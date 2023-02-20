@@ -1,0 +1,33 @@
+.auth-layout {
+  @apply min-h-screen;
+}
+
+.auth-layout > .auth-container {
+  @apply flex h-screen flex-col items-center justify-center overflow-y-scroll p-6 md:p-0;
+}
+
+.auth-layout > .auth-container > .auth-form {
+  @apply mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px];
+}
+
+.auth-form > :nth-child(1) {
+  @apply flex flex-col space-y-2 text-center;
+}
+
+.auth-form .title {
+  @apply text-2xl font-bold;
+}
+
+.auth-form .description {
+  @apply text-sm text-slate-600;
+}
+
+.auth-form .footer {
+  @apply px-8 text-center text-sm text-slate-600;
+}
+
+.auth-form .footer a {
+  color: inherit;
+  text-decoration: inherit;
+  @apply underline hover:text-brand;
+}

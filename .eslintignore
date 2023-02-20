@@ -1,0 +1,9 @@
+# tailwind
+tailwind.config.cjs
+postcss.config.cjs
+
+# eslint
+.eslintrc.js
+
+# prettier
+.prettier.config.cjs

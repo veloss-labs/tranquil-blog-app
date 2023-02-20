@@ -7,6 +7,8 @@ import Document, {
   NextScript,
 } from "next/document";
 
+import { cn } from "~/utils/utils";
+
 export default class MyDocument extends Document {
   static async getInitialProps(ctx: DocumentContext) {
     const cache = createCache();
@@ -39,9 +41,13 @@ export default class MyDocument extends Document {
 
   render() {
     return (
-      <Html lang="ko" dir="ltr">
+      <Html
+        lang="ko"
+        dir="ltr"
+        className={cn("bg-white font-sans text-slate-900 antialiased")}
+      >
         <Head />
-        <body>
+        <body className="min-h-screen">
           <Main />
           <NextScript />
         </body>

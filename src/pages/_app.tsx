@@ -1,13 +1,19 @@
 import { SessionProvider } from "next-auth/react";
 import { ConfigProvider } from "antd";
+import { Inter as FontSans } from "@next/font/google";
 
-import { api } from "../utils/api";
+import { api } from "~/utils/api";
 import koKR from "antd/locale/ko_KR";
 
 import "~/styles/globals.css";
 
 import { type AppType } from "next/app";
 import { type Session } from "next-auth";
+
+const fontSans = FontSans({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
 
 interface AppPageProps {
   session: Session | null;
@@ -18,20 +24,20 @@ const App: AppType<AppPageProps> = ({
   pageProps: { session, ...pageProps },
 }) => {
   return (
-    <ConfigProvider
-      theme={{
-        token: {
-          colorPrimary: "#63489a",
-          colorLink: "#63489a",
-          colorLinkHover: "#7f68a6",
-        },
-      }}
-      locale={koKR}
-    >
-      <SessionProvider session={session}>
-        <Component {...pageProps} />
-      </SessionProvider>
-    </ConfigProvider>
+    <div className={fontSans.variable}>
+      <ConfigProvider
+        theme={{
+          token: {
+            colorPrimary: "#111111",
+          },
+        }}
+        locale={koKR}
+      >
+        <SessionProvider session={session}>
+          <Component {...pageProps} />
+        </SessionProvider>
+      </ConfigProvider>
+    </div>
   );
 };
 
