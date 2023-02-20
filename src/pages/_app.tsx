@@ -4,7 +4,7 @@ import { ConfigProvider } from "antd";
 import { api } from "../utils/api";
 import koKR from "antd/locale/ko_KR";
 
-import "../styles/globals.css";
+import "~/styles/globals.css";
 
 import { type AppType } from "next/app";
 import { type Session } from "next-auth";
