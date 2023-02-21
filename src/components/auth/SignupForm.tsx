@@ -4,18 +4,23 @@ import React, { useCallback } from "react";
 // components
 import { Input, Button, Form } from "antd";
 
+// trpc
+import { api } from "~/utils/api";
+
 // form
 import { useController, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signupSchema, type SignupFormData } from "~/libs/validation/auth";
+import { schema, type SignUpData } from "~/libs/validation/auth";
 
 export default function SignupForm() {
+  const mutation = api.users.create.useMutation();
+
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<SignupFormData>({
-    resolver: zodResolver(signupSchema),
+  } = useForm<SignUpData>({
+    resolver: zodResolver(schema.signup),
   });
 
   const control_email = useController({
@@ -38,9 +43,17 @@ export default function SignupForm() {
     name: "passwordConfirm",
   });
 
-  const onSubmit = useCallback((data: SignupFormData) => {
-    console.log(data);
-  }, []);
+  const onSubmit = useCallback(
+    async (data: SignUpData) => {
+      try {
+        const resp = await mutation.mutateAsync(data);
+        console.log(resp);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [mutation]
+  );
 
   return (
     <div className="grid gap-6">

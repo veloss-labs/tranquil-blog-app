@@ -7,7 +7,7 @@ import { Input, Button, Form } from "antd";
 // form
 import { useController, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { loginSchema, type LoginFormData } from "~/libs/validation/auth";
+import { schema, type SignInData } from "~/libs/validation/auth";
 import { signIn } from "next-auth/react";
 
 export default function LoginForm() {
@@ -15,8 +15,8 @@ export default function LoginForm() {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<SignInData>({
+    resolver: zodResolver(schema.signin),
   });
 
   const control_email = useController({
@@ -29,8 +29,9 @@ export default function LoginForm() {
     name: "password",
   });
 
-  const onSubmit = useCallback(async (data: LoginFormData) => {
+  const onSubmit = useCallback(async (data: SignInData) => {
     const resp = await signIn("credentials", data);
+    console.log(resp);
   }, []);
 
   return (

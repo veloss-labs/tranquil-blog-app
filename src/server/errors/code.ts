@@ -1,0 +1,9 @@
+export const RESULT_CODE = {
+  SUCCESS: 0,
+
+  // 4xx: Bad Request
+  BODY_DATA_INVALID: 2000,
+  USER_NOT_FOUND: 2001,
+  INVALID_PASSWORD: 2002,
+  CSRF_TOKEN_NOT_VALID: 2003,
+};

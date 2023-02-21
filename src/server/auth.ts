@@ -1,4 +1,6 @@
 import type { GetServerSidePropsContext } from "next";
+import omit from "lodash-es/omit";
+// import { env } from "~/env/server.mjs";
 import {
   getServerSession,
   type NextAuthOptions,
@@ -6,8 +8,8 @@ import {
 } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { env } from "~/env/server.mjs";
 import { prisma } from "~/server/db";
+import { generateHash, secureCompare } from "./utils/password";
 
 /**
  * Module augmentation for `next-auth` types
@@ -38,15 +40,14 @@ declare module "next-auth" {
 export const authOptions: NextAuthOptions = {
   callbacks: {
     session({ session, user }) {
+      console.log("session", session);
+      console.log("user", user);
       if (session.user) {
         session.user.id = user.id;
         // session.user.role = user.role; <-- put other properties on the session here
       }
       return session;
     },
-  },
-  pages: {
-    signIn: "/auth/signin",
   },
   adapter: PrismaAdapter(prisma),
   providers: [
@@ -79,15 +80,37 @@ export const authOptions: NextAuthOptions = {
           where: {
             email: credentials.email,
           },
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
+            password: true,
+            salt: true,
+          },
         });
 
+        console.log("user", user);
+
         if (user) {
+          if (user.password && user.salt) {
+            if (
+              !secureCompare(
+                user.password,
+                generateHash(credentials.password, user.salt)
+              )
+            ) {
+              return null;
+            }
+          }
+
+          const omitUser = omit(user, ["password", "salt"]);
+          console.log("omitUser", omitUser);
           // Any object returned will be saved in `user` property of the JWT
-          return user;
+          return omitUser;
         } else {
           // If you return null then an error will be displayed advising the user to check their details.
           return null;
-
           // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
         }
       },
