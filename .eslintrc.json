@@ -7,6 +7,9 @@
       "files": ["*.ts", "*.tsx"],
       "parserOptions": {
         "project": "tsconfig.json"
+      },
+      "rules": {
+        "@typescript-eslint/no-floating-promises": "off"
       }
     }
   ],
@@ -17,7 +20,9 @@
   "plugins": ["@typescript-eslint"],
   "extends": ["next/core-web-vitals", "plugin:@typescript-eslint/recommended"],
   "rules": {
+    "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/consistent-type-imports": "warn",
+    "@typescript-eslint/no-empty-interface": "off",
     "@typescript-eslint/no-misused-promises": "off"
   }
 }

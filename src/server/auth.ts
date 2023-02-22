@@ -1,15 +1,12 @@
 import type { GetServerSidePropsContext } from "next";
 import omit from "lodash-es/omit";
-// import { env } from "~/env/server.mjs";
-import {
-  getServerSession,
-  type NextAuthOptions,
-  type DefaultSession,
-} from "next-auth";
+import { getToken } from "next-auth/jwt";
+import { type NextAuthOptions, type DefaultSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "~/server/db";
 import { generateHash, secureCompare } from "./utils/password";
+import type { User } from "@prisma/client";
 
 /**
  * Module augmentation for `next-auth` types
@@ -20,10 +17,10 @@ import { generateHash, secureCompare } from "./utils/password";
 declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
-      id: string;
       // ...other properties
       // role: UserRole;
-    } & DefaultSession["user"];
+    } & DefaultSession["user"] &
+      UserSchema;
   }
 
   // interface User {
@@ -32,6 +29,9 @@ declare module "next-auth" {
   // }
 }
 
+export interface UserSchema
+  extends Pick<User, "id" | "email" | "name" | "image"> {}
+
 /**
  * Options for NextAuth.js used to configure
  * adapters, providers, callbacks, etc.
@@ -39,15 +39,38 @@ declare module "next-auth" {
  **/
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session({ session, user }) {
-      console.log("session", session);
-      console.log("user", user);
-      if (session.user) {
-        session.user.id = user.id;
-        // session.user.role = user.role; <-- put other properties on the session here
+    session({ session, token }) {
+      // I skipped the line below coz it gave me a TypeError
+      // session.accessToken = token.accessToken;
+      if (session && session.user && token.session) {
+        const typeSafeToken = token as {
+          session: UserSchema;
+        };
+        // @ts-ignore
+        session.user.id = typeSafeToken.session.id;
       }
+
       return session;
     },
+    jwt: ({ token, user }) => {
+      if (user) {
+        token = {
+          ...token,
+          session: user,
+        };
+      }
+      return token;
+    },
+    redirect: ({ url, baseUrl }) => {
+      // Allows relative callback URLs
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      // Allows callback URLs on the same origin
+      else if (new URL(url).origin === baseUrl) return url;
+      return baseUrl;
+    },
+  },
+  session: {
+    strategy: "jwt",
   },
   adapter: PrismaAdapter(prisma),
   providers: [
@@ -65,11 +88,13 @@ export const authOptions: NextAuthOptions = {
       name: "Credentials",
       credentials: {
         email: {
-          label: "email",
-          type: "email",
-          placeholder: "test@email.com",
+          label: "Email",
+          type: "text",
         },
-        password: { label: "Password", type: "password" },
+        password: {
+          label: "Password",
+          type: "password",
+        },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
@@ -90,29 +115,23 @@ export const authOptions: NextAuthOptions = {
           },
         });
 
-        console.log("user", user);
-
-        if (user) {
-          if (user.password && user.salt) {
-            if (
-              !secureCompare(
-                user.password,
-                generateHash(credentials.password, user.salt)
-              )
-            ) {
-              return null;
-            }
-          }
-
-          const omitUser = omit(user, ["password", "salt"]);
-          console.log("omitUser", omitUser);
-          // Any object returned will be saved in `user` property of the JWT
-          return omitUser;
-        } else {
-          // If you return null then an error will be displayed advising the user to check their details.
+        if (!user) {
           return null;
-          // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
         }
+
+        if (user.password && user.salt) {
+          if (
+            !secureCompare(
+              user.password,
+              generateHash(credentials.password, user.salt)
+            )
+          ) {
+            return null;
+          }
+        }
+
+        const omitUser = omit(user, ["password", "salt"]);
+        return omitUser;
       },
     }),
   ],
@@ -123,9 +142,14 @@ export const authOptions: NextAuthOptions = {
  * to import the authOptions in every file.
  * @see https://next-auth.js.org/configuration/nextjs
  **/
-export const getServerAuthSession = (ctx: {
+export const getServerAuthSession = async (ctx: {
   req: GetServerSidePropsContext["req"];
   res: GetServerSidePropsContext["res"];
 }) => {
-  return getServerSession(ctx.req, ctx.res, authOptions);
+  // return getServerSession(ctx.req, ctx.res, authOptions);
+  const token = await getToken({ req: ctx.req });
+  if (!token) {
+    return null;
+  }
+  return token.session as UserSchema;
 };

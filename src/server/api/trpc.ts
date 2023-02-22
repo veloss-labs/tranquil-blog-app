@@ -17,13 +17,12 @@
  *
  */
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
-import { type Session } from "next-auth";
 
-import { getServerAuthSession } from "~/server/auth";
+import { getServerAuthSession, type UserSchema } from "~/server/auth";
 import { prisma } from "~/server/db";
 
 type CreateContextOptions = {
-  session: Session | null;
+  session: UserSchema | null;
 };
 
 /**
@@ -101,13 +100,13 @@ export const publicProcedure = t.procedure;
  * procedure
  */
 const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
-  if (!ctx.session || !ctx.session.user) {
+  if (!ctx.session || !ctx.session) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
   return next({
     ctx: {
       // infers the `session` as non-nullable
-      session: { ...ctx.session, user: ctx.session.user },
+      session: ctx.session,
     },
   });
 });
