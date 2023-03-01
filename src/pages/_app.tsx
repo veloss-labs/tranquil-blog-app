@@ -1,6 +1,6 @@
 import { SessionProvider } from "next-auth/react";
 import { ConfigProvider } from "antd";
-import { Inter as FontSans } from "@next/font/google";
+import { Inter as FontSans } from "next/font/google";
 
 import { api } from "~/utils/api";
 import koKR from "antd/locale/ko_KR";
