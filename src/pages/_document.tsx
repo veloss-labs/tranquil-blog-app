@@ -47,7 +47,7 @@ export default class MyDocument extends Document {
         className={cn("bg-white font-sans text-slate-900 antialiased")}
       >
         <Head />
-        <body className="min-h-screen">
+        <body className="m-0">
           <Main />
           <NextScript />
         </body>

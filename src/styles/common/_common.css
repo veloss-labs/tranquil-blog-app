@@ -1,5 +1,41 @@
+/* Icons */
+
 .icon--sm {
   @apply h-4 w-4;
+}
+
+.icon--md {
+  @apply h-6 w-6;
+}
+
+.icon--lg {
+  @apply h-8 w-8;
+}
+
+/* Header */
+
+.header--mobile {
+  @apply hidden h-16 items-center border-b border-gray-200 px-4 py-2 md:flex;
+}
+
+.header--mobile .header-logo--mobile {
+  @apply flex text-inherit;
+}
+
+.header--mobile .header-content--mobile {
+  @apply flex flex-1 items-center justify-between;
+}
+
+.header--mobile .header-content--mobile .btn-groups--mobile {
+  @apply flex gap-8;
+}
+
+.user-nav {
+  @apply relative flex;
+}
+
+.user-nav .btn-write--user {
+  @apply mr-2 hidden md:flex;
 }
 
 /* Button */

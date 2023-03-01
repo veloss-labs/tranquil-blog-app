@@ -9,6 +9,7 @@ import "~/styles/globals.css";
 
 import { type AppType } from "next/app";
 import { type Session } from "next-auth";
+import { _COLOR } from "~/libs/styles/color";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -28,7 +29,12 @@ const App: AppType<AppPageProps> = ({
       <ConfigProvider
         theme={{
           token: {
-            colorPrimary: "#111111",
+            colorPrimary: _COLOR.brand.DEFAULT,
+            colorPrimaryHover: _COLOR.brand.HOVER,
+            colorPrimaryActive: _COLOR.brand.ACTIVE,
+            colorLink: _COLOR.brand.LINK,
+            colorLinkHover: _COLOR.brand.LINK_HOVER,
+            colorText: _COLOR.brand.DEFAULT,
           },
         }}
         locale={koKR}
