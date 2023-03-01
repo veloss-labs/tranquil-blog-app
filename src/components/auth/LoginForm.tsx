@@ -101,7 +101,12 @@ export default function LoginForm() {
               />
             </Form.Item>
           </div>
-          <Button htmlType="submit" type="primary" className="!shadow-none">
+          <Button
+            htmlType="submit"
+            type="primary"
+            className="!shadow-none"
+            loading={isLoading}
+          >
             로그인
           </Button>
         </div>

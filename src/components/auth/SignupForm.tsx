@@ -11,9 +11,15 @@ import { api } from "~/utils/api";
 import { useController, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { schema, type SignUpData } from "~/libs/validation/auth";
+import { useRouter } from "next/router";
 
 export default function SignupForm() {
-  const mutation = api.users.create.useMutation();
+  const router = useRouter();
+  const mutation = api.users.create.useMutation({
+    onSuccess: () => {
+      router.replace("/auth/signin");
+    },
+  });
 
   const {
     control,
@@ -44,13 +50,8 @@ export default function SignupForm() {
   });
 
   const onSubmit = useCallback(
-    async (data: SignUpData) => {
-      try {
-        const resp = await mutation.mutateAsync(data);
-        console.log(resp);
-      } catch (error) {
-        console.log(error);
-      }
+    (data: SignUpData) => {
+      mutation.mutate(data);
     },
     [mutation]
   );
