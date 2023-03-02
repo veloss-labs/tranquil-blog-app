@@ -1,13 +1,66 @@
-import { Button } from "antd";
 import React from "react";
+import { Dropdown, Space, Avatar, Button } from "antd";
 
-interface UserNavProps {}
+import type { MenuProps } from "antd";
+import type { Session } from "next-auth";
 
-const UserNav: React.FC<UserNavProps> = () => {
+interface UserNavProps {
+  session: Session;
+}
+
+const items: MenuProps["items"] = [
+  {
+    label: <a href="https://www.antgroup.com">1st menu item</a>,
+    key: "0",
+  },
+  {
+    label: <a href="https://www.aliyun.com">2nd menu item</a>,
+    key: "1",
+  },
+  {
+    type: "divider",
+  },
+  {
+    label: "3rd menu item",
+    key: "3",
+  },
+];
+
+const menuProps = {
+  items,
+  onClick: () => {
+    console.log("click");
+  },
+};
+
+const UserNav: React.FC<UserNavProps> = ({ session }) => {
   return (
     <div className="user-nav">
-      <Button className="btn-write--user">새 글 작성</Button>
-      UserNav
+      <Space size="small">
+        <Dropdown
+          menu={menuProps}
+          placement="bottom"
+          trigger={["click"]}
+          className="flex w-14 items-center"
+        >
+          <a onClick={(e) => e.preventDefault()}>
+            <Avatar
+              style={{ backgroundColor: "#f56a00", verticalAlign: "middle" }}
+              size="large"
+              gap={4}
+            >
+              {session?.user?.name}
+            </Avatar>
+          </a>
+        </Dropdown>
+        <Button
+          type="primary"
+          className="btn-write--user !shadow-none"
+          size="middle"
+        >
+          새 글 작성
+        </Button>
+      </Space>
     </div>
   );
 };

@@ -14,19 +14,40 @@
 
 /* Header */
 
-.header--mobile {
+.header--desktop {
   @apply hidden h-16 items-center border-b border-gray-200 px-4 py-2 md:flex;
 }
 
-.header--mobile .header-logo--mobile {
+.header--mobile {
+  @apply relative flex h-14 items-center justify-center border-l-0 border-t-0 border-r-0 border-b border-solid border-gray-200 px-4 md:hidden;
+}
+
+.header--mobile .header-left--mobile {
+  @apply absolute top-0 left-4 flex h-full items-center;
+}
+
+.header--mobile .header-right--mobile {
+  @apply absolute top-0 right-4 flex h-full items-center;
+}
+
+.header--mobile .header-title--mobile {
+  font-size: 18px;
+  @apply font-semibold text-brand-500;
+}
+
+.header--desktop .header-logo--desktop {
   @apply flex text-inherit;
 }
 
-.header--mobile .header-content--mobile {
+.header--mobile .header-logo--mobile {
+  @apply block h-[17px] w-[84px];
+}
+
+.header--desktop .header-content--desktop {
   @apply flex flex-1 items-center justify-between;
 }
 
-.header--mobile .header-content--mobile .btn-groups--mobile {
+.header--desktop .header-content--desktop .btn-groups--desktop {
   @apply flex gap-8;
 }
 

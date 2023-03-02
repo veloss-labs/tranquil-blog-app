@@ -10,6 +10,7 @@ import PlusIcon from "@heroicons/react/24/outline/PlusIcon";
 import EllipsisIcon from "@heroicons/react/24/outline/EllipsisHorizontalIcon";
 import TrashIcon from "@heroicons/react/24/outline/TrashIcon";
 import ExclamationTriangleIcon from "@heroicons/react/24/outline/ExclamationTriangleIcon";
+import Bars3Icon from "@heroicons/react/24/outline/Bars3Icon";
 
 export const Icons = {
   logo: Square3Stack3DIcon,
@@ -24,4 +25,5 @@ export const Icons = {
   ellipsis: EllipsisIcon,
   trash: TrashIcon,
   warning: ExclamationTriangleIcon,
+  menu: Bars3Icon,
 };

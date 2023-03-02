@@ -16,11 +16,7 @@ import type { User } from "@prisma/client";
  **/
 declare module "next-auth" {
   interface Session extends DefaultSession {
-    user: {
-      // ...other properties
-      // role: UserRole;
-    } & DefaultSession["user"] &
-      UserSchema;
+    user: UserSchema;
   }
 
   // interface User {
