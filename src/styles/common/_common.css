@@ -64,3 +64,31 @@
 .btn-link--back {
   @apply absolute top-4 left-4 inline-flex items-center justify-center rounded-lg border border-transparent bg-transparent py-2 px-3 text-center text-sm  font-medium text-slate-900 hover:border-slate-200 hover:bg-slate-100 focus:z-10 focus:outline-none focus:ring-4 focus:ring-slate-200 md:top-8 md:left-8;
 }
+
+/* Site Nav Menu */
+
+.site-nav {
+  -webkit-box-shadow: inset 0px -1px 0px #f3f3f4;
+  box-shadow: inset 0px -1px 0px #f3f3f4;
+
+  @apply fixed top-0 z-[9996] box-border w-full select-none bg-white will-change-transform;
+}
+
+.site-nav-menu {
+  @apply box-border;
+}
+
+.site-nav-menu--mobile {
+  height: calc(100vh - 60px);
+  -webkit-box-shadow: 0px 20px 35px rgb(13 12 34 / 5%);
+  box-shadow: 0px 20px 35px rgb(13 12 34 / 5%);
+  @apply absolute z-10 w-full overflow-scroll bg-white p-[23px];
+}
+
+.site-nav-menu--mobile .ant-menu-light.ant-menu-root.ant-menu-inline {
+  border-inline-end: none;
+}
+
+.site-nav-menu--mobile .site-nav-mobile-user-menu {
+  @apply list-none;
+}
