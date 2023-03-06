@@ -1,5 +1,6 @@
 import React from "react";
-import { Divider, Menu, MenuProps } from "antd";
+import Image from "next/image";
+import { Divider, Menu, type MenuProps } from "antd";
 import Link from "next/link";
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -69,10 +70,11 @@ const SiteNavMenu: React.FC<SiteNavMenuProps> = () => {
       <ul className="site-nav-mobile-user-menu">
         <li>
           <Link href="/" className="site-nav-bold-text site-nav-mobile-avatar">
-            <img
-              src="https://cdn.dribbble.com/users/4714321/avatars/normal/open-uri20200123-26444-dmet7r?1579773018"
+            <Image
+              src="/images/profile.jpeg"
+              width={40}
               height={40}
-              alt=""
+              alt="profile"
             />
             <span className="site-nav-bold-text">OhMinSeop</span>
           </Link>

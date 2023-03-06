@@ -44,11 +44,7 @@ const UserNav: React.FC<UserNavProps> = ({ session }) => {
           className="flex w-14 items-center"
         >
           <a onClick={(e) => e.preventDefault()}>
-            <Avatar
-              style={{ backgroundColor: "#f56a00", verticalAlign: "middle" }}
-              size="large"
-              gap={4}
-            >
+            <Avatar size="large" gap={4} src="/images/profile.jpeg">
               {session?.user?.name}
             </Avatar>
           </a>
