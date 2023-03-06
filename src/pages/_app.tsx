@@ -10,6 +10,8 @@ import "~/styles/globals.css";
 import { type AppType } from "next/app";
 import { type Session } from "next-auth";
 import { _COLOR } from "~/libs/styles/color";
+import { AdminLayoutProvider } from "~/context/layout-context";
+import { AdminRouteProvider } from "~/context/route-context";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -40,7 +42,11 @@ const App: AppType<AppPageProps> = ({
         locale={koKR}
       >
         <SessionProvider session={session}>
-          <Component {...pageProps} />
+          <AdminRouteProvider>
+            <AdminLayoutProvider>
+              <Component {...pageProps} />
+            </AdminLayoutProvider>
+          </AdminRouteProvider>
         </SessionProvider>
       </ConfigProvider>
     </div>
