@@ -1,5 +1,6 @@
 import React from "react";
 import { Divider, Menu, MenuProps } from "antd";
+import Link from "next/link";
 type MenuItem = Required<MenuProps>["items"][number];
 
 function getItem(
@@ -66,10 +67,41 @@ const SiteNavMenu: React.FC<SiteNavMenuProps> = () => {
       />
       <Divider />
       <ul className="site-nav-mobile-user-menu">
-        <li></li>
-        <div></div>
-        <hr />
-        <div></div>
+        <li>
+          <Link href="/" className="site-nav-bold-text site-nav-mobile-avatar">
+            <img
+              src="https://cdn.dribbble.com/users/4714321/avatars/normal/open-uri20200123-26444-dmet7r?1579773018"
+              height={40}
+              alt=""
+            />
+            <span className="site-nav-bold-text">OhMinSeop</span>
+          </Link>
+        </li>
+        <div className="site-nav-mobile-user-menu-columns">
+          <li>
+            <a data-site-nav-element="Profile" href="/veloss">
+              Profile
+            </a>{" "}
+          </li>
+          <li>
+            <a data-site-nav-element="Profile" href="/veloss">
+              Account Setting
+            </a>{" "}
+          </li>
+          <li>
+            <a data-site-nav-element="Profile" href="/veloss">
+              Dashboard
+            </a>{" "}
+          </li>
+        </div>
+        <hr className="mt-6 block h-[1px] border-[0] bg-slate-300" />
+        <div className="site-nav-mobile-footer">
+          <li className="site-nav-bold-text">
+            <a data-site-nav-element="Profile" href="/veloss">
+              Sign Out
+            </a>{" "}
+          </li>
+        </div>
       </ul>
     </div>
   );
