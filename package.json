@@ -36,6 +36,7 @@
     "@trpc/next": "^10.13.2",
     "@trpc/react-query": "^10.13.2",
     "@trpc/server": "^10.13.2",
+    "@vercel/analytics": "^0.1.11",
     "ahooks": "^3.7.5",
     "antd": "^5.2.3",
     "body-scroll-lock": "^4.0.0-beta.0",

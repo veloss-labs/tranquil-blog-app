@@ -1,7 +1,7 @@
 import { SessionProvider } from "next-auth/react";
 import { ConfigProvider } from "antd";
 import { Inter as FontSans } from "next/font/google";
-
+import { Analytics } from "@vercel/analytics/react";
 import { api } from "~/utils/api";
 import koKR from "antd/locale/ko_KR";
 
@@ -13,6 +13,7 @@ import { _COLOR } from "~/libs/styles/color";
 import { DashboardLayoutProvider } from "~/context/layout-context";
 import { DashboardRouteProvider } from "~/context/route-context";
 import { getRoutes } from "~/libs/router/api/routes";
+import { clientEnv } from "~/env/schema.mjs";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -54,6 +55,13 @@ const App: AppType<AppPageProps> = ({
           </DashboardRouteProvider>
         </SessionProvider>
       </ConfigProvider>
+      <Analytics
+        debug={
+          clientEnv.NEXT_PUBLIC_DEPLOY_GROUP
+            ? ["local"].includes(clientEnv.NEXT_PUBLIC_DEPLOY_GROUP)
+            : false
+        }
+      />
     </div>
   );
 };

@@ -1,7 +1,7 @@
-import React from 'react';
-import { Breadcrumb } from 'antd';
-import DashboardLayout from '~/components/dashboard/DashboardLayout';
-import { getServerAuthSession } from '~/server/auth';
+import React from "react";
+import { Breadcrumb } from "antd";
+import DashboardLayout from "~/components/dashboard/DashboardLayout";
+import { getServerAuthSession } from "~/server/auth";
 
 import type { GetServerSidePropsContext } from "next";
 
@@ -30,7 +30,7 @@ Dashboard.getLayout = function GetLayout(page: React.ReactNode) {
   return (
     <DashboardLayout
       pageHeader={
-        <div className="pt-7 px-5 sm:px-10">
+        <div className="px-5 pt-7 sm:px-10">
           <Breadcrumb>
             <Breadcrumb.Item>홈</Breadcrumb.Item>
             <Breadcrumb.Item>대시보드</Breadcrumb.Item>

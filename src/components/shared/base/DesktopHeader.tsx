@@ -12,8 +12,6 @@ const DesktopHeader: React.FC<DesktopHeaderProps> = () => {
   const router = useRouter();
   const session = useSession();
 
-  console.log(session);
-
   const onMoveToSignin = useCallback(() => {
     router.push("/auth/signin");
   }, [router]);
