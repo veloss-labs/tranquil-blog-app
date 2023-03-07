@@ -1,0 +1,20 @@
+/* Routes Menu Custom Styles */
+.ant-menu-light.routes-menu .ant-menu-item-selected {
+  @apply text-brand-100;
+}
+
+.ant-menu-light.routes-menu .ant-menu-item-selected {
+  @apply bg-brand-900;
+}
+
+.mobile-menu .ant-menu-light.ant-menu-root.ant-menu-inline {
+  border-inline-end: none !important;
+}
+
+.ant-spin.page-loading {
+  @apply absolute top-0 left-0 right-0 flex h-full w-full flex-col items-center justify-center bg-brand-400 bg-opacity-40;
+}
+
+.search-form .ant-card-body {
+  @apply bg-gray-100;
+}

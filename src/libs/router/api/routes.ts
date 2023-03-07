@@ -1,36 +1,42 @@
 import type { AuthoritiesSchema } from "../ts/route";
 
-export const getRoutes = async () => {
+export const getAyncRoutes = async () => {
   return new Promise<{ data: AuthoritiesSchema[] }>((resolve) => {
     resolve({
-      data: [
-        {
-          category: { idx: 1, name: "대시보드", type: "MENU", used: true },
-          authorities: null,
-        },
-        {
-          category: { idx: 2, name: "담당자 관리", type: "MENU", used: true },
-          authorities: [
-            { idx: 1, name: "담당자 목록", code: "ASG", order: 1, used: true },
-          ],
-        },
-        {
-          category: { idx: 3, name: "회원 관리", type: "MENU", used: true },
-          authorities: [
-            { idx: 2, name: "회원 목록", code: "USR", order: 1, used: true },
-          ],
-        },
-        {
-          category: { idx: 4, name: "게시판 관리", type: "MENU", used: true },
-          authorities: [
-            { idx: 3, name: "1:1 문의", code: "IQR", order: 1, used: true },
-            { idx: 4, name: "공지사항", code: "NTS", order: 3, used: true },
-            { idx: 5, name: "FAQ", code: "FAQ", order: 5, used: true },
-          ],
-        },
-      ],
+      data: getRoutes().data,
     });
   });
+};
+
+export const getRoutes = () => {
+  return {
+    data: [
+      {
+        category: { idx: 1, name: "대시보드", type: "MENU", used: true },
+        authorities: null,
+      },
+      {
+        category: { idx: 2, name: "담당자 관리", type: "MENU", used: true },
+        authorities: [
+          { idx: 1, name: "담당자 목록", code: "ASG", order: 1, used: true },
+        ],
+      },
+      {
+        category: { idx: 3, name: "회원 관리", type: "MENU", used: true },
+        authorities: [
+          { idx: 2, name: "회원 목록", code: "USR", order: 1, used: true },
+        ],
+      },
+      {
+        category: { idx: 4, name: "게시판 관리", type: "MENU", used: true },
+        authorities: [
+          { idx: 3, name: "1:1 문의", code: "IQR", order: 1, used: true },
+          { idx: 4, name: "공지사항", code: "NTS", order: 3, used: true },
+          { idx: 5, name: "FAQ", code: "FAQ", order: 5, used: true },
+        ],
+      },
+    ],
+  } as { data: AuthoritiesSchema[] };
 };
 
 export const getAuthorityList = async () => {

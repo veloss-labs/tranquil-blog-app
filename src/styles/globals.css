@@ -2,5 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+@import "./common/_antd.css";
 @import "./common/_common.css";
 @import "./pages/_auth.css";
+@import "./pages/_dashboard.css";

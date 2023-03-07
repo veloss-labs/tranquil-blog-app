@@ -42,12 +42,12 @@ type ActionType =
   | ToggleSidebar
   | TogglePopupMenu;
 
-interface AdminLayoutContextState {
+interface DashboardLayoutContextState {
   isShowSidebar: boolean;
   isShowPopupMenu: boolean;
 }
 
-interface AdminLayoutContext extends AdminLayoutContextState {
+interface DashboardLayoutContext extends DashboardLayoutContextState {
   closeSidebar: () => void;
   closePopupMenu: () => void;
   openSidebar: () => void;
@@ -57,21 +57,21 @@ interface AdminLayoutContext extends AdminLayoutContextState {
   dispatch: React.Dispatch<ActionType>;
 }
 
-const initialState: AdminLayoutContextState = {
+const initialState: DashboardLayoutContextState = {
   isShowSidebar: true,
   isShowPopupMenu: false,
 };
 
-const [Provider, useLayoutAdminContext] = createContext<AdminLayoutContext>({
-  name: "useLayoutAdminContext",
-  errorMessage: "useLayoutAdminContext: `context` is undefined.",
+const [Provider, useLayoutDashboardContext] = createContext<DashboardLayoutContext>({
+  name: "useLayoutDashboardContext",
+  errorMessage: "useLayoutDashboardContext: `context` is undefined.",
   defaultValue: initialState,
 });
 
 function reducer(
   state = initialState,
   action: ActionType
-): AdminLayoutContextState {
+): DashboardLayoutContextState {
   switch (action.type) {
     case Action.CLOSE_SIDEBAR:
       return {
@@ -108,11 +108,11 @@ function reducer(
   }
 }
 
-interface Props extends Partial<AdminLayoutContextState> {
+interface Props extends Partial<DashboardLayoutContextState> {
   children: React.ReactNode;
 }
 
-function AdminLayoutProvider({ children, ...otherProps }: Props) {
+function DashboardLayoutProvider({ children, ...otherProps }: Props) {
   const [state, dispatch] = useReducer(
     reducer,
     Object.assign({}, initialState, otherProps)
@@ -147,4 +147,4 @@ function AdminLayoutProvider({ children, ...otherProps }: Props) {
   return <Provider value={actions}>{children}</Provider>;
 }
 
-export { AdminLayoutProvider, useLayoutAdminContext };
+export { DashboardLayoutProvider, useLayoutDashboardContext };

@@ -10,8 +10,9 @@ import "~/styles/globals.css";
 import { type AppType } from "next/app";
 import { type Session } from "next-auth";
 import { _COLOR } from "~/libs/styles/color";
-import { AdminLayoutProvider } from "~/context/layout-context";
-import { AdminRouteProvider } from "~/context/route-context";
+import { DashboardLayoutProvider } from "~/context/layout-context";
+import { DashboardRouteProvider } from "~/context/route-context";
+import { getRoutes } from "~/libs/router/api/routes";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -26,6 +27,10 @@ const App: AppType<AppPageProps> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
+  // @ts-ignore
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-return
+  const getLayout = Component.getLayout || ((page) => page);
+
   return (
     <div className={fontSans.variable}>
       <ConfigProvider
@@ -42,11 +47,11 @@ const App: AppType<AppPageProps> = ({
         locale={koKR}
       >
         <SessionProvider session={session}>
-          <AdminRouteProvider>
-            <AdminLayoutProvider>
-              <Component {...pageProps} />
-            </AdminLayoutProvider>
-          </AdminRouteProvider>
+          <DashboardRouteProvider originRoutes={getRoutes().data}>
+            <DashboardLayoutProvider>
+              {getLayout(<Component {...pageProps} />)}
+            </DashboardLayoutProvider>
+          </DashboardRouteProvider>
         </SessionProvider>
       </ConfigProvider>
     </div>
