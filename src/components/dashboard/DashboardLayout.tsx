@@ -14,10 +14,10 @@ import { useLayoutDashboardContext } from "~/context/layout-context";
 import { useLoading } from "~/libs/hooks/useLoading";
 import { useRouter } from "next/router";
 import { useRouteDashboardContext } from "~/context/route-context";
+import { useMedia } from "~/libs/hooks/useMedia";
 
 // types
 import type { UrlRoutes } from "~/ts/common";
-import { useMedia } from "~/libs/hooks/useMedia";
 
 interface AdminLayoutProps {
   children: React.ReactNode;

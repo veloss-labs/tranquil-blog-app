@@ -1,22 +1,13 @@
 import React, { useCallback, useEffect } from "react";
 import classNames from "classnames";
-import logger from "~/utils/logger";
 
 // components
-import { Avatar, Button, Spin, theme, Typography } from "antd";
-import Sidebar from "~/components/dashboard/Sidebar";
-import MobileMenu from "~/components/dashboard/MobileMenu";
+import { Avatar, Button, theme, Typography } from "antd";
+import DraftsSidebar from "~/components/dashboard/drafts/DraftsSidebar";
 import Bars3Icon from "@heroicons/react/24/outline/Bars3Icon";
-import Deferred from "~/components/shared/loader/Deferred";
 
 // hooks
 import { useLayoutDashboardContext } from "~/context/layout-context";
-import { useLoading } from "~/libs/hooks/useLoading";
-import { useRouter } from "next/router";
-import { useRouteDashboardContext } from "~/context/route-context";
-
-// types
-import type { UrlRoutes } from "~/ts/common";
 import { useMedia } from "~/libs/hooks/useMedia";
 
 interface DraftsLayoutProps {
@@ -25,13 +16,7 @@ interface DraftsLayoutProps {
 }
 
 function DraftsLayout({ children, pageHeader }: DraftsLayoutProps) {
-  const router = useRouter();
-
   const { token } = theme.useToken();
-
-  const { isRouteLoading } = useRouteDashboardContext();
-
-  const [isLoading, startTransition] = useLoading();
 
   const { isShowSidebar, openSidebar, closeSidebar, togglePopupMenu } =
     useLayoutDashboardContext();
@@ -50,17 +35,6 @@ function DraftsLayout({ children, pageHeader }: DraftsLayoutProps) {
     openSidebar();
   }, [isMobile, openSidebar, togglePopupMenu]);
 
-  const pageTransition = useCallback(
-    async (url: UrlRoutes) => {
-      try {
-        await startTransition(router.push(url));
-      } catch (error) {
-        logger.error("[onPageTransition]", error);
-      }
-    },
-    [router, startTransition]
-  );
-
   useEffect(() => {
     if (isMobile) {
       closeSidebar();
@@ -72,7 +46,7 @@ function DraftsLayout({ children, pageHeader }: DraftsLayoutProps) {
   return (
     <>
       <div>
-        <Sidebar pageTransition={pageTransition} />
+        <DraftsSidebar />
         <div className="mobile-header">
           <div className="flex items-center">
             <Avatar
@@ -97,7 +71,6 @@ function DraftsLayout({ children, pageHeader }: DraftsLayoutProps) {
             </Button>
           </div>
         </div>
-        <MobileMenu pageTransition={pageTransition} />
         <div
           className={classNames("sm:h-full sm:overflow-auto", {
             "sm:ml-72": isShowSidebar,
@@ -118,11 +91,6 @@ function DraftsLayout({ children, pageHeader }: DraftsLayoutProps) {
           ) : null}
         </div>
       </div>
-      {isLoading || isRouteLoading ? (
-        <Deferred>
-          <Spin spinning className="page-loading" />
-        </Deferred>
-      ) : null}
     </>
   );
 }
