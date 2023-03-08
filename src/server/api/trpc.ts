@@ -112,6 +112,27 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
 });
 
 /**
+ * Reusable middleware that enforces users are logged in before running the
+ * procedure and that they are a creator
+ */
+const enforceUserIsCreator = t.middleware(({ ctx, next }) => {
+  if (!ctx.session || !ctx.session) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+
+  if (ctx.session.role?.authority !== "CREATOR") {
+    throw new TRPCError({ code: "FORBIDDEN" });
+  }
+
+  return next({
+    ctx: {
+      // infers the `session` as non-nullable
+      session: ctx.session,
+    },
+  });
+});
+
+/**
  * Protected (authed) procedure
  *
  * If you want a query or mutation to ONLY be accessible to logged in users, use
@@ -121,3 +142,12 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
  * @see https://trpc.io/docs/procedures
  */
 export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
+
+/**
+ * Creator procedure
+ * If you want a query or mutation to ONLY be accessible to logged in users who
+ * are creators, use this. It verifies the session is valid and guarantees
+ * ctx.session.user is not null
+ * @see https://trpc.io/docs/procedures
+ */
+export const creatorProcedure = t.procedure.use(enforceUserIsCreator);
