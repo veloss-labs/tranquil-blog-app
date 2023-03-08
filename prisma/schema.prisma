@@ -60,6 +60,7 @@ model User {
     emailVerified DateTime?
     accounts      Account[]
     sessions      Session[]
+    posts         Post[]
     profile       UserProfile?
     role          UserRole?
     createdAt     DateTime     @default(now())
@@ -88,6 +89,94 @@ model UserRole {
     user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@map("user_roles")
+}
+
+model Post {
+    id        Int      @id @default(autoincrement())
+    title     String // 제목
+    subTitle  String? // 부제목
+    content   String // @db.Text 에디터 내용
+    thumbnail String? // 썸네일
+    issueDate DateTime // 발행시간 발행시간 값이 없으면 작성시간으로 대체
+    published Boolean  @default(false) // 공개여부
+    likeCount Int      @default(0) // 좋아요 수
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    userId String
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    categoryId Int?
+    category   PostCategory? @relation(fields: [categoryId], references: [id])
+
+    postsTags PostsTags[]
+    likes     PostLike[]
+    stats     PostStats?
+
+    @@map("posts")
+}
+
+model Tag {
+    id          Int         @id @default(autoincrement())
+    name        String
+    description String?
+    thumbnail   String?
+    createdAt   DateTime    @default(now())
+    updatedAt   DateTime    @updatedAt
+    postsTags   PostsTags[]
+
+    @@map("tags")
+}
+
+model PostsTags {
+    post   Post @relation(fields: [postId], references: [id])
+    postId Int
+    tag    Tag  @relation(fields: [tagId], references: [id])
+    tagId  Int
+
+    @@id([postId, tagId])
+    @@index(postId)
+    @@index(tagId)
+    @@map("posts_tags")
+}
+
+model PostLike {
+    id        Int      @id @default(autoincrement())
+    ip        String   @unique
+    postId    Int
+    post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+    createdAt DateTime @default(now())
+    updatedAt DateTime
+
+    @@index(postId)
+    @@map("post_likes")
+}
+
+model PostCategory {
+    id          Int      @id @default(autoincrement())
+    name        String
+    description String?
+    thumbnail   String?
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    posts       Post[]
+
+    @@map("post_categories")
+}
+
+model PostStats {
+    id            Int      @id @default(autoincrement())
+    postId        Int      @unique
+    likes         Int      @default(0)
+    clicks        Int      @default(0)
+    score         Float    @default(0)
+    commentsCount Int      @default(0)
+    post          Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+    updatedAt     DateTime @default(now()) @updatedAt
+
+    @@index([score(sort: Desc), postId(sort: Desc)])
+    @@index([likes(sort: Desc), postId(sort: Desc)])
+    @@map("post_stats")
 }
 
 model VerificationToken {
