@@ -18,6 +18,8 @@ model Example {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+
+    @@map("examples")
 }
 
 // Necessary for Next auth
@@ -37,6 +39,7 @@ model Account {
     user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@unique([provider, providerAccountId])
+    @@map("accounts")
 }
 
 model Session {
@@ -45,18 +48,46 @@ model Session {
     userId       String
     expires      DateTime
     user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@map("sessions")
 }
 
 model User {
-    id            String    @id @default(cuid())
-    name          String?
-    email         String?   @unique
+    id            String       @id @default(cuid())
+    email         String?      @unique
     password      String?
     salt          String?
     emailVerified DateTime?
-    image         String?
     accounts      Account[]
     sessions      Session[]
+    profile       UserProfile?
+    role          UserRole?
+    createdAt     DateTime     @default(now())
+    updatedAt     DateTime     @updatedAt
+
+    @@map("users")
+}
+
+model UserProfile {
+    id         String  @id @default(cuid())
+    userId     String  @unique
+    profileUrl String?
+    username   String  @unique
+    bio        String?
+    website    String?
+    location   String?
+    user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@map("user_profiles")
+}
+
+model UserRole {
+    id        String @id @default(cuid())
+    userId    String @unique
+    authority String
+    user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@map("user_roles")
 }
 
 model VerificationToken {
@@ -65,4 +96,5 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+    @@map("verification_tokens")
 }

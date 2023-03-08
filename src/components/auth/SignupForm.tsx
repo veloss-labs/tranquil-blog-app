@@ -32,21 +32,25 @@ export default function SignupForm() {
   const control_email = useController({
     control,
     name: "email",
+    defaultValue: "test@email.com",
   });
 
   const control_nickname = useController({
     control,
     name: "nickname",
+    defaultValue: "veloss",
   });
 
   const control_password = useController({
     control,
     name: "password",
+    defaultValue: "1q2w3e4r!Q",
   });
 
   const control_passwordConfirm = useController({
     control,
     name: "passwordConfirm",
+    defaultValue: "1q2w3e4r!Q",
   });
 
   const onSubmit = useCallback(

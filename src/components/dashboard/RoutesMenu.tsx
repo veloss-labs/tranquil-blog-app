@@ -17,7 +17,8 @@ interface RoutesMenuProps {
 }
 
 function RoutesMenu({ pageTransition }: RoutesMenuProps) {
-  const { menuRoutes, openRoutes, selectedRoute } = useRouteDashboardContext();
+  const { menuRoutes, selectedRoute, changeSelectedRoute } =
+    useRouteDashboardContext();
 
   const onSelect: SelectEventHandler = useCallback(
     (data) => {
@@ -25,16 +26,16 @@ function RoutesMenu({ pageTransition }: RoutesMenuProps) {
       if (!pathname) return;
       const nextUrl = new URL(pathname, getUrl().origin);
       pageTransition(nextUrl);
+      changeSelectedRoute(data.selectedKeys);
     },
-    [pageTransition]
+    [pageTransition, changeSelectedRoute]
   );
 
   return (
     <Menu
       className="routes-menu"
       mode={"inline"}
-      defaultOpenKeys={openRoutes}
-      defaultSelectedKeys={selectedRoute}
+      selectedKeys={selectedRoute}
       items={menuRoutes}
       onSelect={onSelect}
       onDeselect={onSelect}

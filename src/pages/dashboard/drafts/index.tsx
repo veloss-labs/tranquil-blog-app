@@ -1,6 +1,5 @@
 import React from "react";
-import { Breadcrumb } from "antd";
-import DashboardLayout from "~/components/dashboard/DashboardLayout";
+import DraftsLayout from "~/components/dashboard/drafts/DraftsLayout";
 import { getServerAuthSession } from "~/server/auth";
 
 import type { GetServerSidePropsContext } from "next";
@@ -32,23 +31,10 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   };
 }
 
-export default function Dashboard() {
-  return <div className="mt-4">Home</div>;
+export default function Drafts() {
+  return <div className="mt-4">Drafts</div>;
 }
 
-Dashboard.getLayout = function GetLayout(page: React.ReactNode) {
-  return (
-    <DashboardLayout
-      pageHeader={
-        <div className="px-5 pt-7 sm:px-10">
-          <Breadcrumb>
-            <Breadcrumb.Item>홈</Breadcrumb.Item>
-            <Breadcrumb.Item>대시보드</Breadcrumb.Item>
-          </Breadcrumb>
-        </div>
-      }
-    >
-      {page}
-    </DashboardLayout>
-  );
+Drafts.getLayout = function GetLayout(page: React.ReactNode) {
+  return <DraftsLayout>{page}</DraftsLayout>;
 };

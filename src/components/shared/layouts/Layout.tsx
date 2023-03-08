@@ -28,6 +28,10 @@ const Layout: React.FC<LayoutProps> = ({ children, hasHeader = true }) => {
     setOpen(!open);
   }, [open]);
 
+  const onCloseSiteNavMenu = useCallback(() => {
+    setOpen(false);
+  }, []);
+
   // 모바일에서만 사이드바 메뉴가 노출되게 설정하기 위해서
   useEffect(() => {
     if (middle) {
@@ -56,7 +60,9 @@ const Layout: React.FC<LayoutProps> = ({ children, hasHeader = true }) => {
                 />
               }
             />
-            {open ? <SiteNavMenu /> : null}
+            {open ? (
+              <SiteNavMenu onCloseSiteNavMenu={onCloseSiteNavMenu} />
+            ) : null}
           </div>
           <DesktopHeader />
         </>

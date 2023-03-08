@@ -1,11 +1,6 @@
 /* eslint-disable react/react-in-jsx-scope */
 import hash from "stable-hash";
-import {
-  LineChartOutlined,
-  TeamOutlined,
-  UserOutlined,
-  ProjectOutlined,
-} from "@ant-design/icons";
+import { LineChartOutlined, FormOutlined } from "@ant-design/icons";
 import { isEmpty } from "~/utils/assertion";
 
 import type {
@@ -19,27 +14,11 @@ import type { NextRouter } from "next/router";
 const _PAGES = {
   DASHBOARD: {
     name: "대시보드",
-    path: "/",
+    path: "/dashboard",
   },
   MANAGERS: {
-    name: "담당자 목록",
-    path: "/managers",
-  },
-  MEMBERS: {
-    name: "회원 목록",
-    path: "/members",
-  },
-  INQUIRIES: {
-    name: "1:1 문의",
-    path: "/inquiries",
-  },
-  NOTICES: {
-    name: "공지사항",
-    path: "/notices",
-  },
-  FAQS: {
-    name: "FAQ",
-    path: "/faqs",
+    name: "게시글",
+    path: "/dashboard/drafts",
   },
 };
 
@@ -112,14 +91,8 @@ class InternalRoutes {
       case "대시보드": {
         return <LineChartOutlined />;
       }
-      case "담당자 관리": {
-        return <TeamOutlined />;
-      }
-      case "회원 관리": {
-        return <UserOutlined />;
-      }
-      case "게시판 관리": {
-        return <ProjectOutlined />;
+      case "게시글": {
+        return <FormOutlined />;
       }
     }
     return undefined;
@@ -168,7 +141,7 @@ class InternalRoutes {
     };
   }
 
-  generateHashKey(data: any) {
+  generateHashKey(data: unknown) {
     return hash(data);
   }
 
@@ -197,8 +170,7 @@ class InternalRoutes {
 
     if (nextRouter) {
       const { pathname } = nextRouter;
-      const name = this._matchPathName(pathname);
-
+      const name = this._matchPathName(pathname.replace(/\/$/, ""));
       if (!name) {
         return {
           selectedRoute: [defaultKey] as string[],

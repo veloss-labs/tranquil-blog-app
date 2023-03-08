@@ -40,7 +40,7 @@ function Sidebar({ pageTransition }: SidebarProps) {
               size={46}
               style={{ backgroundColor: token.colorPrimary }}
             >
-              {session?.data?.user?.name}
+              {session?.data?.user?.profile?.username}
             </Avatar>
           </div>
           <div className="ml-1 grow">

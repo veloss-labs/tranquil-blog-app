@@ -1,6 +1,7 @@
 import { schema } from "~/libs/validation/auth";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
-import { HttpException } from "~/server/errors/exceptions";
+import { RESULT_CODE } from "~/server/errors/code";
+import { ForbiddenError } from "~/server/errors/httpException";
 import { generateHash, generateSalt } from "~/server/utils/password";
 
 export const usersRouter = createTRPCRouter({
@@ -14,7 +15,15 @@ export const usersRouter = createTRPCRouter({
       });
 
       if (exists) {
-        throw new HttpException(400, "AlreadyExists");
+        throw new ForbiddenError("AlreadyExists", {
+          http: {
+            instance: "[trpc]: usersRouter.create",
+            extra: {
+              email: input.email,
+              errorCode: RESULT_CODE.ALREADY_EXISTS,
+            },
+          },
+        });
       }
 
       const salt = generateSalt();
@@ -23,11 +32,26 @@ export const usersRouter = createTRPCRouter({
       const user = await ctx.prisma.user.create({
         data: {
           email: input.email,
-          name: input.nickname,
           password: hash,
           salt,
         },
       });
+
+      // 유저 프로필 및 권한 생성
+      await Promise.all([
+        ctx.prisma.userProfile.create({
+          data: {
+            userId: user.id,
+            username: input.nickname,
+          },
+        }),
+        ctx.prisma.userRole.create({
+          data: {
+            userId: user.id,
+            authority: "CREATOR",
+          },
+        }),
+      ]);
 
       return {
         userId: user.id,

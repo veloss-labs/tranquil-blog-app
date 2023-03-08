@@ -6,7 +6,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "~/server/db";
 import { generateHash, secureCompare } from "./utils/password";
-import type { User } from "@prisma/client";
+import type { User, UserProfile, UserRole } from "@prisma/client";
 
 /**
  * Module augmentation for `next-auth` types
@@ -18,15 +18,13 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: UserSchema;
   }
-
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
 }
 
 export interface UserSchema
-  extends Pick<User, "id" | "email" | "name" | "image"> {}
+  extends Pick<User, "id" | "email" | "createdAt" | "updatedAt"> {
+  profile: Omit<UserProfile, "userId">;
+  role: Pick<UserRole, "authority">;
+}
 
 /**
  * Options for NextAuth.js used to configure
@@ -45,7 +43,7 @@ export const authOptions: NextAuthOptions = {
           session: UserSchema;
         };
         // @ts-ignore
-        session.user.id = typeSafeToken.session.id;
+        session.user = typeSafeToken.session;
       }
 
       return session;
@@ -105,13 +103,29 @@ export const authOptions: NextAuthOptions = {
           },
           select: {
             id: true,
-            name: true,
             email: true,
-            image: true,
             password: true,
             salt: true,
+            profile: {
+              select: {
+                username: true,
+                bio: true,
+                profileUrl: true,
+                website: true,
+                location: true,
+              },
+            },
+            role: {
+              select: {
+                authority: true,
+              },
+            },
+            createdAt: true,
+            updatedAt: true,
           },
         });
+
+        console.log("user", user);
 
         if (!user) {
           return null;

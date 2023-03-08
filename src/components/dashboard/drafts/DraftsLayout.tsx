@@ -19,12 +19,12 @@ import { useRouteDashboardContext } from "~/context/route-context";
 import type { UrlRoutes } from "~/ts/common";
 import { useMedia } from "~/libs/hooks/useMedia";
 
-interface AdminLayoutProps {
+interface DraftsLayoutProps {
   children: React.ReactNode;
   pageHeader?: React.ReactNode;
 }
 
-function AdminLayout({ children, pageHeader }: AdminLayoutProps) {
+function DraftsLayout({ children, pageHeader }: DraftsLayoutProps) {
   const router = useRouter();
 
   const { token } = theme.useToken();
@@ -53,7 +53,6 @@ function AdminLayout({ children, pageHeader }: AdminLayoutProps) {
   const pageTransition = useCallback(
     async (url: UrlRoutes) => {
       try {
-        console.log("pageTransition", url);
         await startTransition(router.push(url));
       } catch (error) {
         logger.error("[onPageTransition]", error);
@@ -128,4 +127,4 @@ function AdminLayout({ children, pageHeader }: AdminLayoutProps) {
   );
 }
 
-export default AdminLayout;
+export default DraftsLayout;

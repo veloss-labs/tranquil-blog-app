@@ -48,7 +48,7 @@
 }
 
 .header--desktop .header-content--desktop .btn-groups--desktop {
-  @apply flex gap-8;
+  @apply flex gap-4;
 }
 
 .user-nav {

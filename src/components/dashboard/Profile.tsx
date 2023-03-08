@@ -65,7 +65,7 @@ function Profile() {
           className="btn-menu--toggle"
         >
           <span className="ellipsis-text sm:max-w-[10rem]">
-            {session?.data?.user?.name}
+            {session?.data?.user?.profile?.username}
           </span>
           <ChevronDownIcon className="h-4 w-4" />
         </Button>

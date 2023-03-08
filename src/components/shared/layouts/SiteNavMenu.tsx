@@ -1,7 +1,9 @@
-import React from "react";
-import Image from "next/image";
-import { Divider, Menu, type MenuProps } from "antd";
+import React, { useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
+import { Divider, Menu, Typography, type MenuProps } from "antd";
+import { signOut } from "next-auth/react";
+
 type MenuItem = Required<MenuProps>["items"][number];
 
 function getItem(
@@ -20,7 +22,9 @@ function getItem(
   } as MenuItem;
 }
 
-interface SiteNavMenuProps {}
+interface SiteNavMenuProps {
+  onCloseSiteNavMenu: () => void;
+}
 
 const items: MenuProps["items"] = [
   getItem("Navigation One", "sub1", null, [
@@ -57,7 +61,14 @@ const items: MenuProps["items"] = [
   ]),
 ];
 
-const SiteNavMenu: React.FC<SiteNavMenuProps> = () => {
+const SiteNavMenu: React.FC<SiteNavMenuProps> = ({ onCloseSiteNavMenu }) => {
+  const onSignOut = useCallback(() => {
+    onCloseSiteNavMenu();
+    signOut({
+      callbackUrl: "/",
+    });
+  }, [onCloseSiteNavMenu]);
+
   return (
     <div className="site-nav-menu site-nav-menu--mobile">
       <Menu
@@ -81,27 +92,32 @@ const SiteNavMenu: React.FC<SiteNavMenuProps> = () => {
         </li>
         <div className="site-nav-mobile-user-menu-columns">
           <li>
-            <a data-site-nav-element="Profile" href="/veloss">
+            <Link data-site-nav-element="Profile" href="/">
               Profile
-            </a>{" "}
+            </Link>
           </li>
           <li>
-            <a data-site-nav-element="Profile" href="/veloss">
+            <Link data-site-nav-element="Account Setting" href="/">
               Account Setting
-            </a>{" "}
+            </Link>
           </li>
           <li>
-            <a data-site-nav-element="Profile" href="/veloss">
+            <Link data-site-nav-element="Dashboard" href="/dashboard">
               Dashboard
-            </a>{" "}
+            </Link>
           </li>
         </div>
         <hr className="mt-6 block h-[1px] border-[0] bg-slate-300" />
         <div className="site-nav-mobile-footer">
           <li className="site-nav-bold-text">
-            <a data-site-nav-element="Profile" href="/veloss">
+            <Typography.Text
+              className="font-bold text-slate-500"
+              role="button"
+              aria-label="sign out"
+              onClick={onSignOut}
+            >
               Sign Out
-            </a>{" "}
+            </Typography.Text>
           </li>
         </div>
       </ul>

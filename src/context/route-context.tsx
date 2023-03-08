@@ -6,6 +6,8 @@ import type { AuthoritiesSchema, RouteItem } from "~/libs/router/ts/route";
 
 enum Action {
   TRANSITION_ROUTE = "TRANSITION_ROUTE",
+  CHANGE_SELECTED_ROUTE = "CHANGE_SELECTED_ROUTE",
+  CHANGE_OPEN_ROUTES = "CHANGE_OPEN_ROUTES",
 }
 
 type TransitionRoute = {
@@ -15,7 +17,21 @@ type TransitionRoute = {
   };
 };
 
-type ActionType = TransitionRoute;
+type ChangeSelectedRoute = {
+  type: Action.CHANGE_SELECTED_ROUTE;
+  payload: {
+    selectedRoute: string[];
+  };
+};
+
+type ChangeOpenRoutes = {
+  type: Action.CHANGE_OPEN_ROUTES;
+  payload: {
+    openRoutes: string[];
+  };
+};
+
+type ActionType = TransitionRoute | ChangeSelectedRoute | ChangeOpenRoutes;
 
 interface DashboardRouteContextState {
   isRouteLoading: boolean;
@@ -27,6 +43,8 @@ interface DashboardRouteContextState {
 
 interface DashboardRouteContext extends DashboardRouteContextState {
   transitionRoute: (isLoading: boolean) => void;
+  changeSelectedRoute: (selectedRoute: string[]) => void;
+  changeOpenRoutes: (openRoutes: string[]) => void;
   dispatch: React.Dispatch<ActionType>;
 }
 
@@ -55,6 +73,16 @@ function reducer(
         ...state,
         isRouteLoading: action.payload.isLoading,
       };
+    case Action.CHANGE_SELECTED_ROUTE:
+      return {
+        ...state,
+        selectedRoute: action.payload.selectedRoute,
+      };
+    case Action.CHANGE_OPEN_ROUTES:
+      return {
+        ...state,
+        openRoutes: action.payload.openRoutes,
+      };
     default:
       return state;
   }
@@ -66,12 +94,16 @@ interface Props extends Partial<DashboardRouteContext> {
 
 function DashboardRouteProvider({ children, ...otherProps }: Props) {
   const nextRouter = useRouter();
-  const menuRoutes = useMemo(() => Routes.makeClientRoutes(otherProps?.originRoutes), [otherProps.originRoutes])
-  const { selectedRoute, openRoutes } = useMemo(() => Routes.getSelectedRoute(
-    menuRoutes,
-    nextRouter
-  ), [menuRoutes, nextRouter])
-  
+
+  const menuRoutes = useMemo(
+    () => Routes.makeClientRoutes(otherProps?.originRoutes),
+    [otherProps.originRoutes]
+  );
+  const { selectedRoute, openRoutes } = useMemo(
+    () => Routes.getSelectedRoute(menuRoutes, nextRouter),
+    [menuRoutes, nextRouter]
+  );
+
   const [state, dispatch] = useReducer(
     reducer,
     Object.assign({}, initialState, {
@@ -91,10 +123,30 @@ function DashboardRouteProvider({ children, ...otherProps }: Props) {
     });
   };
 
+  const changeSelectedRoute = (selectedRoute: string[]) => {
+    dispatch({
+      type: Action.CHANGE_SELECTED_ROUTE,
+      payload: {
+        selectedRoute,
+      },
+    });
+  };
+
+  const changeOpenRoutes = (openRoutes: string[]) => {
+    dispatch({
+      type: Action.CHANGE_OPEN_ROUTES,
+      payload: {
+        openRoutes,
+      },
+    });
+  };
+
   const actions = useMemo(
     () => ({
       ...state,
       transitionRoute,
+      changeSelectedRoute,
+      changeOpenRoutes,
       dispatch,
     }),
     [state]

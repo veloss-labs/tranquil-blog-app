@@ -27,7 +27,7 @@ export default function LoginForm() {
   const control_email = useController({
     control,
     name: "email",
-    defaultValue: "test@naver.com",
+    defaultValue: "test@email.com",
   });
 
   const control_password = useController({
@@ -44,7 +44,6 @@ export default function LoginForm() {
           ...data,
           redirect: false,
         });
-        console.log(resp);
         if (resp) {
           if (!resp.error && resp?.ok) {
             await router.replace("/");
