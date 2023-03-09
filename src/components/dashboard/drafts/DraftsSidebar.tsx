@@ -2,17 +2,22 @@ import React from "react";
 import cx from "classnames";
 
 // components
-import { Button, Layout } from "antd";
+import { Avatar, Button, Layout, theme } from "antd";
 import ChevronLeftIcon from "@heroicons/react/24/outline/ChevronLeftIcon";
 import Bars3Icon from "@heroicons/react/24/outline/Bars3Icon";
+import Profile from "~/components/dashboard/Profile";
 
 // hooks
 import { useLayoutDashboardContext } from "~/context/layout-context";
+import { useSession } from "next-auth/react";
 
 interface DraftsSidebarProps {}
 
 function DraftsSidebar(_: DraftsSidebarProps) {
+  const session = useSession();
   const { isShowSidebar, toggleSidebar } = useLayoutDashboardContext();
+
+  const { token } = theme.useToken();
 
   return (
     <Layout.Sider
@@ -22,7 +27,21 @@ function DraftsSidebar(_: DraftsSidebarProps) {
       })}
     >
       <div className="flex h-full flex-col">
-        <div className="grow overflow-auto">Menu</div>
+        <div className="flex">
+          <div className="shrink-0">
+            <Avatar
+              shape="square"
+              size={46}
+              style={{ backgroundColor: token.colorPrimary }}
+            >
+              {session?.data?.user?.profile?.username}
+            </Avatar>
+          </div>
+          <div className="ml-1 grow">
+            <Profile />
+          </div>
+        </div>
+        <div className="grow overflow-auto"></div>
         <div>
           <div className="absolute bottom-0 right-0 m-3 flex justify-end">
             <Button

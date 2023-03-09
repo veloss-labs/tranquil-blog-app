@@ -3,17 +3,20 @@ import { Dropdown, Typography, Button } from "antd";
 
 // components
 import UserIcon from "@heroicons/react/24/outline/UserIcon";
+import HomeIcon from "@heroicons/react/24/outline/HomeIcon";
 import LogOutIcon from "@heroicons/react/24/outline/ArrowRightOnRectangleIcon";
 import ChevronDownIcon from "@heroicons/react/24/outline/ChevronDownIcon";
 
 // hooks
 import { signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 
 // types
 import type { MenuProps } from "antd";
 
 function Profile() {
   const session = useSession();
+  const router = useRouter();
 
   const onLogout = useCallback(() => {
     signOut({
@@ -21,7 +24,25 @@ function Profile() {
     });
   }, []);
 
+  const onHome = useCallback(() => {
+    router.push("/");
+  }, [router]);
+
   const items: MenuProps["items"] = [
+    {
+      label: (
+        <Button
+          type="link"
+          icon={<HomeIcon />}
+          size="small"
+          className="btn-menu--profile sm:min-w-[8rem]"
+          onClick={onHome}
+        >
+          홈
+        </Button>
+      ),
+      key: "0",
+    },
     {
       label: (
         <Button
@@ -33,7 +54,10 @@ function Profile() {
           내 프로필
         </Button>
       ),
-      key: "0",
+      key: "1",
+    },
+    {
+      type: "divider",
     },
     {
       label: (
@@ -47,7 +71,7 @@ function Profile() {
           로그아웃
         </Button>
       ),
-      key: "1",
+      key: "2",
     },
   ];
 

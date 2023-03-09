@@ -42,7 +42,7 @@
     "body-scroll-lock": "^4.0.0-beta.0",
     "clsx": "^1.2.1",
     "framer-motion": "^10.1.0",
-    "katex": "^0.15.2",
+    "katex": "^0.15.6",
     "lexical": "0.8.1",
     "lodash-es": "^4.17.21",
     "modern-errors": "^5.5.1",
@@ -64,6 +64,7 @@
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.9",
     "@types/body-scroll-lock": "^3.1.0",
+    "@types/katex": "^0.16.0",
     "@types/lodash-es": "^4.17.6",
     "@types/node": "^18.14.2",
     "@types/prettier": "^2.7.2",
