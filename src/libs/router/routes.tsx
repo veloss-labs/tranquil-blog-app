@@ -18,7 +18,7 @@ const _PAGES = {
   },
   MANAGERS: {
     name: "게시글",
-    path: "/dashboard/drafts",
+    path: "/dashboard/posts",
   },
 };
 

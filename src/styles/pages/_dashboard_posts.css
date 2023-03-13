@@ -1,0 +1,46 @@
+.dashboard-posts--header {
+  @apply p-4 2xl:px-5;
+}
+
+.dashboard-posts--header-wrapper {
+  @apply mx-auto grid max-w-[1536px] grid-cols-12 items-center;
+}
+
+.dashboard-posts--header-left {
+  @apply col-span-6;
+}
+
+.dashboard-posts--header-right {
+  @apply relative col-span-6 flex flex-row items-center justify-end;
+}
+
+.dashboard-posts--content {
+  @apply mx-auto grid w-full grid-cols-12 px-5 sm:max-w-[640px] md:max-w-[768px] md:px-0 lg:max-w-[1024px] lg:grid-cols-8 xl:max-w-[1280px] 2xl:max-w-[1536px];
+}
+
+.dashboard-posts--content-wrapper {
+  @apply col-span-12 lg:col-span-6 lg:col-start-2;
+}
+
+.dashboard-posts--content-editor {
+  @apply relative w-full border-0 border-b-2 border-gray-200 transition-all duration-150;
+}
+
+.dashboard-posts--content-editor .editor-header {
+  @apply mb-6 flex flex-row items-center justify-between px-4 font-semibold;
+}
+
+.dashboard-posts--content-editor .editor-title {
+  @apply relative;
+}
+
+.dashboard-posts--content-editor .editor-title textarea {
+  @apply w-full resize-none appearance-none overflow-hidden border-none bg-transparent px-4 py-2 text-2xl font-semibold text-gray-900 outline-none;
+}
+
+.dashboard-posts--content-editor .editor-title .ant-input:focus {
+  /* border-color: #495057; */
+  /* box-shadow: 0 0 0 2px rgb(2 8 13 / 62%); */
+  /* border-inline-end-width: 1px; */
+  @apply border-none shadow-none;
+}

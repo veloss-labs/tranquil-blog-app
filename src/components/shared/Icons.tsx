@@ -11,6 +11,11 @@ import EllipsisIcon from "@heroicons/react/24/outline/EllipsisHorizontalIcon";
 import TrashIcon from "@heroicons/react/24/outline/TrashIcon";
 import ExclamationTriangleIcon from "@heroicons/react/24/outline/ExclamationTriangleIcon";
 import Bars3Icon from "@heroicons/react/24/outline/Bars3Icon";
+import Bars3BottomRightIcon from "@heroicons/react/24/outline/Bars3BottomRightIcon";
+import ClockIcon from "@heroicons/react/24/outline/ClockIcon";
+import Icon from "@ant-design/icons";
+
+import type { CustomIconComponentProps } from "@ant-design/icons/lib/components/Icon";
 
 export const Icons = {
   logo: Square3Stack3DIcon,
@@ -26,4 +31,12 @@ export const Icons = {
   trash: TrashIcon,
   warning: ExclamationTriangleIcon,
   menu: Bars3Icon,
+  time: ClockIcon,
+  subTitle: Bars3BottomRightIcon,
+};
+
+export const AntdIcons = {
+  time: (props: Partial<CustomIconComponentProps>) => (
+    <Icon component={Icons.time} {...props} />
+  ),
 };

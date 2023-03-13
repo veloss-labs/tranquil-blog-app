@@ -3,7 +3,7 @@ import classNames from "classnames";
 
 // components
 import { Avatar, Button, theme, Typography } from "antd";
-import DraftsSidebar from "~/components/dashboard/drafts/DraftsSidebar";
+import PostsSidebar from "~/components/dashboard/posts/PostsSidebar";
 import Bars3Icon from "@heroicons/react/24/outline/Bars3Icon";
 
 // hooks
@@ -46,7 +46,7 @@ function DraftsLayout({ children, pageHeader }: DraftsLayoutProps) {
   return (
     <>
       <div>
-        <DraftsSidebar />
+        <PostsSidebar />
         <div className="mobile-header">
           <div className="flex items-center">
             <Avatar
@@ -77,7 +77,7 @@ function DraftsLayout({ children, pageHeader }: DraftsLayoutProps) {
           })}
         >
           {pageHeader}
-          <section className="px-5 pb-5 sm:px-10">{children}</section>
+          <section>{children}</section>
           {!isShowSidebar ? (
             <div className="fixed bottom-5 left-5">
               <Button

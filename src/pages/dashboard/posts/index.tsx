@@ -1,8 +1,11 @@
 import React from "react";
-import DraftsLayout from "~/components/dashboard/drafts/DraftsLayout";
+import PostsLayout from "~/components/dashboard/posts/PostsLayout";
+import PostsHeader from "~/components/dashboard/posts/PostsHeader";
+
 import { getServerAuthSession } from "~/server/auth";
 
 import type { GetServerSidePropsContext } from "next";
+import PostsContent from "~/components/dashboard/posts/PostsContent";
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   const session = await getServerAuthSession(ctx);
@@ -32,9 +35,14 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 }
 
 export default function Drafts() {
-  return <div className="mt-4">Drafts</div>;
+  return (
+    <div className="mt-4">
+      <PostsHeader />
+      <PostsContent />
+    </div>
+  );
 }
 
 Drafts.getLayout = function GetLayout(page: React.ReactNode) {
-  return <DraftsLayout>{page}</DraftsLayout>;
+  return <PostsLayout>{page}</PostsLayout>;
 };

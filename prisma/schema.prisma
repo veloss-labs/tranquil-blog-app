@@ -66,6 +66,7 @@ model User {
     role          UserRole?
     createdAt     DateTime       @default(now())
     updatedAt     DateTime       @updatedAt
+    drafts        PostDraft[]
 
     @@map("users")
 }
@@ -115,6 +116,18 @@ model Post {
     stats     PostStats?
 
     @@map("posts")
+}
+
+model PostDraft {
+    id        Int      @id @default(autoincrement())
+    title     String
+    thumbnail String?
+    content   String // @db.Text 에디터 내용
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    userId String
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model PostLike {
