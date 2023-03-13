@@ -41,6 +41,7 @@
     "antd": "^5.2.3",
     "body-scroll-lock": "^4.0.0-beta.0",
     "clsx": "^1.2.1",
+    "cookies": "^0.8.0",
     "framer-motion": "^10.1.0",
     "katex": "^0.15.6",
     "lexical": "0.8.1",
@@ -64,6 +65,7 @@
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.9",
     "@types/body-scroll-lock": "^3.1.0",
+    "@types/cookies": "^0.7.7",
     "@types/katex": "^0.16.0",
     "@types/lodash-es": "^4.17.6",
     "@types/node": "^18.14.2",
