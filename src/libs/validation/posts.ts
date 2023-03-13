@@ -22,6 +22,9 @@ export const schema = {
     tags: z.array(z.string()).optional().nullish(),
     categoryId: z.number().int().positive().optional().nullish(),
   }),
+  byId: z.object({
+    id: z.number().int().positive(),
+  }),
 };
 
 export type CreateData = z.infer<typeof schema.create>;

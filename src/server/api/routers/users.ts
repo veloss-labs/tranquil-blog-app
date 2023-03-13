@@ -3,6 +3,7 @@ import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { RESULT_CODE } from "~/server/errors/code";
 import { ForbiddenError } from "~/server/errors/httpException";
 import { generateHash, generateSalt } from "~/server/utils/password";
+import { responseWith } from "~/server/utils/response";
 
 export const usersRouter = createTRPCRouter({
   create: publicProcedure
@@ -18,10 +19,11 @@ export const usersRouter = createTRPCRouter({
         throw new ForbiddenError("AlreadyExists", {
           http: {
             instance: "[trpc]: usersRouter.create",
-            extra: {
-              email: input.email,
-              errorCode: RESULT_CODE.ALREADY_EXISTS,
-            },
+            extra: responseWith({
+              ok: false,
+              resultCode: RESULT_CODE.ALREADY_EXISTS,
+              resultMessage: "이미 존재하는 이메일입니다.",
+            }),
           },
         });
       }
@@ -53,8 +55,8 @@ export const usersRouter = createTRPCRouter({
         }),
       ]);
 
-      return {
-        userId: user.id,
-      };
+      return responseWith({
+        data: user.id,
+      });
     }),
 });

@@ -17,12 +17,15 @@
  *
  */
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
+import type { NextApiRequest, NextApiResponse } from "next";
 
 import { getServerAuthSession, type UserSchema } from "~/server/auth";
 import { prisma } from "~/server/db";
 
 type CreateContextOptions = {
   session: UserSchema | null;
+  req: NextApiRequest;
+  res: NextApiResponse;
 };
 
 /**
@@ -38,6 +41,8 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
     session: opts.session,
     prisma,
+    req: opts.req,
+    res: opts.res,
   };
 };
 
@@ -54,8 +59,13 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 
   return createInnerTRPCContext({
     session,
+    req,
+    res,
   });
 };
+
+export type TRPCContext = ReturnType<typeof createInnerTRPCContext>;
+
 
 /**
  * 2. INITIALIZATION

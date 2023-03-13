@@ -1,6 +1,8 @@
 import { schema } from "~/libs/validation/categories";
 import { createTRPCRouter, creatorProcedure } from "~/server/api/trpc";
+import { RESULT_CODE } from "~/server/errors/code";
 import { ForbiddenError, NotFoundError } from "~/server/errors/httpException";
+import { responseWith } from "~/server/utils/response";
 
 export const categoriesRouter = createTRPCRouter({
   create: creatorProcedure
@@ -17,9 +19,9 @@ export const categoriesRouter = createTRPCRouter({
         },
       });
 
-      return {
-        dataId: category.id,
-      };
+      return responseWith({
+        data: category.id,
+      });
     }),
   update: creatorProcedure
     .input(schema.update)
@@ -37,6 +39,11 @@ export const categoriesRouter = createTRPCRouter({
         throw new NotFoundError("CategoryNotFound", {
           http: {
             instance: "[trpc]: categoriesRouter.update",
+            extra: responseWith({
+              ok: false,
+              resultCode: RESULT_CODE.NOT_FOUND,
+              resultMessage: "카테고리가 존재하지 않습니다.",
+            }),
           },
         });
       }
@@ -46,6 +53,11 @@ export const categoriesRouter = createTRPCRouter({
         throw new ForbiddenError("Forbidden", {
           http: {
             instance: "[trpc]: categoriesRouter.update",
+            extra: responseWith({
+              ok: false,
+              resultCode: RESULT_CODE.FORBIDDEN,
+              resultMessage: "권한이 없습니다.",
+            }),
           },
         });
       }
@@ -60,10 +72,9 @@ export const categoriesRouter = createTRPCRouter({
           thumbnail: input.thumbnail,
         },
       });
-
-      return {
-        dataId: input.id,
-      };
+      return responseWith({
+        data: category.id,
+      });
     }),
   delete: creatorProcedure
     .input(schema.byId)
@@ -81,6 +92,11 @@ export const categoriesRouter = createTRPCRouter({
         throw new NotFoundError("CategoryNotFound", {
           http: {
             instance: "[trpc]: categoriesRouter.delete",
+            extra: responseWith({
+              ok: false,
+              resultCode: RESULT_CODE.NOT_FOUND,
+              resultMessage: "카테고리가 존재하지 않습니다.",
+            }),
           },
         });
       }
@@ -90,6 +106,11 @@ export const categoriesRouter = createTRPCRouter({
         throw new ForbiddenError("Forbidden", {
           http: {
             instance: "[trpc]: categoriesRouter.delete",
+            extra: responseWith({
+              ok: false,
+              resultCode: RESULT_CODE.FORBIDDEN,
+              resultMessage: "권한이 없습니다.",
+            }),
           },
         });
       }
@@ -104,6 +125,12 @@ export const categoriesRouter = createTRPCRouter({
         throw new ForbiddenError("Forbidden", {
           http: {
             instance: "[trpc]: categoriesRouter.delete",
+            extra: responseWith({
+              ok: false,
+              resultCode: RESULT_CODE.CATEGORY_USED_BY_POST,
+              resultMessage:
+                "이미 포스트가 등록된 카테고리는 삭제할 수 없습니다.",
+            }),
           },
         });
       }
@@ -114,9 +141,9 @@ export const categoriesRouter = createTRPCRouter({
         },
       });
 
-      return {
-        ok: true,
-      };
+      return responseWith({
+        data: undefined,
+      });
     }),
   list: creatorProcedure.input(schema.list).query(async ({ input, ctx }) => {
     /**
@@ -152,9 +179,11 @@ export const categoriesRouter = createTRPCRouter({
       nextCursor = lastItem.id;
     }
 
-    return {
-      items: items,
-      nextCursor,
-    };
+    return responseWith({
+      data: {
+        items: items,
+        nextCursor,
+      },
+    });
   }),
 });

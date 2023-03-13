@@ -14,6 +14,9 @@ declare global {
 
       // next-auth
       NEXTAUTH_SECRET: string;
+      GUEST_ID_COOKIE_SECRET: string;
+      GUEST_ID_NAME: string;
+      GUEST_ID_COOKIE_MAX_AGE: string;
     }
   }
 }

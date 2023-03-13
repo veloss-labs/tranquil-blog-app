@@ -1,5 +1,6 @@
 import type { GetServerSidePropsContext } from "next";
 import omit from "lodash-es/omit";
+import Cookies from "cookies";
 import { getToken } from "next-auth/jwt";
 import { type NextAuthOptions, type DefaultSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -7,6 +8,7 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "~/server/db";
 import { generateHash, secureCompare } from "./utils/password";
 import type { User, UserProfile, UserRole } from "@prisma/client";
+import type { TRPCContext } from "./api/trpc";
 
 /**
  * Module augmentation for `next-auth` types
@@ -164,4 +166,10 @@ export const getServerAuthSession = async (ctx: {
     return null;
   }
   return token.session as UserSchema;
+};
+
+export const getTrpcRouterCookie = (ctx: TRPCContext) => {
+  const keys = [process.env.GUEST_ID_COOKIE_SECRET];
+  const cookies = new Cookies(ctx.req, ctx.res, { keys: keys });
+  return cookies;
 };
