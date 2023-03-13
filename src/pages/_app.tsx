@@ -32,6 +32,10 @@ const App: AppType<AppPageProps> = ({
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-return
   const getLayout = Component.getLayout || ((page) => page);
 
+  api.common.generateId.useQuery(undefined, {
+    staleTime: Infinity,
+  });
+
   return (
     <div className={fontSans.variable}>
       <ConfigProvider
