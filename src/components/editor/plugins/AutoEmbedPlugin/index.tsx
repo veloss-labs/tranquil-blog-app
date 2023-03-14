@@ -22,12 +22,12 @@ import { useMemo, useState } from "react";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import useModal from "../../hooks/useModal";
-import Button from "../../components/Button";
-import { DialogActions } from "../../components/Dialog";
-import { INSERT_FIGMA_COMMAND } from "../FigmaPlugin";
-import { INSERT_TWEET_COMMAND } from "../TwitterPlugin";
-import { INSERT_YOUTUBE_COMMAND } from "../YouTubePlugin";
+import useModal from "~/components/editor/hooks/useModal";
+import Button from "~/components/editor/components/Button";
+import { DialogActions } from "~/components/editor/components/Dialog";
+import { INSERT_FIGMA_COMMAND } from "~/components/editor/plugins/FigmaPlugin";
+import { INSERT_TWEET_COMMAND } from "~/components/editor/plugins/TwitterPlugin";
+import { INSERT_YOUTUBE_COMMAND } from "~/components/editor/plugins/YouTubePlugin";
 
 interface PlaygroundEmbedConfig extends EmbedConfig {
   // Human readable name of the embeded content e.g. Tweet or Google Map.
@@ -61,11 +61,11 @@ export const YoutubeEmbedConfig: PlaygroundEmbedConfig = {
   keywords: ["youtube", "video"],
 
   // Determine if a given URL is a match and return url data.
-  parseUrl: async (url: string) => {
+  parseUrl: (url: string) => {
     const match =
       /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/.exec(url);
 
-    const id = match ? (match?.[2].length === 11 ? match[2] : null) : null;
+    const id = match ? (match?.[2]?.length === 11 ? match[2] : null) : null;
 
     if (id != null) {
       return {
@@ -104,7 +104,7 @@ export const TwitterEmbedConfig: PlaygroundEmbedConfig = {
 
     if (match != null) {
       return {
-        id: match[4],
+        id: match[4] as string,
         url: match[0],
       };
     }
@@ -137,7 +137,7 @@ export const FigmaEmbedConfig: PlaygroundEmbedConfig = {
 
     if (match != null) {
       return {
-        id: match[3],
+        id: match[3] as string,
         url: match[0],
       };
     }
@@ -176,9 +176,11 @@ function AutoEmbedMenuItem({
       key={option.key}
       tabIndex={-1}
       className={className}
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       ref={option.setRefElement}
       role="option"
       aria-selected={isSelected}
+      // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
       id={"typeahead-item-" + index}
       onMouseEnter={onMouseEnter}
       onClick={onClick}

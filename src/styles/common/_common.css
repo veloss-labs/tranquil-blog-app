@@ -83,7 +83,8 @@
 }
 
 .site-nav-menu--mobile {
-  height: calc(100vh - 60px);
+  /* height: calc(100vh - 60px); */
+  height: calc(100vh - 50px);
   -webkit-box-shadow: 0px 20px 35px rgb(13 12 34 / 5%);
   box-shadow: 0px 20px 35px rgb(13 12 34 / 5%);
   @apply absolute z-10 w-full overflow-scroll bg-white p-[23px];

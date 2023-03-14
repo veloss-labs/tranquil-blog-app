@@ -6,8 +6,6 @@
  *
  */
 
-import "./index.css";
-
 import {
   $isCodeNode,
   CodeNode,
@@ -16,13 +14,15 @@ import {
 } from "@lexical/code";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $getNearestNodeFromDOMNode } from "lexical";
-import { useEffect, useRef, useState } from "react";
-import * as React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
-import { CopyButton } from "./components/CopyButton";
-import { canBePrettier, PrettierButton } from "./components/PrettierButton";
-import { useDebounce } from "./utils";
+import { CopyButton } from "~/components/editor/plugins/CodeActionMenuPlugin/components/CopyButton";
+import {
+  canBePrettier,
+  PrettierButton,
+} from "~/components/editor/plugins/CodeActionMenuPlugin/components/PrettierButton";
+import { useDebounce } from "~/components/editor/plugins/CodeActionMenuPlugin/utils";
 
 const CODE_PADDING = 8;
 
@@ -147,7 +147,7 @@ function CodeActionMenuContainer({
           ) : null}
         </div>
       ) : null}
-      <style jsx>{`
+      <style jsx global>{`
         .code-action-menu-container {
           height: 35.8px;
           font-size: 10px;

@@ -31,8 +31,8 @@ import { useCallback, useEffect } from "react";
 import {
   $createAutocompleteNode,
   AutocompleteNode,
-} from "../../nodes/AutocompleteNode";
-import { useSharedAutocompleteContext } from "../../context/useSharedAutocompleteContext";
+} from "~/components/editor/nodes/AutocompleteNode";
+import { useSharedAutocompleteContext } from "~/components/editor/context/useSharedAutocompleteContext";
 import { addSwipeRightListener } from "~/utils/swipe";
 
 type SearchPromise = {

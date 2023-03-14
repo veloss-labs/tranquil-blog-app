@@ -6,9 +6,7 @@
  *
  */
 
-import * as React from "react";
-import type { ReactNode } from "react";
-import {
+import React, {
   createContext,
   useCallback,
   useContext,
@@ -27,20 +25,13 @@ export type SettingName =
   | "isAutocomplete"
   | "showTreeView"
   | "showNestedEditorTreeView"
-  | "emptyEditor"
   | "enableLinkPreviews"
   | "showTableOfContents";
 
 export type Settings = Record<SettingName, boolean>;
 
-const hostName = window.location.hostname;
-export const isDevPlayground: boolean =
-  hostName !== "playground.lexical.dev" &&
-  hostName !== "lexical-playground.vercel.app";
-
 export const DEFAULT_SETTINGS: Settings = {
   disableBeforeInput: false,
-  emptyEditor: isDevPlayground,
   enableLinkPreviews: false,
   isAutocomplete: false,
   isCharLimit: false,
@@ -59,6 +50,24 @@ type SettingsContextShape = {
   settings: Record<SettingName, boolean>;
 };
 
+function setURLParam(param: SettingName, value: null | boolean) {
+  const url = new URL(window.location.href);
+  const params = new URLSearchParams(url.search);
+  if (value !== null) {
+    if (params.has(param)) {
+      params.set(param, String(value));
+    } else {
+      params.append(param, String(value));
+    }
+  } else {
+    if (params.has(param)) {
+      params.delete(param);
+    }
+  }
+  url.search = params.toString();
+  window.history.pushState(null, "", url.toString());
+}
+
 const Context: React.Context<SettingsContextShape> = createContext({
   setOption: (name: SettingName, value: boolean) => {
     return;
@@ -69,7 +78,7 @@ const Context: React.Context<SettingsContextShape> = createContext({
 export const SettingsContext = ({
   children,
 }: {
-  children: ReactNode;
+  children: React.ReactNode;
 }): JSX.Element => {
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
 
@@ -96,20 +105,3 @@ export const useSettings = (): SettingsContextShape => {
   return useContext(Context);
 };
 
-function setURLParam(param: SettingName, value: null | boolean) {
-  const url = new URL(window.location.href);
-  const params = new URLSearchParams(url.search);
-  if (value !== null) {
-    if (params.has(param)) {
-      params.set(param, String(value));
-    } else {
-      params.append(param, String(value));
-    }
-  } else {
-    if (params.has(param)) {
-      params.delete(param);
-    }
-  }
-  url.search = params.toString();
-  window.history.pushState(null, "", url.toString());
-}

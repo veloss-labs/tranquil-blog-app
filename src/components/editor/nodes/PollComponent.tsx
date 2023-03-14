@@ -7,9 +7,7 @@
  */
 
 import type { Option, Options, PollNode } from "./PollNode";
-
-import "./PollNode.css";
-
+import clsx from "clsx";
 import { useCollaborationContext } from "@lexical/react/LexicalCollaborationContext";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { useLexicalNodeSelection } from "@lexical/react/useLexicalNodeSelection";
@@ -29,11 +27,15 @@ import {
   KEY_BACKSPACE_COMMAND,
   KEY_DELETE_COMMAND,
 } from "lexical";
-import * as React from "react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
-import Button from "../ui/Button";
-import joinClasses from "../utils/joinClasses";
+import Button from "~/components/editor/components/Button";
 import { $isPollNode, createPollOption } from "./PollNode";
 
 function getTotalVotes(options: Options): number {
@@ -69,7 +71,7 @@ function PollOptionComponent({
   return (
     <div className="PollNode__optionContainer">
       <div
-        className={joinClasses(
+        className={clsx(
           "PollNode__optionCheckboxWrapper",
           checked && "PollNode__optionCheckboxChecked"
         )}
@@ -118,7 +120,7 @@ function PollOptionComponent({
       </div>
       <button
         disabled={options.length < 3}
-        className={joinClasses(
+        className={clsx(
           "PollNode__optionDelete",
           options.length < 3 && "PollNode__optionDeleteDisabled"
         )}
@@ -253,7 +255,7 @@ export default function PollComponent({
           </div>
         </div>
       </div>
-      <style jsx>
+      <style jsx global>
         {`
           .PollNode__container {
             border: 1px solid #eee;

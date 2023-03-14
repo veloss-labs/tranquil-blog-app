@@ -1,5 +1,9 @@
 import { schema } from "~/libs/validation/categories";
-import { createTRPCRouter, creatorProcedure } from "~/server/api/trpc";
+import {
+  createTRPCRouter,
+  creatorProcedure,
+  publicProcedure,
+} from "~/server/api/trpc";
 import { RESULT_CODE } from "~/server/errors/code";
 import { ForbiddenError, NotFoundError } from "~/server/errors/httpException";
 import { responseWith } from "~/server/utils/response";
@@ -145,7 +149,7 @@ export const categoriesRouter = createTRPCRouter({
         data: undefined,
       });
     }),
-  list: creatorProcedure.input(schema.list).query(async ({ input, ctx }) => {
+  list: publicProcedure.input(schema.list).query(async ({ input, ctx }) => {
     /**
      * For pagination docs you can have a look here
      * @see https://trpc.io/docs/useInfiniteQuery

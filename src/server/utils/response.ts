@@ -12,6 +12,8 @@ interface ResponseBody<T> {
   data?: T | undefined;
 }
 
-export const responseWith = <T = unknown>(params: ResponseBody<T>) => {
+export const responseWith = <T = unknown>(
+  params: ResponseBody<T>
+): ResponseBody<T> => {
   return Object.assign(_default_response_body, params);
 };

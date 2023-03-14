@@ -15,12 +15,12 @@ import { ListItemNode, ListNode } from "@lexical/list";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 
 import { AutocompleteNode } from "./AutocompleteNode";
-import { EmojiNode } from "./EmojiNode";
-import { EquationNode } from "./EquationNode";
-import { ExcalidrawNode } from "./ExcalidrawNode";
-import { ImageNode } from "./ImageNode";
-import { KeywordNode } from "./KeywordNode";
-import { MentionNode } from "./MentionNode";
+import { EmojiNode } from "~/components/editor/nodes/EmojiNode";
+import { EquationNode } from "~/components/editor/nodes/EquationNode";
+import { ExcalidrawNode } from "~/components/editor/nodes/ExcalidrawNode";
+import { ImageNode } from "~/components/editor/nodes/ImageNode";
+import { KeywordNode } from "~/components/editor/nodes/KeywordNode";
+import { MentionNode } from "~/components/editor/nodes/MentionNode";
 
 const PlaygroundNodes: Array<Klass<LexicalNode>> = [
   HeadingNode,

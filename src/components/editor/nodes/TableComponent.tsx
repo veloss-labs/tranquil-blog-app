@@ -6,7 +6,13 @@
  *
  */
 
-import type { RangeSelection, TextFormatType } from "lexical";
+import type {
+  RangeSelection,
+  TextFormatType,
+  EditorThemeClasses,
+  LexicalEditor,
+  NodeKey,
+} from "lexical";
 
 import {
   $generateJSONFromSelectedNodes,
@@ -32,7 +38,6 @@ import {
   COPY_COMMAND,
   createEditor,
   CUT_COMMAND,
-  EditorThemeClasses,
   FORMAT_TEXT_COMMAND,
   KEY_ARROW_DOWN_COMMAND,
   KEY_ARROW_LEFT_COMMAND,
@@ -43,11 +48,9 @@ import {
   KEY_ENTER_COMMAND,
   KEY_ESCAPE_COMMAND,
   KEY_TAB_COMMAND,
-  LexicalEditor,
-  NodeKey,
   PASTE_COMMAND,
 } from "lexical";
-import {
+import React, {
   useCallback,
   useContext,
   useEffect,
@@ -55,21 +58,22 @@ import {
   useRef,
   useState,
 } from "react";
-import * as React from "react";
 import { createPortal } from "react-dom";
-import { CellContext } from "../plugins/TablePlugin";
+import { CellContext } from "~/components/editor/plugins/TablePlugin";
+import type {
+  Cell,
+  Rows,
+  TableNode,
+} from "~/components/editor/nodes/TableNode";
 import {
   $isTableNode,
-  Cell,
   cellHTMLCache,
   cellTextContentCache,
   createRow,
   createUID,
   exportTableCellsToHTML,
   extractRowsFromHTML,
-  Rows,
-  TableNode,
-} from "./TableNode";
+} from "~/components/editor/nodes/TableNode";
 import { IS_APPLE } from "~/libs/browser/dom";
 
 type SortOptions = { type: "ascending" | "descending"; x: number };
@@ -83,6 +87,7 @@ function $createSelectAll(): RangeSelection {
 }
 
 function createEmptyParagraphHTML(theme: EditorThemeClasses): string {
+  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
   return `<p class="${theme.paragraph}"><br></p>`;
 }
 
@@ -269,6 +274,7 @@ function getSelectedIDs(
 
   for (let x = startX; x <= endX; x++) {
     for (let y = startY; y <= endY; y++) {
+      // @ts-ignore
       ids.push(rows[y].cells[x].id);
     }
   }
@@ -286,8 +292,9 @@ function extractCellsFromRows(
     const row = rows[y];
     const newRow = createRow();
     for (let x = startX; x <= endX; x++) {
-      const cellClone = { ...row.cells[x] };
+      const cellClone = { ...row?.cells[x] };
       cellClone.id = createUID();
+      // @ts-ignore
       newRow.cells.push(cellClone);
     }
     newRows.push(newRow);
@@ -325,7 +332,7 @@ function getCell(
   }
   const [x, y] = coords;
   const row = rows[y];
-  return row.cells[x];
+  return row?.cells?.[x] ?? null;
 }
 
 function TableActionMenu({
@@ -523,7 +530,7 @@ function TableActionMenu({
         <span className="text">Insert column right</span>
       </button>
       <hr />
-      {rows[0].cells.length !== 1 && (
+      {rows[0]?.cells.length !== 1 && (
         <button
           className="item"
           onClick={() => {
@@ -617,7 +624,9 @@ function TableCell({
 
   return (
     <CellComponent
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       className={`${theme.tableCell} ${isHeader ? theme.tableCellHeader : ""} ${
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         isSelected ? theme.tableCellSelected : ""
       }`}
       data-id={cell.id}
@@ -626,7 +635,9 @@ function TableCell({
     >
       {isPrimarySelected && (
         <div
+          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
           className={`${theme.tableCellPrimarySelected} ${
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
             isEditing ? theme.tableCellEditing : ""
           }`}
         />
@@ -714,10 +725,10 @@ export default function TableComponent({
 
     for (let y = 0; y < rawRows.length; y++) {
       const row = rawRows[y];
-      const cells = row.cells;
+      const cells = row?.cells ?? [];
       for (let x = 0; x < cells.length; x++) {
         const cell = cells[x];
-        map.set(cell.id, [x, y]);
+        map.set(cell?.id, [x, y]);
       }
     }
     return map;
@@ -731,7 +742,9 @@ export default function TableComponent({
       const aCells = a.cells;
       const bCells = b.cells;
       const x = sortingOptions.x;
+      // @ts-ignore
       const aContent = cellTextContentCache.get(aCells[x].json) || "";
+      // @ts-ignore
       const bContent = cellTextContentCache.get(bCells[x].json) || "";
       if (aContent === "" || bContent === "") {
         return 1;
@@ -741,6 +754,7 @@ export default function TableComponent({
       }
       return bContent.localeCompare(aContent);
     });
+    // @ts-ignore
     _rows.unshift(rawRows[0]);
     return _rows;
   }, [rawRows, sortingOptions]);
@@ -804,6 +818,7 @@ export default function TableComponent({
 
   const modifySelectedCells = useCallback(
     (x: number, y: number, extend: boolean) => {
+      // @ts-ignore
       const id = rows[y].cells[x].id;
       lastCellIDRef.current = id;
       if (extend) {
@@ -1207,6 +1222,7 @@ export default function TableComponent({
         if (clipboardData === null) {
           try {
             const items = await navigator.clipboard.read();
+            // @ts-ignore
             clipboardData = items[0];
           } catch {
             // NO-OP
@@ -1493,6 +1509,7 @@ export default function TableComponent({
             selection.getNodes().length === 1 &&
             targetEditor === editor
           ) {
+            // @ts-ignore
             const firstCellID = rows[0].cells[0].id;
             setPrimarySelectedCellID(firstCellID);
             focusCell(tableElem, firstCellID);
@@ -1525,8 +1542,10 @@ export default function TableComponent({
             if (x === 0 && isBackward) {
               if (y !== 0) {
                 nextY = y - 1;
+                // @ts-ignore
                 nextX = rows[nextY].cells.length - 1;
               }
+              // @ts-ignore
             } else if (x === rows[y].cells.length - 1 && !isBackward) {
               if (y !== rows.length - 1) {
                 nextY = y + 1;
@@ -1655,6 +1674,7 @@ export default function TableComponent({
               : primarySelectedCellID;
             if (cellID !== null) {
               const [x, y] = cellCoordMap.get(cellID) as [number, number];
+              // @ts-ignore
               if (x !== rows[y].cells.length - 1) {
                 modifySelectedCells(x + 1, y, extend);
                 return true;
@@ -1733,6 +1753,7 @@ export default function TableComponent({
   return (
     <div style={{ position: "relative" }}>
       <table
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         className={`${theme.table} ${isSelected ? theme.tableSelected : ""}`}
         ref={tableRef}
         tabIndex={-1}

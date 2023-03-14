@@ -25,16 +25,15 @@ import {
   CLEAR_EDITOR_COMMAND,
   COMMAND_PRIORITY_EDITOR,
 } from "lexical";
-import * as React from "react";
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
-import useModal from "../../hooks/useModal";
-import Button from "../../components/Button";
-import { PLAYGROUND_TRANSFORMERS } from "../MarkdownTransformers";
+import useModal from "~/components/editor/hooks/useModal";
+import Button from "~/components/editor/components/Button";
+import { PLAYGROUND_TRANSFORMERS } from "~/components/editor/plugins/MarkdownTransformers";
 import {
   SPEECH_TO_TEXT_COMMAND,
   SUPPORT_SPEECH_RECOGNITION,
-} from "../SpeechToTextPlugin";
+} from "~/components/editor/plugins/SpeechToTextPlugin";
 
 async function sendEditorState(editor: LexicalEditor): Promise<void> {
   const stringifiedEditorState = JSON.stringify(editor.getEditorState());

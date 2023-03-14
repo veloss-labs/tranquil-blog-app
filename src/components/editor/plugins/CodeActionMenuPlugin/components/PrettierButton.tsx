@@ -129,6 +129,7 @@ export function PrettierButton({ lang, editor, getCodeDOMNode }: Props) {
       <div className="prettier-wrapper">
         <button
           className="menu-item"
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
           onClick={handleClick}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
@@ -144,7 +145,7 @@ export function PrettierButton({ lang, editor, getCodeDOMNode }: Props) {
           <pre className="code-error-tips">{syntaxError}</pre>
         ) : null}
       </div>
-      <style jsx>{`
+      <style jsx global>{`
         .code-action-menu-container .prettier-wrapper {
           position: relative;
         }

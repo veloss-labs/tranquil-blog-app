@@ -14,7 +14,7 @@ import {
 } from "lexical";
 import React, { useState } from "react";
 
-import { useDebounce } from "../utils";
+import { useDebounce } from "~/components/editor/plugins/CodeActionMenuPlugin/utils";
 
 interface Props {
   editor: LexicalEditor;
@@ -58,6 +58,7 @@ export function CopyButton({ editor, getCodeDOMNode }: Props) {
   }
 
   return (
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     <button className="menu-item" onClick={handleClick} aria-label="copy">
       {isCopyCompleted ? (
         <i className="format success" />

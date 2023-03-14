@@ -21,11 +21,16 @@ import {
   KEY_BACKSPACE_COMMAND,
   KEY_DELETE_COMMAND,
 } from "lexical";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import * as React from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
-import ImageResizer from "../../ui/ImageResizer";
 import { $isExcalidrawNode } from ".";
+import ImageResizer from "~/components/editor/components/ImageResizer";
 import ExcalidrawImage from "./ExcalidrawImage";
 import ExcalidrawModal from "./ExcalidrawModal";
 

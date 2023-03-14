@@ -10,24 +10,19 @@ import type { LexicalEditor, NodeKey } from "lexical";
 
 import "./StickyNode.css";
 
-import { useCollaborationContext } from "@lexical/react/LexicalCollaborationContext";
-import { CollaborationPlugin } from "@lexical/react/LexicalCollaborationPlugin";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { LexicalNestedComposer } from "@lexical/react/LexicalNestedComposer";
 import { PlainTextPlugin } from "@lexical/react/LexicalPlainTextPlugin";
 import { $getNodeByKey } from "lexical";
-import * as React from "react";
-import { useEffect, useRef } from "react";
-import useLayoutEffect from "shared/useLayoutEffect";
-
-import { createWebsocketProvider } from "../collaboration";
-import { useSharedHistoryContext } from "../context/SharedHistoryContext";
+import React, { useEffect, useRef } from "react";
+import { useUpdateLayoutEffect } from "ahooks";
+import { useSharedHistoryContext } from "~/components/editor/context/useSharedHistoryContext";
 import StickyEditorTheme from "../themes/StickyEditorTheme";
-import ContentEditable from "../ui/ContentEditable";
-import Placeholder from "../ui/Placeholder";
-import { $isStickyNode } from "./StickyNode";
+import ContentEditable from "~/components/editor/components/ContentEditable";
+import Placeholder from "~/components/editor/components/Placeholder";
+import { $isStickyNode } from "~/components/editor/nodes/StickyNode";
 
 type Positioning = {
   isDragging: boolean;
@@ -46,7 +41,9 @@ function positionSticky(
   const rootElementRect = positioning.rootElementRect;
   const rectLeft = rootElementRect !== null ? rootElementRect.left : 0;
   const rectTop = rootElementRect !== null ? rootElementRect.top : 0;
+  // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
   style.top = rectTop + positioning.y + "px";
+  // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
   style.left = rectLeft + positioning.x + "px";
 }
 
@@ -73,7 +70,6 @@ export default function StickyComponent({
     x: 0,
     y: 0,
   });
-  const { isCollabActive } = useCollaborationContext();
 
   useEffect(() => {
     const position = positioningRef.current;
@@ -86,11 +82,12 @@ export default function StickyComponent({
     }
   }, [x, y]);
 
-  useLayoutEffect(() => {
+  useUpdateLayoutEffect(() => {
     const position = positioningRef.current;
     const resizeObserver = new ResizeObserver((entries) => {
       for (let i = 0; i < entries.length; i++) {
         const entry = entries[i];
+        // @ts-ignore
         const { target } = entry;
         position.rootElementRect = target.getBoundingClientRect();
         const stickyContainer = stickyContainerRef.current;
@@ -243,22 +240,14 @@ export default function StickyComponent({
             initialEditor={caption}
             initialTheme={StickyEditorTheme}
           >
-            {isCollabActive ? (
-              <CollaborationPlugin
-                id={caption.getKey()}
-                providerFactory={createWebsocketProvider}
-                shouldBootstrap={true}
-              />
-            ) : (
-              <HistoryPlugin externalHistoryState={historyState} />
-            )}
+            <HistoryPlugin externalHistoryState={historyState} />
             <PlainTextPlugin
               contentEditable={
                 <ContentEditable className="StickyNode__contentEditable" />
               }
               placeholder={
                 <Placeholder className="StickyNode__placeholder">
-                  What's up?
+                  {`What's up?`}
                 </Placeholder>
               }
               ErrorBoundary={LexicalErrorBoundary}
@@ -266,7 +255,7 @@ export default function StickyComponent({
           </LexicalNestedComposer>
         </div>
       </div>
-      <style jsx>{`
+      <style jsx global>{`
         .StickyNode__contentEditable {
           min-height: 20px;
           border: 0;

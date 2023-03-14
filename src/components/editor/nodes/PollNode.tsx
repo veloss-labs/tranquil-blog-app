@@ -16,8 +16,7 @@ import type {
   Spread,
 } from "lexical";
 import { DecoratorNode } from "lexical";
-import * as React from "react";
-import { Suspense } from "react";
+import React, { Suspense } from "react";
 
 export type Options = ReadonlyArray<Option>;
 
@@ -96,6 +95,7 @@ export class PollNode extends DecoratorNode<JSX.Element> {
       serializedNode.question,
       serializedNode.options
     );
+    // eslint-disable-next-line @typescript-eslint/unbound-method
     serializedNode.options.forEach(node.addOption);
     return node;
   }

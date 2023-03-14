@@ -14,11 +14,7 @@ import type {
   RangeSelection,
 } from "lexical";
 
-import "./ImageNode.css";
-
 import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
-import { useCollaborationContext } from "@lexical/react/LexicalCollaborationContext";
-import { CollaborationPlugin } from "@lexical/react/LexicalCollaborationPlugin";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 import { HashtagPlugin } from "@lexical/react/LexicalHashtagPlugin";
@@ -49,18 +45,17 @@ import React, {
   useState,
 } from "react";
 
-import { createWebsocketProvider } from "../collaboration";
-import { useSettings } from "../context/SettingsContext";
-import { useSharedHistoryContext } from "../context/SharedHistoryContext";
-import EmojisPlugin from "../plugins/EmojisPlugin";
-import KeywordsPlugin from "../plugins/KeywordsPlugin";
-import LinkPlugin from "../plugins/LinkPlugin";
-import MentionsPlugin from "../plugins/MentionsPlugin";
-import TreeViewPlugin from "../plugins/TreeViewPlugin";
-import ContentEditable from "../components/ContentEditable";
-import ImageResizer from "../components/ImageResizer";
-import Placeholder from "../components/Placeholder";
-import { $isImageNode } from "./ImageNode";
+import { useSettings } from "~/components/editor/context/useSettingsContext";
+import { useSharedHistoryContext } from "~/components/editor/context/useSharedHistoryContext";
+import EmojisPlugin from "~/components/editor/plugins/EmojisPlugin";
+import KeywordsPlugin from "~/components/editor/plugins/KeywordsPlugin";
+import LinkPlugin from "~/components/editor/plugins/LinkPlugin";
+import MentionsPlugin from "~/components/editor/plugins/MentionsPlugin";
+import TreeViewPlugin from "~/components/editor/plugins/TreeViewPlugin";
+import ContentEditable from "~/components/editor/components/ContentEditable";
+import ImageResizer from "~/components/editor/components/ImageResizer";
+import Placeholder from "~/components/editor/components/Placeholder";
+import { $isImageNode } from "~/components/editor/nodes/ImageNode";
 
 const imageCache = new Set();
 
@@ -140,7 +135,6 @@ export default function ImageComponent({
   const [isSelected, setSelected, clearSelection] =
     useLexicalNodeSelection(nodeKey);
   const [isResizing, setIsResizing] = useState<boolean>(false);
-  const { isCollabActive } = useCollaborationContext();
   const [editor] = useLexicalComposerContext();
   const [selection, setSelection] = useState<
     RangeSelection | NodeSelection | GridSelection | null
@@ -358,15 +352,7 @@ export default function ImageComponent({
                 <EmojisPlugin />
                 <HashtagPlugin />
                 <KeywordsPlugin />
-                {isCollabActive ? (
-                  <CollaborationPlugin
-                    id={caption.getKey()}
-                    providerFactory={createWebsocketProvider}
-                    shouldBootstrap={true}
-                  />
-                ) : (
-                  <HistoryPlugin externalHistoryState={historyState} />
-                )}
+                <HistoryPlugin externalHistoryState={historyState} />
                 <RichTextPlugin
                   contentEditable={
                     <ContentEditable className="ImageNode__contentEditable" />
@@ -397,7 +383,7 @@ export default function ImageComponent({
           )}
         </>
       </Suspense>
-      <style jsx>{`
+      <style jsx global>{`
         .ImageNode__contentEditable {
           min-height: 20px;
           border: 0px;

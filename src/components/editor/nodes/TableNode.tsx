@@ -19,8 +19,7 @@ import type {
 } from "lexical";
 
 import { DecoratorNode } from "lexical";
-import * as React from "react";
-import { Suspense } from "react";
+import React, { Suspense } from "react";
 
 export type Cell = {
   colSpan: number;
@@ -93,7 +92,7 @@ export function extractRowsFromHTML(tableElem: HTMLTableElement): Rows {
   const rows: Rows = [];
   for (let y = 0; y < rowElems.length; y++) {
     const rowElem = rowElems[y];
-    const cellElems = rowElem.querySelectorAll("td,th");
+    const cellElems = rowElem?.querySelectorAll("td,th");
     if (!cellElems || cellElems.length === 0) {
       continue;
     }
@@ -122,7 +121,7 @@ function convertTableElement(domNode: HTMLElement): null | DOMConversionOutput {
   const rows: Rows = [];
   for (let y = 0; y < rowElems.length; y++) {
     const rowElem = rowElems[y];
-    const cellElems = rowElem.querySelectorAll("td,th");
+    const cellElems = rowElem?.querySelectorAll("td,th");
     if (!cellElems || cellElems.length === 0) {
       continue;
     }
@@ -154,7 +153,7 @@ export function exportTableCellsToHTML(
 
   for (
     let x = rect != null ? rect.startX : 0;
-    x < (rect != null ? rect.endX + 1 : firstRow.cells.length);
+    x < (rect != null ? rect.endX + 1 : firstRow?.cells.length ?? 0);
     x++
   ) {
     const col = document.createElement("col");
@@ -167,19 +166,19 @@ export function exportTableCellsToHTML(
     y++
   ) {
     const row = rows[y];
-    const cells = row.cells;
+    const cells = row?.cells;
     const rowElem = document.createElement("tr");
 
     for (
       let x = rect != null ? rect.startX : 0;
-      x < (rect != null ? rect.endX + 1 : cells.length);
+      x < (rect != null ? rect.endX + 1 : cells?.length ?? 0);
       x++
     ) {
-      const cell = cells[x];
+      const cell = cells?.[x];
       const cellElem = document.createElement(
-        cell.type === "header" ? "th" : "td"
+        cell?.type === "header" ? "th" : "td"
       );
-      cellElem.innerHTML = cellHTMLCache.get(cell.json) || "";
+      cellElem.innerHTML = cell?.json ? cellHTMLCache.get(cell.json) || "" : "";
       rowElem.appendChild(cellElem);
     }
     tBody.appendChild(rowElem);
@@ -246,21 +245,23 @@ export class TableNode extends DecoratorNode<JSX.Element> {
     for (let y = startY; y < endY; y++) {
       const row = rows[y];
       const mergeRow = mergeRows[y - startY];
-      const cells = row.cells;
+      const cells = row?.cells ?? [];
       const cellsClone = Array.from(cells);
       const rowClone = { ...row, cells: cellsClone };
-      const mergeCells = mergeRow.cells;
+      const mergeCells = mergeRow?.cells ?? [];
       const endX = Math.min(cells.length, startX + mergeCells.length);
       for (let x = startX; x < endX; x++) {
         const cell = cells[x];
         const mergeCell = mergeCells[x - startX];
         const cellClone = {
           ...cell,
-          json: mergeCell.json,
-          type: mergeCell.type,
+          json: mergeCell?.json,
+          type: mergeCell?.type,
         };
+        // @ts-ignore
         cellsClone[x] = cellClone;
       }
+      // @ts-ignore
       rows[y] = rowClone;
     }
   }
@@ -269,12 +270,14 @@ export class TableNode extends DecoratorNode<JSX.Element> {
     const self = this.getWritable();
     const rows = self.__rows;
     const row = rows[y];
-    const cells = row.cells;
+    const cells = row?.cells ?? [];
     const cell = cells[x];
     const cellsClone = Array.from(cells);
     const cellClone = { ...cell, json };
     const rowClone = { ...row, cells: cellsClone };
+    // @ts-ignore
     cellsClone[x] = cellClone;
+    // @ts-ignore
     rows[y] = rowClone;
   }
 
@@ -282,12 +285,14 @@ export class TableNode extends DecoratorNode<JSX.Element> {
     const self = this.getWritable();
     const rows = self.__rows;
     const row = rows[y];
-    const cells = row.cells;
+    const cells = row?.cells ?? [];
     const cell = cells[x];
     const cellsClone = Array.from(cells);
     const cellClone = { ...cell, type };
     const rowClone = { ...row, cells: cellsClone };
+    // @ts-ignore
     cellsClone[x] = cellClone;
+    // @ts-ignore
     rows[y] = rowClone;
   }
 
@@ -296,11 +301,13 @@ export class TableNode extends DecoratorNode<JSX.Element> {
     const rows = self.__rows;
     for (let y = 0; y < rows.length; y++) {
       const row = rows[y];
-      const cells = row.cells;
+      const cells = row?.cells ?? [];
       const cellsClone = Array.from(cells);
       const rowClone = { ...row, cells: cellsClone };
+      // @ts-ignore
       const type = (cells[x] || cells[x - 1]).type;
       cellsClone.splice(x, 0, createCell(type));
+      // @ts-ignore
       rows[y] = rowClone;
     }
   }
@@ -310,10 +317,11 @@ export class TableNode extends DecoratorNode<JSX.Element> {
     const rows = self.__rows;
     for (let y = 0; y < rows.length; y++) {
       const row = rows[y];
-      const cells = row.cells;
+      const cells = row?.cells ?? [];
       const cellsClone = Array.from(cells);
       const rowClone = { ...row, cells: cellsClone };
       cellsClone.splice(x, 1);
+      // @ts-ignore
       rows[y] = rowClone;
     }
   }
@@ -323,13 +331,15 @@ export class TableNode extends DecoratorNode<JSX.Element> {
     const rows = self.__rows;
     for (let y = 0; y < rows.length; y++) {
       const row = rows[y];
-      const cells = row.cells;
+      const cells = row?.cells ?? [];
       const cellsClone = Array.from(cells);
       const rowClone = { ...row, cells: cellsClone };
+      // @ts-ignore
       const type = cells[cells.length - 1].type;
       for (let x = 0; x < count; x++) {
         cellsClone.push(createCell(type));
       }
+      // @ts-ignore
       rows[y] = rowClone;
     }
   }
@@ -338,9 +348,10 @@ export class TableNode extends DecoratorNode<JSX.Element> {
     const self = this.getWritable();
     const rows = self.__rows;
     const prevRow = rows[y] || rows[y - 1];
-    const cellCount = prevRow.cells.length;
+    const cellCount = prevRow?.cells.length ?? 0;
     const row = createRow();
     for (let x = 0; x < cellCount; x++) {
+      // @ts-ignore
       const cell = createCell(prevRow.cells[x].type);
       row.cells.push(cell);
     }
@@ -357,11 +368,12 @@ export class TableNode extends DecoratorNode<JSX.Element> {
     const self = this.getWritable();
     const rows = self.__rows;
     const prevRow = rows[rows.length - 1];
-    const cellCount = prevRow.cells.length;
+    const cellCount = prevRow?.cells.length ?? 0;
 
     for (let y = 0; y < count; y++) {
       const row = createRow();
       for (let x = 0; x < cellCount; x++) {
+        // @ts-ignore
         const cell = createCell(prevRow.cells[x].type);
         row.cells.push(cell);
       }
@@ -374,10 +386,12 @@ export class TableNode extends DecoratorNode<JSX.Element> {
     const rows = self.__rows;
     for (let y = 0; y < rows.length; y++) {
       const row = rows[y];
-      const cells = row.cells;
+      const cells = row?.cells ?? [];
       const cellsClone = Array.from(cells);
       const rowClone = { ...row, cells: cellsClone };
+      // @ts-ignore
       cellsClone[x].width = width;
+      // @ts-ignore
       rows[y] = rowClone;
     }
   }

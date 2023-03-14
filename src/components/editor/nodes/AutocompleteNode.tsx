@@ -14,10 +14,9 @@ import type {
 } from "lexical";
 
 import { DecoratorNode } from "lexical";
-import * as React from "react";
-import { useSharedAutocompleteContext } from "../context/useSharedAutocompleteContext";
-
-import { uuid as UUID } from "../plugins/AutocompletePlugin";
+import React from "react";
+import { useSharedAutocompleteContext } from "~/components/editor/context/useSharedAutocompleteContext";
+import { uuid as UUID } from "~/components/editor/plugins/AutocompletePlugin";
 
 declare global {
   interface Navigator {

@@ -62,6 +62,7 @@ model User {
     sessions      Session[]
     posts         Post[]
     categories    PostCategory[]
+    postImages    PostImage[]
     profile       UserProfile?
     role          UserRole?
     createdAt     DateTime       @default(now())
@@ -98,9 +99,9 @@ model Post {
     title     String // 제목
     subTitle  String? // 부제목
     content   String // @db.Text 에디터 내용
-    thumbnail String? // 썸네일
     issueDate DateTime // 발행시간 발행시간 값이 없으면 작성시간으로 대체
     likeCount Int      @default(0) // 좋아요 수
+    viewCount Int      @default(0) // 조회수
     published Boolean  @default(false) // 공개여부
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -111,6 +112,9 @@ model Post {
     categoryId Int?
     category   PostCategory? @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
+    thumbnailId Int?
+    thumbnail   PostImage? @relation(fields: [thumbnailId], references: [id], onDelete: Cascade)
+
     postsTags PostsTags[]
     likes     PostLike[]
     stats     PostStats?
@@ -118,10 +122,21 @@ model Post {
     @@map("posts")
 }
 
+model PostImage {
+    id        Int      @id @default(autoincrement())
+    url       String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    userId    String
+    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    posts     Post[]
+
+    @@map("post_images")
+}
+
 model PostDraft {
     id        Int      @id @default(autoincrement())
     title     String
-    thumbnail String?
     content   String // @db.Text 에디터 내용
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -185,6 +200,7 @@ model PostStats {
     postId        Int      @unique
     likes         Int      @default(0)
     clicks        Int      @default(0)
+    views         Int      @default(0)
     score         Float    @default(0)
     commentsCount Int      @default(0)
     post          Post     @relation(fields: [postId], references: [id], onDelete: Cascade)

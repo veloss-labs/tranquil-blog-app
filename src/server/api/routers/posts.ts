@@ -21,7 +21,7 @@ const _default_post_select = Prisma.validator<Prisma.PostSelect>()({
   title: true,
   subTitle: true,
   content: true,
-  thumbnail: true,
+  viewCount: true,
   issueDate: true,
   createdAt: true,
   updatedAt: true,
@@ -29,6 +29,12 @@ const _default_post_select = Prisma.validator<Prisma.PostSelect>()({
     select: {
       id: true,
       name: true,
+    },
+  },
+  thumbnail: {
+    select: {
+      id: true,
+      url: true,
     },
   },
   user: {
@@ -89,7 +95,21 @@ export const postsRouter = createTRPCRouter({
       const session = ctx.session;
 
       return ctx.prisma.$transaction(async (tx) => {
-        // 카테고리가 존재하는 경우 카테고리 아이디가 서버에 존재하는지 확인
+        // 발행일시가 없는 경우 오늘로 설정
+        const issueDate = input.issueDate ?? new Date();
+
+        const post = await tx.post.create({
+          data: {
+            title: input.title,
+            subTitle: input.subTitle,
+            content: input.content,
+            issueDate,
+            published: input.published ?? false,
+            userId: session.id,
+          },
+        });
+
+        // 카테고리가 존재하는 경우 카테고리와 게시물을 연결
         if (input.categoryId) {
           const exists_category = await ctx.prisma.postCategory.findUnique({
             where: {
@@ -105,6 +125,28 @@ export const postsRouter = createTRPCRouter({
                   ok: false,
                   resultCode: RESULT_CODE.NOT_FOUND,
                   resultMessage: "카테고리가 존재하지 않습니다.",
+                }),
+              },
+            });
+          }
+        }
+
+        // 썸네일이 존재하는 경우 썸네일과 게시물을 연결
+        if (input.thumbnailId) {
+          const exists_image = await ctx.prisma.postImage.findUnique({
+            where: {
+              id: input.thumbnailId,
+            },
+          });
+
+          if (!exists_image) {
+            throw new BadRequestError("PostImageNotFound", {
+              http: {
+                instance: "[trpc]: postsRouter.create",
+                extra: responseWith({
+                  ok: false,
+                  resultCode: RESULT_CODE.NOT_FOUND,
+                  resultMessage: "게시물 이미지가 존재하지 않습니다.",
                 }),
               },
             });
@@ -136,21 +178,6 @@ export const postsRouter = createTRPCRouter({
           createdTags = tags;
         }
 
-        // 발행일시가 없는 경우 오늘로 설정
-        const issueDate = input.issueDate ?? new Date();
-
-        const post = await tx.post.create({
-          data: {
-            title: input.title,
-            subTitle: input.subTitle,
-            content: input.content,
-            thumbnail: input.thumbnail,
-            issueDate,
-            published: input.published ?? false,
-            userId: session.id,
-          },
-        });
-
         // 태그가 존재하는 경우에만 게시물과 태그를 연결
         if (!isEmpty(createdTags)) {
           await Promise.all(
@@ -172,6 +199,16 @@ export const postsRouter = createTRPCRouter({
             )
           );
         }
+
+        await tx.post.update({
+          where: {
+            id: post.id,
+          },
+          data: {
+            categoryId: input.categoryId ? input.categoryId : null,
+            thumbnailId: input.thumbnailId ? input.thumbnailId : null,
+          },
+        });
 
         return responseWith({
           data: post.id,
@@ -227,8 +264,11 @@ export const postsRouter = createTRPCRouter({
       if (input.content && !isEqual(input.content, post.content)) {
         newData.content = input.content;
       }
-      if (input.thumbnail && !isEqual(input.thumbnail, post.thumbnail)) {
-        newData.thumbnail = input.thumbnail;
+      if (
+        input.thumbnailId &&
+        !isEqual(input.thumbnailId, post.thumbnail?.id)
+      ) {
+        newData.thumbnailId = input.thumbnailId;
       }
       if (input.issueDate) {
         const issueDate = input.issueDate.getTime();
@@ -318,6 +358,12 @@ export const postsRouter = createTRPCRouter({
             )
           );
         }
+      }
+
+      if (isEmpty(newData)) {
+        return responseWith({
+          data: post.id,
+        });
       }
 
       await tx.post.update({
@@ -489,6 +535,59 @@ export const postsRouter = createTRPCRouter({
 
     return responseWith({
       data: update_posts.likeCount,
+    });
+  }),
+  view: publicProcedure.input(schema.byId).query(async ({ ctx, input }) => {
+    const cookies = getTrpcRouterCookie(ctx);
+    const guestId = cookies.get(process.env.GUEST_ID_NAME, {
+      signed: true,
+    });
+
+    if (!guestId) {
+      throw new UnauthorizedError("Unauthorized", {
+        http: {
+          instance: "[trpc]: postsRouter.view",
+          extra: responseWith({
+            ok: false,
+            resultCode: RESULT_CODE.NOT_USED_GUEST_ID,
+            resultMessage: "게스트 아이디가 존재하지 않습니다.",
+          }),
+        },
+      });
+    }
+
+    const post = await ctx.prisma.post.findFirst({
+      where: {
+        id: input.id,
+      },
+    });
+
+    if (!post) {
+      throw new BadRequestError("PostNotFound", {
+        http: {
+          instance: "[trpc]: postsRouter.byId",
+          extra: responseWith({
+            ok: false,
+            resultCode: RESULT_CODE.NOT_FOUND,
+            resultMessage: "게시글이 존재하지 않습니다.",
+          }),
+        },
+      });
+    }
+
+    const update_posts = await ctx.prisma.post.update({
+      where: {
+        id: input.id,
+      },
+      data: {
+        viewCount: {
+          increment: 1,
+        },
+      },
+    });
+
+    return responseWith({
+      data: update_posts.viewCount,
     });
   }),
 });

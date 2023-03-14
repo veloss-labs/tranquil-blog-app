@@ -46,6 +46,14 @@ const UserNav: React.FC<UserNavProps> = ({ session }) => {
         ),
         key: "2",
       });
+      _menuItems.push({
+        label: (
+          <Link href="/dashboard/posts" aria-label="posts">
+            <Typography.Text strong>Posts</Typography.Text>
+          </Link>
+        ),
+        key: "3",
+      });
     }
     _menuItems.push({
       type: "divider",
@@ -61,7 +69,7 @@ const UserNav: React.FC<UserNavProps> = ({ session }) => {
           Sign out
         </Typography.Text>
       ),
-      key: "3",
+      key: "4",
     });
 
     return _menuItems;
@@ -74,7 +82,7 @@ const UserNav: React.FC<UserNavProps> = ({ session }) => {
           menu={{
             items: menuItems,
           }}
-          placement="bottom"
+          placement="bottomLeft"
           trigger={["click"]}
           className="flex w-14 items-center"
         >
@@ -84,13 +92,6 @@ const UserNav: React.FC<UserNavProps> = ({ session }) => {
             </Avatar>
           </a>
         </Dropdown>
-        <Button
-          type="primary"
-          className="btn-write--user !shadow-none"
-          size="middle"
-        >
-          새 글 작성
-        </Button>
       </Space>
     </div>
   );

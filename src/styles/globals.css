@@ -4,6 +4,7 @@
 
 @import "./common/_antd.css";
 @import "./common/_common.css";
+@import "./pages/_main.css";
 @import "./pages/_auth.css";
 @import "./pages/_dashboard.css";
 @import "./pages/_dashboard_posts.css";

@@ -1,4 +1,5 @@
 import ArrowLeftIcon from "@heroicons/react/20/solid/ArrowLeftIcon";
+import ChevronDownIcon from "@heroicons/react/20/solid/ChevronDownIcon";
 import Square3Stack3DIcon from "@heroicons/react/24/outline/Square3Stack3DIcon";
 import XMarkIcon from "@heroicons/react/24/outline/XMarkIcon";
 import UserIcon from "@heroicons/react/24/outline/UserIcon";
@@ -20,6 +21,7 @@ import type { CustomIconComponentProps } from "@ant-design/icons/lib/components/
 export const Icons = {
   logo: Square3Stack3DIcon,
   arrowLeft: ArrowLeftIcon,
+  down: ChevronDownIcon,
   close: XMarkIcon,
   user: UserIcon,
   post: DocumentTextIcon,

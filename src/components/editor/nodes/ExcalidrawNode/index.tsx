@@ -19,8 +19,7 @@ import type {
 } from "lexical";
 
 import { DecoratorNode } from "lexical";
-import * as React from "react";
-import { Suspense } from "react";
+import React, { Suspense } from "react";
 
 const ExcalidrawComponent = React.lazy(
   // @ts-ignore

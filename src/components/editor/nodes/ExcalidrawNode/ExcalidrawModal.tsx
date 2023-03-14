@@ -7,13 +7,11 @@
  */
 
 import Excalidraw from "@excalidraw/excalidraw";
-import * as React from "react";
-import type { ReactPortal } from "react";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
-import Button from "../../ui/Button";
-import Modal from "../../ui/Modal";
+import Button from "~/components/editor/components/Button";
+import Modal from "~/components/editor/components/Modal";
 
 export type ExcalidrawElementFragment = {
   isDeleted?: boolean;
@@ -50,7 +48,7 @@ export default function ExcalidrawModal({
   initialElements,
   isShown = false,
   onDelete,
-}: Props): ReactPortal | null {
+}: Props): React.ReactPortal | null {
   const excaliDrawModelRef = useRef<HTMLDivElement | null>(null);
 
   const [discardModalOpen, setDiscardModalOpen] = useState(false);
@@ -173,6 +171,7 @@ export default function ExcalidrawModal({
   // In DEV, Vite pulls this in fine, in prod it doesn't. It seems
   // like a module resolution issue with ESM vs CJS?
   const _Excalidraw =
+    // @ts-ignore
     Excalidraw.$$typeof != null ? Excalidraw : Excalidraw.default;
 
   return createPortal(
@@ -203,7 +202,7 @@ export default function ExcalidrawModal({
           </div>
         </div>
       </div>
-      <style jsx>{`
+      <style jsx global>{`
         .ExcalidrawModal__overlay {
           display: flex;
           align-items: center;

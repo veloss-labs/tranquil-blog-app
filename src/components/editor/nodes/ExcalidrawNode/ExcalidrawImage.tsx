@@ -12,8 +12,7 @@ import type {
   NonDeleted,
 } from "@excalidraw/excalidraw/types/element/types";
 import type { AppState } from "@excalidraw/excalidraw/types/types";
-import * as React from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 type ImageType = "svg" | "canvas";
 
@@ -62,8 +61,12 @@ const removeStyleFromSvg_HACK = (svg: SVGElement) => {
   const viewBox = svg.getAttribute("viewBox");
   if (viewBox != null) {
     const viewBoxDimensions = viewBox.split(" ");
-    svg.setAttribute("width", viewBoxDimensions[2]);
-    svg.setAttribute("height", viewBoxDimensions[3]);
+    if (viewBoxDimensions[2]) {
+      svg.setAttribute("width", viewBoxDimensions[2]);
+    }
+    if (viewBoxDimensions[3]) {
+      svg.setAttribute("height", viewBoxDimensions[3]);
+    }
   }
 
   if (styleTag && styleTag.tagName === "style") {
