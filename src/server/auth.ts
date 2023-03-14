@@ -168,6 +168,41 @@ export const getServerAuthSession = async (ctx: {
   return token.session as UserSchema;
 };
 
+export enum AuthMode {
+  USER = "CREATOR",
+  CREATOR = "CREATOR",
+}
+
+export const getServerAuthValidation = (
+  session: UserSchema | null,
+  mode: AuthMode = AuthMode.USER
+) => {
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  if (mode === AuthMode.CREATOR) {
+    // Only creator can access this page
+    if (session.role.authority !== "CREATOR") {
+      return {
+        redirect: {
+          destination: "/",
+          permanent: false,
+        },
+      };
+    }
+  }
+
+  return {
+    redirect: null,
+  };
+};
+
 export const getTrpcRouterCookie = (ctx: TRPCContext) => {
   const keys = [process.env.GUEST_ID_COOKIE_SECRET];
   const cookies = new Cookies(ctx.req, ctx.res, { keys: keys });

@@ -10,25 +10,59 @@ import {
   Breadcrumb,
   Col,
 } from "antd";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import DashboardLayout from "~/components/dashboard/DashboardLayout";
 import { SearchOutlined } from "@ant-design/icons";
 import { useMedia } from "~/libs/hooks/useMedia";
 import { useResetUrlState, useUrlState } from "~/libs/hooks/useUrlState";
 import { useRouter } from "next/router";
 import { CategoriesSearch } from "~/libs/search/categories";
+import {
+  AuthMode,
+  getServerAuthSession,
+  getServerAuthValidation,
+} from "~/server/auth";
+import dynamic from "next/dynamic";
+
+import type { GetServerSidePropsContext } from "next";
+import { useMemoizedFn } from "ahooks";
 
 interface FormFields {
   keyword: string;
 }
 
-const defaultQuery = {
-  pageNo: "1",
-  pageSize: "10",
-  keyword: "",
-};
+const DashboardCategoriesModal = dynamic(
+  () => import("~/components/shared/modal/DashboardCategoriesModal"),
+  {
+    ssr: false,
+  }
+);
+
+export async function getServerSideProps(ctx: GetServerSidePropsContext) {
+  const session = await getServerAuthSession(ctx);
+  const result = getServerAuthValidation(session, AuthMode.CREATOR);
+
+  if (result.redirect) {
+    return result;
+  }
+
+  return {
+    props: {},
+  };
+}
 
 export default function Categories() {
+  const [open, setOpen] = useState(false);
+
+  const defaultQuery = useMemo(
+    () => ({
+      pageNo: "1",
+      pageSize: "10",
+      keyword: "",
+    }),
+    []
+  );
+
   const router = useRouter();
 
   const [state, setState] = useUrlState(defaultQuery);
@@ -109,7 +143,14 @@ export default function Categories() {
       </div>
       <Row className="my-3 flex justify-end">
         <Space split={<Divider type="vertical" />}>
-          <Button type="primary" htmlType="button" className="!shadow-none">
+          <Button
+            type="primary"
+            htmlType="button"
+            className="!shadow-none"
+            onClick={useMemoizedFn(() => {
+              setOpen(true);
+            })}
+          >
             등록
           </Button>
           <Button type="text" htmlType="button">
@@ -154,6 +195,10 @@ export default function Categories() {
         }}
         bordered
       />
+      <DashboardCategoriesModal
+        open={open}
+        changeOpen={useMemoizedFn((value: boolean) => setOpen(value))}
+      />
     </div>
   );
 }
@@ -163,10 +208,12 @@ Categories.getLayout = function GetLayout(page: React.ReactNode) {
     <DashboardLayout
       pageHeader={
         <div className="py-7 px-5 sm:px-10">
-          <Breadcrumb>
-            <Breadcrumb.Item>대시보드</Breadcrumb.Item>
-            <Breadcrumb.Item>카테고리</Breadcrumb.Item>
-          </Breadcrumb>
+          <Breadcrumb
+            items={[
+              { title: "대시보드", href: "/dashboard" },
+              { title: "카테고리", href: "/dashboard/categories" },
+            ]}
+          />
         </div>
       }
     >
