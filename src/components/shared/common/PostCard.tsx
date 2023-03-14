@@ -34,9 +34,7 @@ function PostCard() {
         />
         veloss-labs
       </div>
-      <h3 className="title">
-        Migrate from Webpack to Remix Migrate from Webpack to Remix
-      </h3>
+      <h3 className="title">Migrate from Webpack to Remix</h3>
       <div className="action">
         <span className="text-xs">좋아요 11개</span>
         <span className="text-xs">댓글 10개</span>

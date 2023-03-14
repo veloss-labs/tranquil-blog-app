@@ -20,9 +20,9 @@ configResponsive({
 const Layout: React.FC<LayoutProps> = ({ children, hasHeader = true }) => {
   const responsive = useResponsive();
 
-  // const router = useRouter();
-
   const session = useSession();
+
+  const router = useRouter();
 
   const middle = useMemo(() => {
     return responsive?.middle ?? true;
@@ -38,9 +38,9 @@ const Layout: React.FC<LayoutProps> = ({ children, hasHeader = true }) => {
     setOpen(false);
   }, []);
 
-  // const onMoveToSignup = useCallback(() => {
-  //   router.push("/auth/signup");
-  // }, [router]);
+  const onMoveToSignin = useCallback(() => {
+    router.push("/auth/signin");
+  }, [router]);
 
   // 모바일에서만 사이드바 메뉴가 노출되게 설정하기 위해서
   useEffect(() => {
@@ -70,17 +70,18 @@ const Layout: React.FC<LayoutProps> = ({ children, hasHeader = true }) => {
                 />
               }
               headerRight={
-                session.status === "authenticated" && session.data ? null : (
+                session.status === "unauthenticated" ? (
                   <Button
-                    type="primary"
-                    className="!shadow-none"
+                    type="text"
                     role="link"
-                    aria-label="회원가입"
-                    data-href="/auth/signup"
+                    data-href="/auth/signin"
+                    aria-label="로그인"
+                    onClick={onMoveToSignin}
+                    onKeyDown={onMoveToSignin}
                   >
-                    회원가입
+                    로그인
                   </Button>
-                )
+                ) : null
               }
             />
             {open ? (

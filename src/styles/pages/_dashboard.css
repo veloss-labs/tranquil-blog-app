@@ -9,7 +9,7 @@
 }
 
 .ant-btn.btn-menu--profile svg {
-  @apply w-4 h-4;
+  @apply h-4 w-4;
 }
 
 /* Button */
@@ -17,7 +17,7 @@
 /* mobile header */
 
 .mobile-header {
-  @apply z-40 flex items-center justify-between px-5 h-14 sm:hidden border-solid border-0 border-b border-b-brand-300;
+  @apply z-40 flex h-14 items-center justify-between border-0 border-b border-solid border-b-brand-300 border-opacity-30 px-5 sm:hidden;
 }
 
 /* mobile header */
@@ -25,21 +25,20 @@
 /* Sidebar */
 
 .sidebar {
-  @apply fixed top-0 left-0 bottom-0 p-5 bg-gray-100 overflow-hidden;
+  @apply fixed top-0 left-0 bottom-0 overflow-hidden bg-gray-100 p-5;
   box-shadow: inset -7px 0 9px -7px rgb(0 0 0 / 0.1);
 }
 
 .sidebar .routes-menu {
-  @apply !bg-transparent !border-none;
+  @apply !border-none !bg-transparent;
 }
 
 /* Sidebar */
 
-
 /* Card */
 
 .edit-form .ant-card-actions {
-  @apply !flex !justify-end !bg-gray-100 gap-4;
+  @apply !flex !justify-end gap-4 !bg-gray-100;
 }
 
 .edit-form .ant-card-actions li {

@@ -16,10 +16,6 @@ const DesktopHeader: React.FC<DesktopHeaderProps> = () => {
     router.push("/auth/signin");
   }, [router]);
 
-  const onMoveToSignup = useCallback(() => {
-    router.push("/auth/signup");
-  }, [router]);
-
   return (
     <div className="header--desktop">
       <Link href="/" className="header-logo--desktop" aria-label="홈">
@@ -41,17 +37,6 @@ const DesktopHeader: React.FC<DesktopHeaderProps> = () => {
                 onKeyDown={onMoveToSignin}
               >
                 로그인
-              </Button>
-              <Button
-                type="primary"
-                className="!shadow-none"
-                role="link"
-                aria-label="회원가입"
-                data-href="/auth/signup"
-                onClick={onMoveToSignup}
-                onKeyDown={onMoveToSignup}
-              >
-                회원가입
               </Button>
             </div>
           )}

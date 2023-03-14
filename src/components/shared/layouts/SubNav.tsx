@@ -80,7 +80,7 @@ const SubNav = () => {
             className="!inline-flex !items-center"
             aria-label="리스트 필터 옵션"
           >
-            <Typography.Text type="secondary">최신순</Typography.Text>
+            <Typography.Text>최신순</Typography.Text>
             <Icons.down className="icon--sm ml-2 opacity-50" />
           </Button>
         </Dropdown>
@@ -105,9 +105,9 @@ const SubNav = () => {
         <Button
           className="!inline-flex !items-center"
           aria-label="리스트 검색 옵션"
-          icon={<Icons.subTitle className="icon--xs mr-2 opacity-50" />}
+          icon={<Icons.subTitle className="icon--sm mr-2 opacity-80" />}
         >
-          <Typography.Text type="secondary">필터</Typography.Text>
+          <Typography.Text>필터</Typography.Text>
         </Button>
       </div>
     </div>

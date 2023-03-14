@@ -143,44 +143,7 @@ const SiteNavMenu: React.FC<SiteNavMenuProps> = ({
             </li>
           </div>
         </ul>
-      ) : (
-        <ul className="site-nav-mobile-user-menu m-0">
-          <li>
-            <Link
-              href="/"
-              className="site-nav-bold-text site-nav-mobile-avatar"
-            >
-              <Image
-                src="/images/profile.jpeg"
-                width={40}
-                height={40}
-                alt="profile"
-              />
-              <span className="site-nav-bold-text">OhMinSeop</span>
-            </Link>
-          </li>
-          <div className="site-nav-mobile-user-menu-columns">
-            <li>
-              <Link data-site-nav-element="Profile" href="/">
-                Home
-              </Link>
-            </li>
-          </div>
-          <hr className="mt-6 block h-[1px] border-[0] bg-slate-300" />
-          <div className="site-nav-mobile-footer">
-            <li className="site-nav-bold-text">
-              <Typography.Text
-                className="cursor-pointer font-bold text-slate-500"
-                role="button"
-                aria-label="sign out"
-                onClick={onSignOut}
-              >
-                로그인 / 회원가입
-              </Typography.Text>
-            </li>
-          </div>
-        </ul>
-      )}
+      ) : null}
     </div>
   );
 };
