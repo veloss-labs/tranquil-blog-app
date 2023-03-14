@@ -16,7 +16,11 @@ export const getRoutes = () => {
         authorities: null,
       },
       {
-        category: { idx: 2, name: "게시글", type: "MENU", used: true },
+        category: { idx: 2, name: "카테고리", type: "MENU", used: true },
+        authorities: null,
+      },
+      {
+        category: { idx: 3, name: "게시글", type: "MENU", used: true },
         authorities: null,
       },
     ],

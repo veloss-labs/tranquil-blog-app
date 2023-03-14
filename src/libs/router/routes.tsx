@@ -1,6 +1,10 @@
 /* eslint-disable react/react-in-jsx-scope */
 import hash from "stable-hash";
-import { LineChartOutlined, FormOutlined } from "@ant-design/icons";
+import {
+  LineChartOutlined,
+  FormOutlined,
+  TagOutlined,
+} from "@ant-design/icons";
 import { isEmpty } from "~/utils/assertion";
 
 import type {
@@ -16,7 +20,11 @@ const _PAGES = {
     name: "대시보드",
     path: "/dashboard",
   },
-  MANAGERS: {
+  CATEGORIES: {
+    name: "카테고리",
+    path: "/dashboard/categories",
+  },
+  POSTS: {
     name: "게시글",
     path: "/dashboard/posts",
   },
@@ -93,6 +101,9 @@ class InternalRoutes {
       }
       case "게시글": {
         return <FormOutlined />;
+      }
+      case "카테고리": {
+        return <TagOutlined />;
       }
     }
     return undefined;
