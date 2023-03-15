@@ -21,7 +21,7 @@ import {
   useBasicTypeaheadTriggerMatch,
 } from "@lexical/react/LexicalTypeaheadMenuPlugin";
 import { $createHeadingNode, $createQuoteNode } from "@lexical/rich-text";
-import { $setBlocksType_experimental } from "@lexical/selection";
+import { $setBlocksType } from "@lexical/selection";
 import { INSERT_TABLE_COMMAND } from "@lexical/table";
 import type { TextNode } from "lexical";
 import {
@@ -34,13 +34,12 @@ import { useCallback, useMemo, useState } from "react";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import useModal from "../../hooks/useModal";
-import catTypingGif from "../../images/cat-typing.gif";
+import useModal from "~/components/editor/hooks/useModal";
 import { EmbedConfigs } from "../AutoEmbedPlugin";
 import { INSERT_COLLAPSIBLE_COMMAND } from "../CollapsiblePlugin";
 import { InsertEquationDialog } from "../EquationsPlugin";
 import { INSERT_EXCALIDRAW_COMMAND } from "../ExcalidrawPlugin";
-import { INSERT_IMAGE_COMMAND, InsertImageDialog } from "../ImagesPlugin";
+import { InsertImageDialog } from "../ImagesPlugin";
 import { InsertPollDialog } from "../PollPlugin";
 import { InsertNewTableDialog, InsertTableDialog } from "../TablePlugin";
 
@@ -96,9 +95,11 @@ function ComponentPickerMenuItem({
       key={option.key}
       tabIndex={-1}
       className={className}
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       ref={option.setRefElement}
       role="option"
       aria-selected={isSelected}
+      // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
       id={"typeahead-item-" + index}
       onMouseEnter={onMouseEnter}
       onClick={onClick}
@@ -137,6 +138,7 @@ export default function ComponentPickerMenuPlugin(): JSX.Element {
         .map((n: string) => parseInt(n, 10));
 
       options.push(
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         new ComponentPickerOption(`${rows}x${columns} Table`, {
           icon: <i className="icon table" />,
           keywords: ["table"],
@@ -156,7 +158,12 @@ export default function ComponentPickerMenuPlugin(): JSX.Element {
               keywords: ["table"],
               onSelect: () =>
                 // @ts-ignore Correct types, but since they're dynamic TS doesn't like it.
-                editor.dispatchCommand(INSERT_TABLE_COMMAND, { columns, rows }),
+                editor.dispatchCommand(INSERT_TABLE_COMMAND, {
+                  // @ts-ignore
+                  columns,
+                  // @ts-ignore
+                  rows,
+                }),
             })
         )
       );
@@ -174,9 +181,7 @@ export default function ComponentPickerMenuPlugin(): JSX.Element {
           editor.update(() => {
             const selection = $getSelection();
             if ($isRangeSelection(selection)) {
-              $setBlocksType_experimental(selection, () =>
-                $createParagraphNode()
-              );
+              $setBlocksType(selection, () => $createParagraphNode());
             }
           }),
       }),
@@ -189,7 +194,7 @@ export default function ComponentPickerMenuPlugin(): JSX.Element {
               editor.update(() => {
                 const selection = $getSelection();
                 if ($isRangeSelection(selection)) {
-                  $setBlocksType_experimental(selection, () =>
+                  $setBlocksType(selection, () =>
                     // @ts-ignore Correct types, but since they're dynamic TS doesn't like it.
                     $createHeadingNode(`h${n}`)
                   );
@@ -238,7 +243,7 @@ export default function ComponentPickerMenuPlugin(): JSX.Element {
           editor.update(() => {
             const selection = $getSelection();
             if ($isRangeSelection(selection)) {
-              $setBlocksType_experimental(selection, () => $createQuoteNode());
+              $setBlocksType(selection, () => $createQuoteNode());
             }
           }),
       }),
@@ -251,7 +256,7 @@ export default function ComponentPickerMenuPlugin(): JSX.Element {
 
             if ($isRangeSelection(selection)) {
               if (selection.isCollapsed()) {
-                $setBlocksType_experimental(selection, () => $createCodeNode());
+                $setBlocksType(selection, () => $createCodeNode());
               } else {
                 // Will this ever happen?
                 const textContent = selection.getTextContent();
@@ -299,15 +304,15 @@ export default function ComponentPickerMenuPlugin(): JSX.Element {
             <InsertEquationDialog activeEditor={editor} onClose={onClose} />
           )),
       }),
-      new ComponentPickerOption("GIF", {
-        icon: <i className="icon gif" />,
-        keywords: ["gif", "animate", "image", "file"],
-        onSelect: () =>
-          editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
-            altText: "Cat typing on a laptop",
-            src: catTypingGif,
-          }),
-      }),
+      // new ComponentPickerOption("GIF", {
+      //   icon: <i className="icon gif" />,
+      //   keywords: ["gif", "animate", "image", "file"],
+      //   onSelect: () =>
+      //     editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
+      //       altText: "Cat typing on a laptop",
+      //       src: catTypingGif,
+      //     }),
+      // }),
       new ComponentPickerOption("Image", {
         icon: <i className="icon image" />,
         keywords: ["image", "photo", "picture", "file"],

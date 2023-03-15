@@ -26,25 +26,23 @@ import {
 } from "lexical";
 import { useEffect, useRef, useState } from "react";
 import * as React from "react";
-import { CAN_USE_DOM } from "shared/canUseDOM";
 
-import landscapeImage from "../../images/landscape.jpg";
-import yellowFlowerImage from "../../images/yellow-flower.jpg";
 import type { ImagePayload } from "../../nodes/ImageNode";
 import {
   $createImageNode,
   $isImageNode,
   ImageNode,
 } from "../../nodes/ImageNode";
-import Button from "../../ui/Button";
-import { DialogActions, DialogButtonsList } from "../../ui/Dialog";
-import FileInput from "../../ui/FileInput";
-import TextInput from "../../ui/TextInput";
+import { isBrowser } from "~/libs/browser/dom";
+import FileInput from "~/components/editor/components/FileInput";
+import Button from "~/components/editor/components/Button";
+import TextInput from "~/components/editor/components/TextInput";
+import { DialogActions, DialogButtonsList } from "~/components/editor/components/Dialog";
 
 export type InsertImagePayload = Readonly<ImagePayload>;
 
 const getDOMSelection = (targetWindow: Window | null): Selection | null =>
-  CAN_USE_DOM ? (targetWindow || window).getSelection() : null;
+  isBrowser ? (targetWindow || window).getSelection() : null;
 
 export const INSERT_IMAGE_COMMAND: LexicalCommand<InsertImagePayload> =
   createCommand("INSERT_IMAGE_COMMAND");
@@ -107,6 +105,7 @@ export function InsertImageUploadedDialogBody({
       return "";
     };
     if (files !== null) {
+      // @ts-ignore
       reader.readAsDataURL(files[0]);
     }
   };
@@ -169,25 +168,6 @@ export function InsertImageDialog({
     <>
       {!mode && (
         <DialogButtonsList>
-          <Button
-            data-test-id="image-modal-option-sample"
-            onClick={() =>
-              onClick(
-                hasModifier.current
-                  ? {
-                      altText:
-                        "Daylight fir trees forest glacier green high ice landscape",
-                      src: landscapeImage,
-                    }
-                  : {
-                      altText: "Yellow flower in tilt shift lens",
-                      src: yellowFlowerImage,
-                    }
-              )
-            }
-          >
-            Sample
-          </Button>
           <Button
             data-test-id="image-modal-option-url"
             onClick={() => setMode("url")}
@@ -263,8 +243,10 @@ export default function ImagesPlugin({
 
 const TRANSPARENT_IMAGE =
   "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
-const img = document.createElement("img");
-img.src = TRANSPARENT_IMAGE;
+const img = isBrowser ? document.createElement("img") : null;
+if (img) {
+  img.src = TRANSPARENT_IMAGE;
+} 
 
 function onDragStart(event: DragEvent): boolean {
   const node = getImageNodeInSelection();
@@ -276,6 +258,7 @@ function onDragStart(event: DragEvent): boolean {
     return false;
   }
   dataTransfer.setData("text/plain", "_");
+  // @ts-ignore
   dataTransfer.setDragImage(img, 0, 0);
   dataTransfer.setData(
     "application/x-lexical-drag",

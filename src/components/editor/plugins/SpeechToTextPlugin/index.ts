@@ -20,6 +20,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 
 import useReport from "../../hooks/useReport";
+import { isBrowser } from "~/libs/browser/dom";
 
 export const SPEECH_TO_TEXT_COMMAND: LexicalCommand<boolean> = createCommand(
   "SPEECH_TO_TEXT_COMMAND"
@@ -42,15 +43,15 @@ const VOICE_COMMANDS: Readonly<
   },
 };
 
-export const SUPPORT_SPEECH_RECOGNITION: boolean =
-  "SpeechRecognition" in window || "webkitSpeechRecognition" in window;
+export const SUPPORT_SPEECH_RECOGNITION: boolean = isBrowser ?
+  "SpeechRecognition" in window || "webkitSpeechRecognition" in window : false;
 
 function SpeechToTextPlugin(): null {
   const [editor] = useLexicalComposerContext();
   const [isEnabled, setIsEnabled] = useState<boolean>(false);
-  const SpeechRecognition =
+  const SpeechRecognition = isBrowser ?
     // @ts-ignore
-    window.SpeechRecognition || window.webkitSpeechRecognition;
+    window.SpeechRecognition || window.webkitSpeechRecognition : null;
   const recognition = useRef<typeof SpeechRecognition | null>(null);
   const report = useReport();
 

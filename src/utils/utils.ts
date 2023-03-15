@@ -70,3 +70,12 @@ export default function invariant(
       message,
   );
 }
+
+export const computedTableIndex = (
+  total: number,
+  size: number,
+  no: number,
+  index: number
+) => {
+  return total - size * (no - 1) - index;
+};

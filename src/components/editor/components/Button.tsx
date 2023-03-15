@@ -43,7 +43,7 @@ export default function Button({
       >
         {children}
       </button>
-      <style jsx>{`
+      <style jsx global>{`
         .Button__root {
           padding-top: 10px;
           padding-bottom: 10px;

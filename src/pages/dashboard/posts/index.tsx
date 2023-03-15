@@ -10,6 +10,11 @@ import {
 
 import type { GetServerSidePropsContext } from "next";
 import PostsContent from "~/components/dashboard/posts/PostsContent";
+import dynamic from "next/dynamic";
+
+const LexicalEditor = dynamic(() => import("~/components/editor/LexicalEditor"), {
+  ssr: false,
+});
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   const session = await getServerAuthSession(ctx);
@@ -28,7 +33,9 @@ export default function Drafts() {
   return (
     <div className="mt-4">
       <PostsHeader />
-      <PostsContent />
+      <PostsContent>
+        <LexicalEditor />
+      </PostsContent>
     </div>
   );
 }

@@ -66,6 +66,7 @@ function LinkPreviewContent({
       <div className="LinkPreview__container">
         {preview.img && (
           <div className="LinkPreview__imageWrapper">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={preview.img}
               alt={preview.title}
@@ -83,7 +84,7 @@ function LinkPreviewContent({
           <div className="LinkPreview__description">{preview.description}</div>
         )}
       </div>
-      <style jsx>{`
+      <style jsx global>{`
         @keyframes glimmer-animation {
           0% {
             background: #f9f9f9;

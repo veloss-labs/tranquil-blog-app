@@ -10,7 +10,7 @@ export default function Placeholder({
   return (
     <>
       <div className={className || "Placeholder__root"}>{children}</div>
-      <style jsx>{`
+      <style jsx global>{`
         .Placeholder__root {
           font-size: 15px;
           color: #999;

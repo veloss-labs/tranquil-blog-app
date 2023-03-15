@@ -54,7 +54,7 @@ const items: MenuProps["items"] = [
 ];
 
 const SubNav = () => {
-  const query = api.categories.list.useInfiniteQuery(
+  const query = api.categories.infinity.useInfiniteQuery(
     {
       limit: 100,
     },

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from "react";
 import classNames from "classnames";
-import logger from "~/utils/logger";
+import { logger } from "~/utils/logger";
 
 // components
 import { Avatar, Button, Spin, theme, Typography } from "antd";

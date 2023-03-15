@@ -5,26 +5,38 @@ import { schema } from "~/libs/validation/categories";
 import type { CreateData } from "~/libs/validation/categories";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { api } from "~/utils/api";
+import { logger } from "~/utils/logger";
+import type { PostCategory } from "@prisma/client";
 
 interface InternalDashboardCategoriesModalProps {
-  categoryId?: number;
+  category?: PostCategory | undefined;
   setForm: (form: FormInstance | null) => void;
   changeOpen: (open: boolean) => void;
 }
 
 const InternalDashboardCategoriesModal: React.FC<
   InternalDashboardCategoriesModalProps
-> = ({ setForm, changeOpen }) => {
+> = ({ setForm, changeOpen, category }) => {
   const $form = useRef<FormInstance>(null);
+
+  const utils = api.useContext();
 
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<CreateData>({
     mode: "onSubmit",
     resolver: zodResolver(schema.create),
   });
+
+  const initialValues = category
+    ? {
+        name: category.name,
+        description: category.description ?? undefined,
+      }
+    : undefined;
 
   const control_name = useController({
     control,
@@ -39,25 +51,71 @@ const InternalDashboardCategoriesModal: React.FC<
   const mutation_create = api.categories.create.useMutation({
     onSuccess: () => {
       changeOpen(false);
+      utils.categories.pages.invalidate();
+      Modal.success({
+        title: "카테고리 등록",
+        content: "카테고리가 등록되었습니다.",
+        centered: true,
+      });
     },
-    onError: () => {
-      console.log("error");
+    onError: (error) => {
+      logger.error("[dashboard - categories] create error", error);
+      Modal.error({
+        title: "카테고리 등록",
+        content: "카테고리 등록에 실패했습니다.",
+        centered: true,
+      });
+    },
+  });
+
+  const mutation_update = api.categories.update.useMutation({
+    onSuccess: () => {
+      changeOpen(false);
+      utils.categories.pages.invalidate();
+      Modal.success({
+        title: "카테고리 수정",
+        content: "카테고리가 수정되었습니다.",
+        centered: true,
+      });
+    },
+    onError: (error) => {
+      logger.error("[dashboard - categories] update error", error);
+      Modal.error({
+        title: "카테고리 수정",
+        content: "카테고리 수정에 실패했습니다.",
+        centered: true,
+      });
     },
   });
 
   const onSubmit = useCallback(
     (data: CreateData) => {
-      mutation_create.mutate(data);
+      if (category) {
+        mutation_update.mutate({ id: category.id, ...data });
+      } else {
+        mutation_create.mutate(data);
+      }
     },
-    [mutation_create]
+    [category, mutation_create, mutation_update]
   );
 
   useEffect(() => {
     setForm($form.current);
   }, []);
 
+  useEffect(() => {
+    if (category) {
+      reset(initialValues);
+    }
+  }, [category]);
+
   return (
-    <Form layout="vertical" ref={$form} onFinish={handleSubmit(onSubmit)}>
+    <Form
+      layout="vertical"
+      ref={$form}
+      onFinish={handleSubmit(onSubmit)}
+      initialValues={initialValues}
+    >
       <Form.Item
         name="name"
         label="이름"
@@ -83,7 +141,7 @@ const InternalDashboardCategoriesModal: React.FC<
 interface DashboardCategoriesModalProps
   extends Pick<
     InternalDashboardCategoriesModalProps,
-    "categoryId" | "changeOpen"
+    "category" | "changeOpen"
   > {
   open: boolean;
   destroyOnClose?: boolean;
@@ -91,6 +149,7 @@ interface DashboardCategoriesModalProps
 
 const DashboardCategoriesModal: React.FC<DashboardCategoriesModalProps> = ({
   open,
+  category,
   changeOpen,
   destroyOnClose = true,
 }) => {
@@ -110,7 +169,6 @@ const DashboardCategoriesModal: React.FC<DashboardCategoriesModalProps> = ({
 
   useEffect(() => {
     if (!open) {
-      console.log("destroy");
       setForm(null);
     }
   }, [open]);
@@ -118,9 +176,9 @@ const DashboardCategoriesModal: React.FC<DashboardCategoriesModalProps> = ({
   return (
     <Modal
       open={open}
-      title="카테고리 등록"
+      title={`카테고리 ${category ? "수정" : "등록"}`}
       centered
-      okText="등록"
+      okText={category ? "수정" : "등록"}
       onOk={onSubmit}
       onCancel={onClose}
       okButtonProps={{
@@ -132,6 +190,7 @@ const DashboardCategoriesModal: React.FC<DashboardCategoriesModalProps> = ({
       <InternalDashboardCategoriesModal
         changeOpen={changeOpen}
         setForm={setForm}
+        category={category}
       />
     </Modal>
   );

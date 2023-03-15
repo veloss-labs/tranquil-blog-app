@@ -227,7 +227,7 @@ function MoveWrapper({
       >
         {children}
       </div>
-      <style jsx>{`
+      <style jsx global>{`
         .color-picker-wrapper {
           padding: 20px;
         }

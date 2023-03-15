@@ -6,8 +6,6 @@
  *
  */
 
-import "./Dialog.css";
-
 import React from "react";
 
 type Props = Readonly<{

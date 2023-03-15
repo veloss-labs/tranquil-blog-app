@@ -9,8 +9,6 @@ import type { TableOfContentsEntry } from "@lexical/react/LexicalTableOfContents
 import type { HeadingTagType } from "@lexical/rich-text";
 import type { NodeKey } from "lexical";
 
-import "./index.css";
-
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import LexicalTableOfContents from "@lexical/react/LexicalTableOfContents";
 import { useEffect, useRef, useState } from "react";
@@ -28,18 +26,22 @@ function indent(tagName: HeadingTagType) {
 }
 
 function isHeadingAtTheTopOfThePage(element: HTMLElement): boolean {
-  const elementYPosition = element?.getClientRects()[0].y;
+  const elementYPosition = element?.getClientRects()?.[0]?.y;
   return (
+    // @ts-ignore
     elementYPosition >= MARGIN_ABOVE_EDITOR &&
+    // @ts-ignore
     elementYPosition <= MARGIN_ABOVE_EDITOR + HEADING_WIDTH
   );
 }
 function isHeadingAboveViewport(element: HTMLElement): boolean {
-  const elementYPosition = element?.getClientRects()[0].y;
+  const elementYPosition = element?.getClientRects()?.[0]?.y;
+  // @ts-ignore
   return elementYPosition < MARGIN_ABOVE_EDITOR;
 }
 function isHeadingBelowTheTopOfThePage(element: HTMLElement): boolean {
-  const elementYPosition = element?.getClientRects()[0].y;
+  const elementYPosition = element?.getClientRects()?.[0]?.y;
+  // @ts-ignore
   return elementYPosition >= MARGIN_ABOVE_EDITOR + HEADING_WIDTH;
 }
 
@@ -70,6 +72,7 @@ function TableOfContentsList({
         selectedIndex.current < tableOfContents.length - 1
       ) {
         let currentHeading = editor.getElementByKey(
+          // @ts-ignore
           tableOfContents[selectedIndex.current][0]
         );
         if (currentHeading !== null) {
@@ -81,6 +84,7 @@ function TableOfContentsList({
               selectedIndex.current > 0
             ) {
               const prevHeading = editor.getElementByKey(
+                // @ts-ignore
                 tableOfContents[selectedIndex.current - 1][0]
               );
               if (
@@ -92,6 +96,7 @@ function TableOfContentsList({
               }
               currentHeading = prevHeading;
             }
+            // @ts-ignore
             const prevHeadingKey = tableOfContents[selectedIndex.current][0];
             setSelectedKey(prevHeadingKey);
           } else if (isHeadingAboveViewport(currentHeading)) {
@@ -102,6 +107,7 @@ function TableOfContentsList({
               selectedIndex.current < tableOfContents.length - 1
             ) {
               const nextHeading = editor.getElementByKey(
+                // @ts-ignore
                 tableOfContents[selectedIndex.current + 1][0]
               );
               if (
@@ -113,6 +119,7 @@ function TableOfContentsList({
               }
               currentHeading = nextHeading;
             }
+            // @ts-ignore
             const nextHeadingKey = tableOfContents[selectedIndex.current][0];
             setSelectedKey(nextHeadingKey);
           }

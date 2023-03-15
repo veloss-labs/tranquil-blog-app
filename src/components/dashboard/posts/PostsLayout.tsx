@@ -18,30 +18,11 @@ interface DraftsLayoutProps {
 function DraftsLayout({ children, pageHeader }: DraftsLayoutProps) {
   const { token } = theme.useToken();
 
-  const { isShowSidebar, openSidebar, closeSidebar, togglePopupMenu } =
-    useLayoutDashboardContext();
-
-  const isMobile = useMedia("(max-width: 640px)", false);
+  const { isShowSidebar, togglePopupMenu } = useLayoutDashboardContext();
 
   const onTogglePopupMenu = useCallback(() => {
     togglePopupMenu();
   }, [togglePopupMenu]);
-
-  const onToggleSidebar = useCallback(() => {
-    if (isMobile) {
-      togglePopupMenu();
-      return;
-    }
-    openSidebar();
-  }, [isMobile, openSidebar, togglePopupMenu]);
-
-  useEffect(() => {
-    if (isMobile) {
-      closeSidebar();
-    } else {
-      openSidebar();
-    }
-  }, [isMobile]);
 
   return (
     <>
@@ -85,7 +66,6 @@ function DraftsLayout({ children, pageHeader }: DraftsLayoutProps) {
                 type="primary"
                 className="!flex items-center justify-center !shadow-none"
                 icon={<Bars3Icon className="h-5 w-5" />}
-                onClick={onToggleSidebar}
               />
             </div>
           ) : null}

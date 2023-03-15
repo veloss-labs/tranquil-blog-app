@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import "./index.css";
 
 import {
   $isAutoLinkNode,
@@ -34,11 +33,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import * as React from "react";
 import { createPortal } from "react-dom";
 
-import { useSettings } from "../../context/SettingsContext";
-import LinkPreview from "../../ui/LinkPreview";
-import { getSelectedNode } from "../../utils/getSelectedNode";
-import { setFloatingElemPosition } from "../../utils/setFloatingElemPosition";
-import { sanitizeUrl } from "../../utils/url";
+import { useSettings } from "~/components/editor/context/useSettingsContext";
+import LinkPreview from "~/components/editor/components/LinkPreview";
+import { sanitizeUrl } from "~/utils/url";
+import { setFloatingElemPosition } from "~/utils/setFloatingElemPosition";
+import { getSelectedNode } from "~/utils/getSelectedNode";
 
 function FloatingLinkEditor({
   editor,

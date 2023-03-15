@@ -31,10 +31,7 @@ Dashboard.getLayout = function GetLayout(page: React.ReactNode) {
     <DashboardLayout
       pageHeader={
         <div className="px-5 pt-7 sm:px-10">
-          <Breadcrumb>
-            <Breadcrumb.Item>홈</Breadcrumb.Item>
-            <Breadcrumb.Item>대시보드</Breadcrumb.Item>
-          </Breadcrumb>
+          <Breadcrumb items={[{ title: "대시보드", href: "/dashboard" }]} />
         </div>
       }
     >

@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import "./index.css";
 
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { eventFiles } from "@lexical/rich-text";
@@ -25,9 +24,9 @@ import type { DragEvent as ReactDragEvent } from "react";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
-import { isHTMLElement } from "../../utils/guard";
-import { Point } from "../../utils/point";
-import { Rect } from "../../utils/rect";
+import { isHTMLElement } from "~/utils/assertion";
+import { Point } from "~/utils/point";
+import { Rect } from "~/utils/rect";
 
 const SPACE = 4;
 const TARGET_LINE_HALF_HEIGHT = 2;
@@ -72,6 +71,7 @@ function getBlockElement(
 
     while (index >= 0 && index < topLevelNodeKeys.length) {
       const key = topLevelNodeKeys[index];
+      // @ts-ignore
       const elem = editor.getElementByKey(key);
       if (elem === null) {
         break;
@@ -355,7 +355,7 @@ function useDraggableBlockMenu(
         <div className={isEditable ? "icon" : ""} />
       </div>
       <div className="draggable-block-target-line" ref={targetLineRef} />
-      <style jsx>
+      <style jsx global>
         {`
           .draggable-block-menu {
             border-radius: 4px;

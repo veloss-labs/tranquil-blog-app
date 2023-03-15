@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import "./common/_editor.css";
+
 @import "./common/_antd.css";
 @import "./common/_common.css";
 @import "./pages/_main.css";

@@ -28,11 +28,11 @@ import { INSERT_EMBED_COMMAND } from "@lexical/react/LexicalAutoEmbedPlugin";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $isDecoratorBlockNode } from "@lexical/react/LexicalDecoratorBlockNode";
 import { INSERT_HORIZONTAL_RULE_COMMAND } from "@lexical/react/LexicalHorizontalRuleNode";
+import type { HeadingTagType } from "@lexical/rich-text";
 import {
   $createHeadingNode,
   $createQuoteNode,
   $isHeadingNode,
-  HeadingTagType,
 } from "@lexical/rich-text";
 import {
   $getSelectionStyleValueForProperty,
@@ -69,26 +69,22 @@ import {
 } from "lexical";
 import { useCallback, useEffect, useState } from "react";
 import * as React from "react";
-import { IS_APPLE } from "shared/environment";
 
 import useModal from "../../hooks/useModal";
-import catTypingGif from "../../images/cat-typing.gif";
 import { $createStickyNode } from "../../nodes/StickyNode";
-import ColorPicker from "../../ui/ColorPicker";
-import DropDown, { DropDownItem } from "../../ui/DropDown";
-import { getSelectedNode } from "../../utils/getSelectedNode";
-import { sanitizeUrl } from "../../utils/url";
+import ColorPicker from "../../components/ColorPicker";
+import DropDown, { DropDownItem } from "../../components/DropDown";
 import { EmbedConfigs } from "../AutoEmbedPlugin";
 import { INSERT_COLLAPSIBLE_COMMAND } from "../CollapsiblePlugin";
 import { InsertEquationDialog } from "../EquationsPlugin";
 import { INSERT_EXCALIDRAW_COMMAND } from "../ExcalidrawPlugin";
-import {
-  INSERT_IMAGE_COMMAND,
-  InsertImageDialog,
-  InsertImagePayload,
-} from "../ImagesPlugin";
+import type { InsertImagePayload } from "../ImagesPlugin";
+import { INSERT_IMAGE_COMMAND, InsertImageDialog } from "../ImagesPlugin";
 import { InsertPollDialog } from "../PollPlugin";
 import { InsertNewTableDialog, InsertTableDialog } from "../TablePlugin";
+import { IS_APPLE } from "~/libs/browser/dom";
+import { getSelectedNode } from "~/utils/getSelectedNode";
+import { sanitizeUrl } from "~/utils/url";
 
 const blockTypeToBlockName = {
   bullet: "Bulleted List",
@@ -855,7 +851,8 @@ export default function ToolbarPlugin(): JSX.Element {
               onClick={() =>
                 insertGifOnClick({
                   altText: "Cat typing on a laptop",
-                  src: catTypingGif,
+                  // src: catTypingGif,
+                  src: "",
                 })
               }
               className="item"
@@ -1036,7 +1033,6 @@ export default function ToolbarPlugin(): JSX.Element {
           <span className="text">Indent</span>
         </DropDownItem>
       </DropDown>
-
       {modal}
     </div>
   );

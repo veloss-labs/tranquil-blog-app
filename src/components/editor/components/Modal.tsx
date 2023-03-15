@@ -78,7 +78,7 @@ function PortalImpl({
           <div className="Modal__content">{children}</div>
         </div>
       </div>
-      <style jsx>{`
+      <style jsx global>{`
         .Modal__overlay {
           display: flex;
           justify-content: center;

@@ -6,8 +6,6 @@
  *
  */
 
-import "./KatexEquationAlterer.css";
-
 import React, { useCallback, useState } from "react";
 
 import Button from "./Button";
@@ -70,7 +68,7 @@ export default function KatexEquationAlterer({
       <div className="KatexEquationAlterer_dialogActions">
         <Button onClick={onClick}>Confirm</Button>
       </div>
-      <style jsx>{`
+      <style jsx global>{`
         .KatexEquationAlterer_defaultRow {
           display: flex;
           flex-direction: row;

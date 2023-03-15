@@ -1,5 +1,5 @@
 .dashboard-posts--header {
-  @apply p-4 2xl:px-5;
+  @apply p-4 pt-0 2xl:px-5;
 }
 
 .dashboard-posts--header-wrapper {
@@ -15,7 +15,7 @@
 }
 
 .dashboard-posts--content {
-  @apply mx-auto grid w-full grid-cols-12 px-5 sm:max-w-[640px] md:max-w-[768px] md:px-0 lg:max-w-[1024px] lg:grid-cols-8 xl:max-w-[1280px] 2xl:max-w-[1536px];
+  @apply mx-auto grid w-full grid-cols-12 px-0 sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] lg:grid-cols-8 xl:max-w-[1280px] 2xl:max-w-[1536px];
 }
 
 .dashboard-posts--content-wrapper {

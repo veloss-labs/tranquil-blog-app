@@ -8,14 +8,15 @@
 
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $wrapNodeInElement } from "@lexical/utils";
+import type {
+  LexicalCommand,
+  LexicalEditor} from "lexical";
 import {
   $createParagraphNode,
   $insertNodes,
   $isRootOrShadowRoot,
   COMMAND_PRIORITY_EDITOR,
-  createCommand,
-  LexicalCommand,
-  LexicalEditor,
+  createCommand
 } from "lexical";
 import { useEffect, useState } from "react";
 import * as React from "react";
@@ -25,9 +26,9 @@ import {
   createPollOption,
   PollNode,
 } from "../../nodes/PollNode";
-import Button from "../../ui/Button";
-import { DialogActions } from "../../ui/Dialog";
-import TextInput from "../../ui/TextInput";
+import Button from "../../components/Button";
+import { DialogActions } from "../../components/Dialog";
+import TextInput from "../../components/TextInput";
 
 export const INSERT_POLL_COMMAND: LexicalCommand<string> = createCommand(
   "INSERT_POLL_COMMAND"

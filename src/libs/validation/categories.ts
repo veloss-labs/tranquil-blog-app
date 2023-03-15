@@ -24,11 +24,16 @@ export const schema = {
     description: z.string().optional(),
     thumbnail: z.string().url().optional(),
   }),
-  list: z
+  infinity: z
     .object({
       keyword: z.string().optional().nullish(),
     })
     .merge(common.list),
+  pages: z
+    .object({
+      keyword: z.string().optional().nullish(),
+    })
+    .merge(common.pages),
 };
 
 export type CreateData = z.infer<typeof schema.create>;
@@ -37,4 +42,6 @@ export type ByIdData = z.infer<typeof schema.byId>;
 
 export type UpdateData = z.infer<typeof schema.update>;
 
-export type ListData = z.infer<typeof schema.list>;
+export type InfinityData = z.infer<typeof schema.infinity>;
+
+export type PagesData = z.infer<typeof schema.pages>;

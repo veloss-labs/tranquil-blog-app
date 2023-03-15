@@ -17,7 +17,7 @@ export default function LexicalContentEditable({
   return (
     <>
       <ContentEditable className={className || "ContentEditable__root"} />;
-      <style jsx>{`
+      <style jsx global>{`
         .ContentEditable__root {
           border: 0;
           font-size: 15px;

@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import React, { useReducer, useMemo } from "react";
+import React, { useReducer, useMemo, useEffect } from "react";
 import { createContext } from "~/libs/react/context";
 import { Routes } from "~/libs/router/routes";
 import type { AuthoritiesSchema, RouteItem } from "~/libs/router/ts/route";
@@ -8,6 +8,7 @@ enum Action {
   TRANSITION_ROUTE = "TRANSITION_ROUTE",
   CHANGE_SELECTED_ROUTE = "CHANGE_SELECTED_ROUTE",
   CHANGE_OPEN_ROUTES = "CHANGE_OPEN_ROUTES",
+  INIT_ROUTES = "INIT_ROUTES",
 }
 
 type TransitionRoute = {
@@ -31,7 +32,19 @@ type ChangeOpenRoutes = {
   };
 };
 
-type ActionType = TransitionRoute | ChangeSelectedRoute | ChangeOpenRoutes;
+type InitRoutes = {
+  type: Action.INIT_ROUTES;
+  payload: {
+    selectedRoute: string[];
+    openRoutes: string[];
+  };
+};
+
+type ActionType =
+  | TransitionRoute
+  | ChangeSelectedRoute
+  | ChangeOpenRoutes
+  | InitRoutes;
 
 interface DashboardRouteContextState {
   isRouteLoading: boolean;
@@ -83,6 +96,12 @@ function reducer(
         ...state,
         openRoutes: action.payload.openRoutes,
       };
+    case Action.INIT_ROUTES:
+      return {
+        ...state,
+        selectedRoute: action.payload.selectedRoute,
+        openRoutes: action.payload.openRoutes,
+      };
     default:
       return state;
   }
@@ -109,10 +128,20 @@ function DashboardRouteProvider({ children, ...otherProps }: Props) {
     Object.assign({}, initialState, {
       ...otherProps,
       menuRoutes,
-      selectedRoute,
-      openRoutes,
+      // selectedRoute,
+      // openRoutes,
     })
   );
+
+  useEffect(() => {
+    dispatch({
+      type: Action.INIT_ROUTES,
+      payload: {
+        selectedRoute,
+        openRoutes,
+      },
+    });
+  }, [nextRouter.pathname]);
 
   const transitionRoute = (isLoading: boolean) => {
     dispatch({

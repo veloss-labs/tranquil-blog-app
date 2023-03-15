@@ -8,8 +8,6 @@
 import type { Cell } from "@lexical/table";
 import type { LexicalEditor } from "lexical";
 
-import "./index.css";
-
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import useLexicalEditable from "@lexical/react/useLexicalEditable";
 import {
@@ -28,9 +26,10 @@ import {
   SELECTION_CHANGE_COMMAND,
 } from "lexical";
 import * as React from "react";
-import {
+import type {
   MouseEventHandler,
-  ReactPortal,
+  ReactPortal} from "react";
+import {
   useCallback,
   useEffect,
   useMemo,

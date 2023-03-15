@@ -8,6 +8,12 @@
 
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { INSERT_TABLE_COMMAND } from "@lexical/table";
+import type {
+  EditorThemeClasses,
+  Klass,
+  LexicalCommand,
+  LexicalEditor,
+  LexicalNode} from "lexical";
 import {
   $createNodeSelection,
   $createParagraphNode,
@@ -16,21 +22,15 @@ import {
   $isRootOrShadowRoot,
   $setSelection,
   COMMAND_PRIORITY_EDITOR,
-  createCommand,
-  EditorThemeClasses,
-  Klass,
-  LexicalCommand,
-  LexicalEditor,
-  LexicalNode,
+  createCommand
 } from "lexical";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import * as React from "react";
-import invariant from "shared/invariant";
-
-import { $createTableNodeWithDimensions, TableNode } from "../nodes/TableNode";
-import Button from "../ui/Button";
-import { DialogActions } from "../ui/Dialog";
-import TextInput from "../ui/TextInput";
+import { $createTableNodeWithDimensions, TableNode } from "../../nodes/TableNode";
+import Button from "../../components/Button";
+import { DialogActions } from "../../components/Dialog";
+import TextInput from "../../components/TextInput";
+import invariant from "~/utils/utils";
 
 export type InsertTableCommandPayload = Readonly<{
   columns: string;

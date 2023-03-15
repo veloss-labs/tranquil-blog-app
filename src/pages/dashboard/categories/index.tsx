@@ -9,6 +9,8 @@ import {
   Row,
   Breadcrumb,
   Col,
+  Modal,
+  type TablePaginationConfig,
 } from "antd";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import DashboardLayout from "~/components/dashboard/DashboardLayout";
@@ -26,6 +28,12 @@ import dynamic from "next/dynamic";
 
 import type { GetServerSidePropsContext } from "next";
 import { useMemoizedFn } from "ahooks";
+import { api } from "~/utils/api";
+import { isString } from "~/utils/assertion";
+import { computedTableIndex } from "~/utils/utils";
+import dayjs from "dayjs";
+import type { PostCategory } from "@prisma/client";
+import { logger } from "~/utils/logger";
 
 interface FormFields {
   keyword: string;
@@ -53,6 +61,9 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
 export default function Categories() {
   const [open, setOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<
+    PostCategory | undefined
+  >(undefined);
 
   const defaultQuery = useMemo(
     () => ({
@@ -77,7 +88,50 @@ export default function Categories() {
       initialQuery: defaultQuery,
     });
     return _instance;
-  }, []);
+  }, [defaultQuery]);
+
+  const page = isString(state.pageNo) ? parseInt(state.pageNo, 10) : 1;
+  const pageSize = isString(state.pageSize) ? parseInt(state.pageSize, 10) : 10;
+
+  const query = api.categories.pages.useQuery(
+    {
+      page,
+      pageSize,
+    },
+    {
+      staleTime: Infinity,
+      onError: (error) => {
+        logger.error("[dashboard - categories] pages error", error);
+      },
+    }
+  );
+
+  const mutation_delete = api.categories.delete.useMutation({
+    onSuccess: () => {
+      query.refetch();
+      Modal.success({
+        title: "카테고리 삭제",
+        content: "카테고리가 삭제되었습니다.",
+        centered: true,
+      });
+    },
+    onError(error) {
+      logger.error("[dashboard - categories] delete error", error);
+      Modal.error({
+        title: "카테고리 삭제",
+        content: "카테고리 삭제에 실패했습니다.",
+        centered: true,
+      });
+    },
+  });
+
+  const data = useMemo(() => {
+    const _data = query.data?.data;
+    return {
+      list: _data?.list ?? [],
+      total: _data?.totalCount ?? 0,
+    };
+  }, [query]);
 
   const [form] = Form.useForm<FormFields>();
 
@@ -94,6 +148,54 @@ export default function Categories() {
     reset();
     form.resetFields();
   }, [form, reset]);
+
+  const onRowClick = useCallback((record: PostCategory) => {
+    setSelectedCategory(record);
+    setOpen(true);
+  }, []);
+
+  const onRowItemClickForDelete = useCallback(
+    async (id: number) => {
+      const async_confirm = new Promise((resolve) => {
+        Modal.confirm({
+          title: "카테고리 삭제",
+          content: "정말로 삭제하시겠습니까?",
+          centered: true,
+          onOk: () => {
+            resolve(true);
+          },
+          onCancel: () => {
+            resolve(false);
+          },
+        });
+      });
+
+      const confirm = await async_confirm;
+      if (!confirm) return;
+      mutation_delete.mutate({
+        id,
+      });
+    },
+    [mutation_delete]
+  );
+
+  const onTableChange = useCallback(
+    (data: TablePaginationConfig) => {
+      const pagination: Record<string, any> = {};
+      if (data.current) {
+        pagination.pageNo = data.current;
+      }
+
+      if (data.pageSize) {
+        pagination.pageSize = data.pageSize;
+      }
+
+      const formData = form.getFieldsValue();
+      const query = _search.makeQuery({ ...formData, ...pagination });
+      setState(query);
+    },
+    [_search, form, setState]
+  );
 
   useEffect(() => {
     if (!router.isReady) return;
@@ -153,7 +255,13 @@ export default function Categories() {
           >
             등록
           </Button>
-          <Button type="text" htmlType="button">
+          <Button
+            type="text"
+            htmlType="button"
+            onClick={useMemoizedFn(() => {
+              query.refetch();
+            })}
+          >
             화면갱신
           </Button>
         </Space>
@@ -161,43 +269,102 @@ export default function Categories() {
       <Table
         columns={[
           {
-            dataIndex: "seq",
+            dataIndex: "id",
             title: "순번",
-            sorter: false,
             align: "center",
+            width: 80,
+            fixed: "left",
+            render: (_, __, index: number) => {
+              return computedTableIndex(data.total, pageSize, page, index);
+            },
           },
           {
             dataIndex: "name",
             title: "카테고리명",
             align: "center",
+            width: 120,
+            fixed: "left",
           },
           {
             dataIndex: "description",
             title: "설명",
-            align: "center",
+            align: "left",
           },
           {
             dataIndex: "createdAt",
             title: "등록일",
             align: "center",
+            width: 150,
+            render: (value: string) => {
+              return dayjs(value).format("YYYY-MM-DD");
+            },
           },
           {
             dataIndex: "updatedAt",
             title: "업데이트일",
             align: "center",
+            width: 150,
+            render: (value: string) => {
+              return dayjs(value).format("YYYY-MM-DD");
+            },
+          },
+          {
+            dataIndex: "id",
+            title: "관리",
+            align: "center",
+            width: 100,
+            render: (value: number) => {
+              return (
+                <Button
+                  type="text"
+                  size="small"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onRowItemClickForDelete(value);
+                  }}
+                >
+                  삭제
+                </Button>
+              );
+            },
           },
         ]}
-        rowKey="seq"
-        dataSource={[]}
+        rowKey="id"
+        dataSource={data.list}
+        loading={query.isLoading}
         size="small"
         locale={{
           emptyText: "데이터가 없습니다.",
         }}
         bordered
+        onChange={onTableChange}
+        onRow={(record) => {
+          return {
+            onClick: () => onRowClick(record),
+          };
+        }}
+        scroll={{ x: 1500 }}
+        pagination={{
+          pageSize,
+          current: page,
+          total: data.total,
+          showSizeChanger: true,
+          showQuickJumper: true,
+          locale: {
+            items_per_page: "개씩 보기",
+          },
+        }}
       />
       <DashboardCategoriesModal
         open={open}
-        changeOpen={useMemoizedFn((value: boolean) => setOpen(value))}
+        category={selectedCategory}
+        changeOpen={useMemoizedFn((value: boolean) => {
+          setOpen(value);
+          if (!value) {
+            setSelectedCategory(undefined);
+          }
+        })}
       />
     </div>
   );

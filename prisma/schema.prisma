@@ -143,6 +143,8 @@ model PostDraft {
 
     userId String
     user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@map("post_drafts")
 }
 
 model PostLike {
