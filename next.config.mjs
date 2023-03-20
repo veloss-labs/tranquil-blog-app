@@ -11,11 +11,6 @@ const config = {
   reactStrictMode: true,
   compress: true,
   poweredByHeader: false,
-  // experimental: {
-  //   runtime: 'experimental-edge',
-  // },
-  /* If trying out the experimental appDir, comment the i18n config out
-   * @see https://github.com/vercel/next.js/issues/41980 */
   i18n: {
     locales: ["ko", "en"],
     defaultLocale: "ko",

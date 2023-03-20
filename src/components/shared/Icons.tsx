@@ -15,8 +15,24 @@ import Bars3Icon from "@heroicons/react/24/outline/Bars3Icon";
 import Bars3BottomRightIcon from "@heroicons/react/24/outline/Bars3BottomRightIcon";
 import ClockIcon from "@heroicons/react/24/outline/ClockIcon";
 import Icon from "@ant-design/icons";
+import {
+  ListBulletIcon,
+  FontBoldIcon,
+  FontItalicIcon,
+  StrikethroughIcon,
+  CodeIcon,
+  Pencil1Icon,
+  HeadingIcon,
+  QuoteIcon,
+  CheckboxIcon,
+  ActivityLogIcon,
+  ArrowLeftIcon as BackIcon,
+  ArrowRightIcon as ForwardIcon,
+} from "@radix-ui/react-icons";
 
 import type { CustomIconComponentProps } from "@ant-design/icons/lib/components/Icon";
+
+interface IconProps extends React.SVGProps<SVGSVGElement> {}
 
 export const Icons = {
   logo: Square3Stack3DIcon,
@@ -35,6 +51,18 @@ export const Icons = {
   menu: Bars3Icon,
   time: ClockIcon,
   subTitle: Bars3BottomRightIcon,
+  Bold: FontBoldIcon,
+  Italic: FontItalicIcon,
+  Strikethrough: StrikethroughIcon,
+  Code: CodeIcon,
+  Highlight: Pencil1Icon,
+  Heading: HeadingIcon,
+  Quote: QuoteIcon,
+  BulletList: ListBulletIcon,
+  Checkbox: CheckboxIcon,
+  ActivityLog: ActivityLogIcon,
+  Back: BackIcon,
+  Forward: ForwardIcon,
 };
 
 export const AntdIcons = {

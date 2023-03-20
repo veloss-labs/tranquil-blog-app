@@ -39,8 +39,20 @@
 }
 
 .dashboard-posts--content-editor .editor-title .ant-input:focus {
-  /* border-color: #495057; */
-  /* box-shadow: 0 0 0 2px rgb(2 8 13 / 62%); */
-  /* border-inline-end-width: 1px; */
+  @apply border-none shadow-none;
+}
+
+.dashboard-posts--content-editor .editor-subtitle {
+  @apply relative mt-3;
+}
+
+.dashboard-posts--content-editor .editor-subtitle textarea {
+  font-size: 1.5rem;
+  --tw-text-opacity: 1;
+  color: rgb(51 65 85 / var(--tw-text-opacity));
+  @apply w-full resize-none font-medium border-none appearance-none outline-none leading-[1.375] pl-4 pr-10 bg-transparent;
+}
+
+.dashboard-posts--content-editor .editor-subtitle .ant-input:focus {
   @apply border-none shadow-none;
 }

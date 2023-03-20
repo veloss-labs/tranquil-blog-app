@@ -18,6 +18,8 @@ export type IsAnyBoolean<T> = 1 extends 0 & T ? true : false;
 
 export type IsKnown<T, Y, N> = unknown extends T ? N : Y;
 
+export type NonNullable<T> = T extends null | undefined ? never : T;
+
 export type Values<O> = O[ValueKeys<O>];
 
 export type ValueKeys<O> = Extract<keyof O, PropertyKey>;

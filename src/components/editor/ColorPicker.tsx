@@ -1,55 +1,42 @@
-/**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
-import React, { useEffect, useMemo, useRef, useState } from "react";
-
-import DropDown from "./DropDown";
-import TextInput from "./TextInput";
+import { Input, Form, Button } from "antd";
+import clsx from "clsx";
+import React, { useMemo, useState, useEffect, useRef } from "react";
 
 interface ColorPickerProps {
-  disabled?: boolean;
   buttonAriaLabel?: string;
-  buttonClassName: string;
   buttonIconClassName?: string;
   buttonLabel?: string;
   color: string;
-  children?: React.ReactNode;
   onChange?: (color: string) => void;
   title?: string;
+  children?: React.ReactNode;
 }
 
-const basicColors = [
-  "#d0021b",
-  "#f5a623",
-  "#f8e71c",
-  "#8b572a",
-  "#7ed321",
-  "#417505",
-  "#bd10e0",
-  "#9013fe",
-  "#4a90e2",
-  "#50e3c2",
-  "#b8e986",
-  "#000000",
-  "#4a4a4a",
-  "#9b9b9b",
-  "#ffffff",
-];
-
-const WIDTH = 214;
+const WIDTH = 210;
 const HEIGHT = 150;
 
-export default function ColorPicker({
-  color,
-  children,
-  onChange,
-  disabled = false,
-  ...rest
-}: Readonly<ColorPickerProps>): JSX.Element {
+function ColorPicker({ color, children, onChange }: ColorPickerProps) {
+  const basicColors = useMemo(
+    () => [
+      "#d0021b",
+      "#f5a623",
+      "#f8e71c",
+      "#8b572a",
+      "#7ed321",
+      "#417505",
+      "#bd10e0",
+      "#9013fe",
+      "#4a90e2",
+      "#50e3c2",
+      "#b8e986",
+      "#000000",
+      "#4a4a4a",
+      "#9b9b9b",
+      "#ffffff",
+    ],
+    []
+  );
+
   const [selfColor, setSelfColor] = useState(transformColor("hex", color));
   const [inputColor, setInputColor] = useState(color);
   const innerDivRef = useRef(null);
@@ -97,14 +84,6 @@ export default function ColorPicker({
   };
 
   useEffect(() => {
-    // Check if the dropdown is actually active
-    if (innerDivRef.current !== null && onChange) {
-      onChange(selfColor.hex);
-      setInputColor(selfColor.hex);
-    }
-  }, [selfColor, onChange]);
-
-  useEffect(() => {
     if (color === undefined) return;
     const newColor = transformColor("hex", color);
     setSelfColor(newColor);
@@ -112,17 +91,20 @@ export default function ColorPicker({
   }, [color]);
 
   return (
-    <DropDown {...rest} disabled={disabled}>
-      <div
-        className="color-picker-wrapper"
-        style={{ width: WIDTH }}
-        ref={innerDivRef}
-      >
-        <TextInput label="Hex" onChange={onSetHex} value={inputColor} />
-        <div className="color-picker-basic-color">
+    <>
+      <div className="px-[20px] pt-[5px] pb-[20px]" ref={innerDivRef}>
+        <Form.Item label="Hex" className="mb-2">
+          <Input
+            onChange={(e) => onSetHex(e.target.value)}
+            value={inputColor}
+          />
+        </Form.Item>
+        <div className="m-0 flex flex-wrap gap-2 p-0">
           {basicColors.map((basicColor) => (
             <button
-              className={basicColor === selfColor.hex ? " active" : ""}
+              className={clsx(
+                "h-4 w-4 cursor-pointer list-none rounded-full border border-solid bg-brand-900"
+              )}
               key={basicColor}
               style={{ backgroundColor: basicColor }}
               onClick={() => {
@@ -132,38 +114,84 @@ export default function ColorPicker({
             />
           ))}
         </div>
-        <MoveWrapper
-          className="color-picker-saturation"
+        <ColorPicker.MoveWrapper
+          className="color-picker-saturation relative mt-4 h-[150px] w-full select-none"
           style={{ backgroundColor: `hsl(${selfColor.hsv.h}, 100%, 50%)` }}
           onChange={onMoveSaturation}
         >
           <div
-            className="color-picker-saturation_cursor"
+            className="color-picker-saturation_cursor w-5 h-5 rounded-[50%] absolute box-border shadow-lg"
             style={{
               backgroundColor: selfColor.hex,
               left: saturationPosition.x,
               top: saturationPosition.y,
             }}
           />
-        </MoveWrapper>
-        <MoveWrapper className="color-picker-hue" onChange={onMoveHue}>
+        </ColorPicker.MoveWrapper>
+        <ColorPicker.MoveWrapper
+          className="color-picker-hue relative mt-4 h-3 w-full select-none rounded-xl"
+          onChange={onMoveHue}
+        >
           <div
-            className="color-picker-hue_cursor"
+            className="color-picker-hue_cursor w-5 h-5 absolute rounded-[50%] box-border shadow"
             style={{
               backgroundColor: `hsl(${selfColor.hsv.h}, 100%, 50%)`,
               left: huePosition.x,
             }}
           />
-        </MoveWrapper>
+        </ColorPicker.MoveWrapper>
         <div
-          className="color-picker-color"
+          className="mt-4 h-5 w-full border border-solid border-brand-200"
           style={{ backgroundColor: selfColor.hex }}
         />
+        <div className="mt-3 flex justify-end">
+          <Button
+            type="primary"
+            size="small"
+            className="!shadow-none"
+            onClick={() => {
+              onChange?.(selfColor.hex);
+              setInputColor(selfColor.hex);
+            }}
+          >
+            Confirm
+          </Button>
+        </div>
       </div>
       {children}
-    </DropDown>
+      <style jsx global>{`
+        .color-picker-saturation {
+          background-image: linear-gradient(transparent, black),
+            linear-gradient(to right, white, transparent);
+        }
+        .color-picker-saturation_cursor {
+          border: 2px solid #ffffff;
+          transform: translate(-10px, -10px);
+        }
+
+        .color-picker-hue {
+          background-image: linear-gradient(
+            to right,
+            rgb(255, 0, 0),
+            rgb(255, 255, 0),
+            rgb(0, 255, 0),
+            rgb(0, 255, 255),
+            rgb(0, 0, 255),
+            rgb(255, 0, 255),
+            rgb(255, 0, 0)
+          );
+        }
+
+        .color-picker-hue_cursor {
+          border: 2px solid #ffffff;
+          transform: translate(-10px, -4px);
+        }
+      `}</style>
+    </>
   );
 }
+
+export default ColorPicker;
 
 export interface Position {
   x: number;
@@ -177,7 +205,7 @@ interface MoveWrapperProps {
   children: JSX.Element;
 }
 
-function MoveWrapper({
+ColorPicker.MoveWrapper = function MoveWrapper({
   className,
   style,
   onChange,
@@ -218,100 +246,16 @@ function MoveWrapper({
   };
 
   return (
-    <>
-      <div
-        ref={divRef}
-        className={className}
-        style={style}
-        onMouseDown={onMouseDown}
-      >
-        {children}
-      </div>
-      <style jsx global>{`
-        .color-picker-wrapper {
-          padding: 20px;
-        }
-
-        .color-picker-basic-color {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 10px;
-          margin: 0;
-          padding: 0;
-        }
-
-        .color-picker-basic-color button {
-          border: 1px solid #ccc;
-          border-radius: 4px;
-          height: 16px;
-          width: 16px;
-          cursor: pointer;
-          list-style-type: none;
-        }
-
-        .color-picker-basic-color button.active {
-          box-shadow: 0px 0px 2px 2px rgba(0, 0, 0, 0.3);
-        }
-
-        .color-picker-saturation {
-          width: 100%;
-          position: relative;
-          margin-top: 15px;
-          height: 150px;
-          background-image: linear-gradient(transparent, black),
-            linear-gradient(to right, white, transparent);
-          user-select: none;
-        }
-        .color-picker-saturation_cursor {
-          position: absolute;
-          width: 20px;
-          height: 20px;
-          border: 2px solid #ffffff;
-          border-radius: 50%;
-          box-shadow: 0 0 15px #00000026;
-          box-sizing: border-box;
-          transform: translate(-10px, -10px);
-        }
-        .color-picker-hue {
-          width: 100%;
-          position: relative;
-          margin-top: 15px;
-          height: 12px;
-          background-image: linear-gradient(
-            to right,
-            rgb(255, 0, 0),
-            rgb(255, 255, 0),
-            rgb(0, 255, 0),
-            rgb(0, 255, 255),
-            rgb(0, 0, 255),
-            rgb(255, 0, 255),
-            rgb(255, 0, 0)
-          );
-          user-select: none;
-          border-radius: 12px;
-        }
-
-        .color-picker-hue_cursor {
-          position: absolute;
-          width: 20px;
-          height: 20px;
-          border: 2px solid #ffffff;
-          border-radius: 50%;
-          box-shadow: #0003 0 0 0 0.5px;
-          box-sizing: border-box;
-          transform: translate(-10px, -4px);
-        }
-
-        .color-picker-color {
-          border: 1px solid #ccc;
-          margin-top: 15px;
-          width: 100%;
-          height: 20px;
-        }
-      `}</style>
-    </>
+    <div
+      ref={divRef}
+      className={className}
+      style={style}
+      onMouseDown={onMouseDown}
+    >
+      {children}
+    </div>
   );
-}
+};
 
 function clamp(value: number, max: number, min: number) {
   return value > max ? max : value < min ? min : value;
@@ -361,22 +305,18 @@ export function toHex(value: string): string {
 function hex2rgb(hex: string): RGB {
   const rbgArr = (
     hex
-      .replace(
-        /^#?([a-f\d])([a-f\d])([a-f\d])$/i,
-        // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-        (m, r, g, b) => "#" + r + r + g + g + b + b
-      )
+      .replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i, (m, r, g, b) => {
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        return `#${r}${r}${g}${g}${b}${b}`;
+      })
       .substring(1)
       .match(/.{2}/g) || []
   ).map((x) => parseInt(x, 16));
 
   return {
-    // @ts-ignore
-    b: rbgArr[2],
-    // @ts-ignore
-    g: rbgArr[1],
-    // @ts-ignore
-    r: rbgArr[0],
+    b: rbgArr[2] as number,
+    g: rbgArr[1] as number,
+    r: rbgArr[0] as number,
   };
 }
 
