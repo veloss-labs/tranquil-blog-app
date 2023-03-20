@@ -2,6 +2,7 @@ import React, { useCallback } from "react";
 import { Button, Input } from "antd";
 import { Icons } from "~/components/shared/Icons";
 import { useEditorContext } from "~/context/editor-context";
+import PostsCoverButton from "~/components/dashboard/posts/PostsCoverButton";
 
 const PostsEditorHead = () => {
   const {
@@ -42,14 +43,7 @@ const PostsEditorHead = () => {
     <>
       <div className="editor-header">
         <div>
-          <Button
-            type="text"
-            size="small"
-            className="!inline-flex !items-center space-x-2"
-            icon={<Icons.media className="icon--sm" />}
-          >
-            Add Cover
-          </Button>
+          <PostsCoverButton />
           {!subtitle.open ? (
             <Button
               type="text"
@@ -64,7 +58,12 @@ const PostsEditorHead = () => {
         </div>
       </div>
       <div className="editor-title">
-        <Input.TextArea value={title} autoSize placeholder="제목" onChange={onChangeTitle} />
+        <Input.TextArea
+          value={title}
+          autoSize
+          placeholder="제목"
+          onChange={onChangeTitle}
+        />
       </div>
       {subtitle.open ? (
         <div className="editor-subtitle" aria-label="sub title">

@@ -1,6 +1,6 @@
 /* Basic editor styles */
 .ProseMirror {
-  @apply my-4 outline-none;
+  @apply my-4 outline-none min-h-[500px];
 }
 
 .ProseMirror > * + * {

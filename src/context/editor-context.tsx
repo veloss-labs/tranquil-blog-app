@@ -1,5 +1,6 @@
 import React, { useReducer, useMemo } from "react";
 import { createContext } from "~/libs/react/context";
+import type { Nullable } from "~/ts/common";
 
 interface PopoverContextState {
   open: boolean;
@@ -17,11 +18,24 @@ interface SubtitleContextState extends PopoverContextState {
   text: string;
 }
 
+interface CoverContextState extends PopoverContextState {
+  id: number | null;
+  url: string | null;
+  transition: Transition;
+}
+
+export enum Transition {
+  IDLE = "IDLE",
+  PROCESSING = "PROCESSING",
+  DONE = "DONE",
+}
+
 interface EditorContextState {
   highlight: HighlightContextState;
   heading: HeadingContextState;
   subtitle: SubtitleContextState;
   title: string;
+  cover: CoverContextState;
 }
 
 enum Action {
@@ -31,6 +45,8 @@ enum Action {
   CHANGE_HEADING_LEVEL = "CHANGE_HEADING_LEVEL",
   CHNAGE_SUBTITLE_TEXT = "CHNAGE_SUBTITLE_TEXT",
   CHANGE_TITLE_TEXT = "CHANGE_TITLE_TEXT",
+  CHANGE_COVER = "CHANGE_COVER",
+  TRANSITION_COVER = "TRANSITION_COVER",
 }
 
 type PopoverOpenAction = {
@@ -75,13 +91,30 @@ type ChangeTitleTextAction = {
   };
 };
 
+type ChangeCoverAction = {
+  type: Action.CHANGE_COVER;
+  payload: {
+    id: Nullable<number>;
+    url: Nullable<string>;
+  };
+};
+
+type ChangeCoverTransitionAction = {
+  type: Action.TRANSITION_COVER;
+  payload: {
+    transition: Transition;
+  };
+};
+
 type ActionType =
   | PopoverOpenAction
   | PopoverCloseAction
   | ChangeHighlightColorAction
   | ChangeHeadingLevelAction
   | ChangeSubtitleTextAction
-  | ChangeTitleTextAction;
+  | ChangeTitleTextAction
+  | ChangeCoverAction
+  | ChangeCoverTransitionAction;
 
 interface EditorContext extends EditorContextState {
   popoverOpen: (payload: PopoverOpenAction["payload"]) => void;
@@ -89,13 +122,10 @@ interface EditorContext extends EditorContextState {
   changeHighlightColor: (
     payload: ChangeHighlightColorAction["payload"]
   ) => void;
-  changeHeadingLevel: (
-    payload: ChangeHeadingLevelAction["payload"]
-  ) => void;
-  changeSubtitleText: (
-    payload: ChangeSubtitleTextAction["payload"]
-  ) => void;
+  changeHeadingLevel: (payload: ChangeHeadingLevelAction["payload"]) => void;
+  changeSubtitleText: (payload: ChangeSubtitleTextAction["payload"]) => void;
   changeTitleText: (payload: ChangeTitleTextAction["payload"]) => void;
+  transitionCover: (payload: ChangeCoverTransitionAction["payload"]) => void;
   dispatch: React.Dispatch<ActionType>;
 }
 
@@ -111,6 +141,12 @@ const initialState: EditorContextState = {
   subtitle: {
     open: false,
     text: "",
+  },
+  cover: {
+    transition: Transition.IDLE,
+    open: false,
+    id: null,
+    url: null,
   },
   title: "",
 };
@@ -167,6 +203,23 @@ function reducer(state = initialState, action: ActionType): EditorContextState {
       return {
         ...state,
         title: action.payload.text,
+      };
+    case Action.CHANGE_COVER:
+      return {
+        ...state,
+        cover: {
+          ...state.cover,
+          id: action.payload.id,
+          url: action.payload.url,
+        },
+      };
+    case Action.TRANSITION_COVER:
+      return {
+        ...state,
+        cover: {
+          ...state.cover,
+          transition: action.payload.transition,
+        },
       };
     default:
       return state;
@@ -227,6 +280,20 @@ function EditorProvider({ children, ...otherProps }: Props) {
     });
   };
 
+  const changeCover = (payload: ChangeCoverAction["payload"]) => {
+    dispatch({
+      type: Action.CHANGE_COVER,
+      payload,
+    });
+  };
+
+  const transitionCover = (payload: ChangeCoverTransitionAction["payload"]) => {
+    dispatch({
+      type: Action.TRANSITION_COVER,
+      payload,
+    });
+  };
+
   const actions = useMemo(
     () => ({
       ...state,
@@ -236,6 +303,8 @@ function EditorProvider({ children, ...otherProps }: Props) {
       changeHeadingLevel,
       changeSubtitleText,
       changeTitleText,
+      changeCover,
+      transitionCover,
       dispatch,
     }),
     [state]

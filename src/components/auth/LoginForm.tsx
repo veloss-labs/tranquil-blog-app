@@ -64,7 +64,7 @@ export default function LoginForm() {
         layout="vertical"
         onFinish={handleSubmit(onSubmit)}
         initialValues={{
-          email: "test@naver.com",
+          email:"test@email.com",
           password: "1q2w3e4r!Q",
         }}
       >
