@@ -1,4 +1,5 @@
 import * as z from "zod";
+import { schema as common } from "~/libs/validation/common";
 
 export const schema = {
   create: z.object({
@@ -25,6 +26,11 @@ export const schema = {
   byId: z.object({
     id: z.number().int().positive(),
   }),
+  pages: z
+  .object({
+    keyword: z.string().optional().nullish(),
+  })
+  .merge(common.pages),
 };
 
 export type CreateData = z.infer<typeof schema.create>;

@@ -123,13 +123,15 @@ model Post {
 }
 
 model PostImage {
-    id        Int      @id @default(autoincrement())
-    url       String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    userId    String
-    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-    posts     Post[]
+    id         Int      @id @default(autoincrement())
+    url        String
+    mediaType  String
+    uploadType String   @default("etc")
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime @updatedAt
+    userId     String
+    user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    posts      Post[]
 
     @@map("post_images")
 }

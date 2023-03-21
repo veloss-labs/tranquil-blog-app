@@ -1,6 +1,6 @@
 /* Basic editor styles */
 .ProseMirror {
-  @apply my-4 outline-none min-h-[500px];
+  @apply my-4 min-h-[500px] outline-none;
 }
 
 .ProseMirror > * + * {
@@ -16,6 +16,9 @@
   pointer-events: none;
 }
 
+.ProseMirror ul[data-type="taskList"] {
+  list-style: none;
+}
 .ProseMirror ul,
 .ProseMirror ol {
   padding: 0 1rem;
@@ -114,4 +117,14 @@
 
 .editor__popover-close:hover {
   @apply bg-brand-100;
+}
+
+.editor__popover-content .upload__container {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+  @apply w-full rounded-lg border shadow-lg;
+}
+
+.editor-header [data-radix-popper-content-wrapper] {
+  @apply !z-[300];
 }

@@ -1,5 +1,6 @@
 import { schema } from "~/libs/validation/common";
 import { createTRPCRouter, creatorProcedure } from "~/server/api/trpc";
+import { r2Manager } from "~/server/service/r2Manager";
 import { responseWith } from "~/server/utils/response";
 
 export const imagesRouter = createTRPCRouter({
@@ -15,6 +16,14 @@ export const imagesRouter = createTRPCRouter({
       const cursor = input.cursor ?? input.initialCursor;
 
       const items = await ctx.prisma.postImage.findMany({
+        select: {
+          id: true,
+          url: true,
+          createdAt: true,
+        },
+        where: {
+          mediaType: "images",
+        },
         take: limit + 1,
         cursor: cursor
           ? {
@@ -36,7 +45,10 @@ export const imagesRouter = createTRPCRouter({
 
       return responseWith({
         data: {
-          items: items,
+          items: items.map((item) => ({
+            ...item,
+            url: r2Manager.concatUrl(item.url),
+          })),
           nextCursor,
         },
       });

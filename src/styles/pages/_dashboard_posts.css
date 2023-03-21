@@ -50,9 +50,25 @@
   font-size: 1.5rem;
   --tw-text-opacity: 1;
   color: rgb(51 65 85 / var(--tw-text-opacity));
-  @apply w-full resize-none font-medium border-none appearance-none outline-none leading-[1.375] pl-4 pr-10 bg-transparent;
+  @apply w-full resize-none appearance-none border-none bg-transparent pl-4 pr-10 font-medium leading-[1.375] outline-none;
 }
 
 .dashboard-posts--content-editor .editor-subtitle .ant-input:focus {
   @apply border-none shadow-none;
+}
+
+.dashboard-posts--content-editor .editor-cover {
+  @apply mb-5;
+}
+
+.dashboard-posts--content-editor .editor-cover .editor-cover__container {
+  padding-top: 52.5%;
+  @apply relative h-40 w-full rounded-lg bg-cover;
+}
+
+.dashboard-posts--content-editor
+  .editor-cover
+  .editor-cover__container
+  .editor-cover__controls {
+  @apply absolute top-0 right-0 m-5 flex flex-row items-center;
 }

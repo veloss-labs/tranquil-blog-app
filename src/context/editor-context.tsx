@@ -39,6 +39,7 @@ interface EditorContextState {
 }
 
 enum Action {
+  POPOVER_ALL_CLOSE = "POPOVER_ALL_CLOSE",
   POPOVER_OPEN = "POPOVER_OPEN",
   POPOVER_CLOSE = "POPOVER_CLOSE",
   CHANGE_HIGHLIGHT_COLOR = "CHANGE_HIGHLIGHT_COLOR",
@@ -47,6 +48,10 @@ enum Action {
   CHANGE_TITLE_TEXT = "CHANGE_TITLE_TEXT",
   CHANGE_COVER = "CHANGE_COVER",
   TRANSITION_COVER = "TRANSITION_COVER",
+}
+
+type PopoverAllCloseAction = {
+  type: Action.POPOVER_ALL_CLOSE;
 }
 
 type PopoverOpenAction = {
@@ -114,9 +119,11 @@ type ActionType =
   | ChangeSubtitleTextAction
   | ChangeTitleTextAction
   | ChangeCoverAction
-  | ChangeCoverTransitionAction;
+  | ChangeCoverTransitionAction
+  | PopoverAllCloseAction;
 
 interface EditorContext extends EditorContextState {
+  popoverAllClose: () => void;
   popoverOpen: (payload: PopoverOpenAction["payload"]) => void;
   popoverClose: (payload: PopoverCloseAction["payload"]) => void;
   changeHighlightColor: (
@@ -126,6 +133,7 @@ interface EditorContext extends EditorContextState {
   changeSubtitleText: (payload: ChangeSubtitleTextAction["payload"]) => void;
   changeTitleText: (payload: ChangeTitleTextAction["payload"]) => void;
   transitionCover: (payload: ChangeCoverTransitionAction["payload"]) => void;
+  changeCover: (payload: ChangeCoverAction["payload"]) => void;
   dispatch: React.Dispatch<ActionType>;
 }
 
@@ -159,6 +167,27 @@ const [Provider, useEditorContext] = createContext<EditorContext>({
 
 function reducer(state = initialState, action: ActionType): EditorContextState {
   switch (action.type) {
+    case Action.POPOVER_ALL_CLOSE: {
+      return {
+        ...state,
+        highlight: {
+          ...state.highlight,
+          open: false,
+        },
+        heading: {
+          ...state.heading,
+          open: false,
+        },
+        subtitle: {
+          ...state.subtitle,
+          open: false,
+        },
+        cover: {
+          ...state.cover,
+          open: false,
+        },
+      };
+    }
     case Action.POPOVER_OPEN:
       return {
         ...state,
@@ -236,6 +265,12 @@ function EditorProvider({ children, ...otherProps }: Props) {
     Object.assign({}, initialState, otherProps)
   );
 
+  const popoverAllClose = () => {
+    dispatch({
+      type: Action.POPOVER_ALL_CLOSE,
+    })
+  }
+
   const popoverOpen = (payload: PopoverOpenAction["payload"]) => {
     dispatch({
       type: Action.POPOVER_OPEN,
@@ -297,6 +332,7 @@ function EditorProvider({ children, ...otherProps }: Props) {
   const actions = useMemo(
     () => ({
       ...state,
+      popoverAllClose,
       popoverOpen,
       popoverClose,
       changeHighlightColor,

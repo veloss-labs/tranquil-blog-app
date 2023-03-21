@@ -14,7 +14,7 @@ interface ToolbarProps {
 }
 
 function Toolbar({ editor }: ToolbarProps) {
-  const {} = useEditorContext();
+  const { } = useEditorContext();
 
   return (
     <div className="editor__toolbar">
@@ -97,9 +97,9 @@ function Toolbar({ editor }: ToolbarProps) {
         onClick={() => editor.chain().focus().toggleOrderedList().run()}
         disabled={!editor.can().chain().focus().toggleOrderedList().run()}
       >
-        <Icons.ActivityLog />
+        <Icons.OrderedList />
       </button>
-      <button
+      {/* <button
         type="button"
         aria-label="Toggle task list"
         className={clsx("btn-menu", {
@@ -109,7 +109,7 @@ function Toolbar({ editor }: ToolbarProps) {
         disabled={!editor.can().chain().focus().toggleTaskList().run()}
       >
         <Icons.Checkbox />
-      </button>
+      </button> */}
       <div className="divider"></div>
       <button
         type="button"
@@ -215,7 +215,7 @@ Toolbar.Heading = function Heading({ editor }: ToolbarProps) {
   );
 };
 
-interface HighlightProps extends ToolbarProps {}
+interface HighlightProps extends ToolbarProps { }
 
 Toolbar.Highlight = function Highlight({ editor }: HighlightProps) {
   const { highlight, popoverClose, popoverOpen, changeHighlightColor } =

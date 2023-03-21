@@ -9,9 +9,11 @@ const PostsEditorHead = () => {
     popoverOpen,
     popoverClose,
     title,
+    cover,
     subtitle,
     changeSubtitleText,
     changeTitleText,
+    changeCover,
   } = useEditorContext();
 
   const onAddSubtitle = useCallback(() => {
@@ -39,6 +41,10 @@ const PostsEditorHead = () => {
       [changeTitleText]
     );
 
+  const onRemoveCover = useCallback(() => {
+    changeCover({ id: null, url: null });
+  }, [changeCover]);
+
   return (
     <>
       <div className="editor-header">
@@ -57,6 +63,25 @@ const PostsEditorHead = () => {
           ) : null}
         </div>
       </div>
+      {cover.url ? (
+        <div className="editor-cover">
+          <div
+            className="editor-cover__container"
+            style={{
+              backgroundImage: `url(${cover.url})`,
+            }}
+          >
+            <div className="editor-cover__controls">
+              <Button
+                type="default"
+                onClick={onRemoveCover}
+                className="!inline-flex !items-center !justify-center"
+                icon={<Icons.close className="icon--sm" />}
+              ></Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
       <div className="editor-title">
         <Input.TextArea
           value={title}

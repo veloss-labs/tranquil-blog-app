@@ -79,3 +79,17 @@ export const computedTableIndex = (
 ) => {
   return total - size * (no - 1) - index;
 };
+
+export function optimizeAnimation(callback: () => void) {
+  let ticking = false;
+
+  return () => {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(() => {
+        callback();
+        ticking = false;
+      });
+    }
+  };
+}

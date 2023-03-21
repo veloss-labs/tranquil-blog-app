@@ -11,9 +11,9 @@ import Profile from "~/components/dashboard/Profile";
 import { useLayoutDashboardContext } from "~/context/layout-context";
 import { useSession } from "next-auth/react";
 
-interface DraftsSidebarProps {}
+interface PostsSidebarProps { }
 
-function DraftsSidebar(_: DraftsSidebarProps) {
+function PostsSidebar(_: PostsSidebarProps) {
   const session = useSession();
   const { isShowSidebar, toggleSidebar } = useLayoutDashboardContext();
 
@@ -60,4 +60,4 @@ function DraftsSidebar(_: DraftsSidebarProps) {
   );
 }
 
-export default React.memo(DraftsSidebar);
+export default React.memo(PostsSidebar);

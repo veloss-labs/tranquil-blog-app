@@ -61,9 +61,7 @@
 }
 
 .subnav .subnav--filters {
-  -ms-flex: 0 0 200px;
-  flex: 0 0 200px;
-  @apply flex items-center justify-end;
+  @apply flex items-center justify-end flex-auto;
 }
 
 .container-contents--list {
@@ -92,19 +90,19 @@
 
 .posts-card-item .image-container {
   padding-top: 75%;
-  @apply relative w-full overflow-hidden rounded-lg bg-gray-200 mb-4;
+  @apply relative mb-4 w-full overflow-hidden rounded-lg bg-gray-200;
 }
 
 .posts-card-item .my-info {
-  @apply flex items-center mb-2 text-brand-500 text-sm lg:text-base;
+  @apply mb-2 flex items-center text-sm text-brand-500 lg:text-base;
 }
 
 .posts-card-item .title {
-  @apply text-base font-bold lg:text-lg text-ellipsis	 flex-1;
+  @apply flex-1 text-ellipsis text-base font-bold	 lg:text-lg;
 }
 
 .posts-card-item .action {
-  @apply flex gap-3 ml-1 flex-none;
+  @apply ml-1 flex flex-none gap-3;
 }
 
 @media screen and (min-width: 959px) {
@@ -123,5 +121,12 @@
 @media (min-width: 1200px) {
   .container-fluid {
     @apply px-[72px];
+  }
+}
+
+@media (min-width: 368px) {
+  .subnav .subnav--filters {
+    -ms-flex: 0 0 200px;
+    flex: 0 0 200px;
   }
 }

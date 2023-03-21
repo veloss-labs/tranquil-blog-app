@@ -9,6 +9,7 @@ import { prisma } from "~/server/db";
 import { generateHash, secureCompare } from "./utils/password";
 import type { User, UserProfile, UserRole } from "@prisma/client";
 import type { TRPCContext } from "./api/trpc";
+import { env } from "~/env/server.mjs";
 
 /**
  * Module augmentation for `next-auth` types
@@ -35,7 +36,7 @@ export interface UserSchema
  **/
 export const authOptions: NextAuthOptions = {
   debug: process.env.NODE_ENV === "development",
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: env.NEXTAUTH_SECRET,
   callbacks: {
     session({ session, token }) {
       // I skipped the line below coz it gave me a TypeError
@@ -127,8 +128,6 @@ export const authOptions: NextAuthOptions = {
           },
         });
 
-        console.log("user", user);
-
         if (!user) {
           return null;
         }
@@ -204,7 +203,7 @@ export const getServerAuthValidation = (
 };
 
 export const getTrpcRouterCookie = (ctx: TRPCContext) => {
-  const keys = [process.env.GUEST_ID_COOKIE_SECRET];
+  const keys = [env.GUEST_ID_COOKIE_SECRET];
   const cookies = new Cookies(ctx.req, ctx.res, { keys: keys });
   return cookies;
 };

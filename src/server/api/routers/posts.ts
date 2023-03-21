@@ -65,6 +65,37 @@ const _default_post_select = Prisma.validator<Prisma.PostSelect>()({
 });
 
 export const postsRouter = createTRPCRouter({
+  pages: creatorProcedure.input(schema.pages).query(async ({ input, ctx }) => {
+    const session = ctx.session;
+
+    const limit = input.pageSize ?? 20;
+    const page = input.page ?? 1;
+
+    const [posts, totalCount] = await Promise.all([
+      ctx.prisma.post.findMany({
+        take: limit,
+        skip: (page - 1) * limit,
+        orderBy: {
+          createdAt: "desc",
+        },
+        where: {
+          userId: session.id,
+        },
+      }),
+      ctx.prisma.post.count({
+        where: {
+          userId: session.id,
+        },
+      }),
+    ]);
+
+    return responseWith({
+      data: {
+        list: posts,
+        totalCount,
+      },
+    });
+  }),
   byId: publicProcedure.input(schema.byId).query(async ({ ctx, input }) => {
     const post = await ctx.prisma.post.findUnique({
       where: {

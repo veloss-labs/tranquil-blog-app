@@ -1,14 +1,12 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback } from "react";
 import classNames from "classnames";
 
 // components
 import { Avatar, Button, theme, Typography } from "antd";
-import PostsSidebar from "~/components/dashboard/posts/PostsSidebar";
 import Bars3Icon from "@heroicons/react/24/outline/Bars3Icon";
 
 // hooks
 import { useLayoutDashboardContext } from "~/context/layout-context";
-import { useMedia } from "~/libs/hooks/useMedia";
 
 interface DraftsLayoutProps {
   children: React.ReactNode;
@@ -18,7 +16,7 @@ interface DraftsLayoutProps {
 function DraftsLayout({ children, pageHeader }: DraftsLayoutProps) {
   const { token } = theme.useToken();
 
-  const { isShowSidebar, togglePopupMenu } = useLayoutDashboardContext();
+  const { togglePopupMenu } = useLayoutDashboardContext();
 
   const onTogglePopupMenu = useCallback(() => {
     togglePopupMenu();
@@ -27,7 +25,6 @@ function DraftsLayout({ children, pageHeader }: DraftsLayoutProps) {
   return (
     <>
       <div>
-        <PostsSidebar />
         <div className="mobile-header">
           <div className="flex items-center">
             <Avatar
@@ -52,23 +49,17 @@ function DraftsLayout({ children, pageHeader }: DraftsLayoutProps) {
             </Button>
           </div>
         </div>
-        <div
-          className={classNames("sm:h-full sm:overflow-auto", {
-            "sm:ml-72": isShowSidebar,
-          })}
-        >
+        <div className={classNames("sm:h-full sm:overflow-auto")}>
           {pageHeader}
           <section>{children}</section>
-          {!isShowSidebar ? (
-            <div className="fixed bottom-5 left-5">
-              <Button
-                htmlType="button"
-                type="primary"
-                className="!flex items-center justify-center !shadow-none"
-                icon={<Bars3Icon className="h-5 w-5" />}
-              />
-            </div>
-          ) : null}
+          <div className="fixed bottom-5 left-5">
+            <Button
+              htmlType="button"
+              type="primary"
+              className="!flex items-center justify-center !shadow-none"
+              icon={<Bars3Icon className="h-5 w-5" />}
+            />
+          </div>
         </div>
       </div>
     </>
