@@ -22,6 +22,7 @@ import { api } from "~/utils/api";
 import { useForceUpdate } from "~/libs/hooks/useForceUpdate";
 import { useEditorContext } from "~/context/editor-context";
 import { useEventListener } from "ahooks";
+import { useFormContext } from "react-hook-form";
 
 // utils
 import { optimizeAnimation } from "~/utils/utils";
@@ -35,6 +36,7 @@ import {
 // types
 import type { UploadRequestOption } from "rc-upload/lib/interface";
 import type { RcFile } from "antd/lib/upload";
+import type { CreateData } from "~/libs/validation/posts";
 
 const PostsCoverButton = () => {
   const forceUpdate = useForceUpdate();
@@ -129,6 +131,9 @@ PostsCoverButton.UploadCover = function UploadCover() {
 
   const mutation_upload = api.files.upload.useMutation();
 
+  const { changeCover } = useEditorContext();
+  const { setValue } = useFormContext<CreateData>()
+
   const isUploading = useMemo(() => {
     return mutation_url.isLoading || mutation_upload.isLoading;
   }, [mutation_upload.isLoading, mutation_url.isLoading]);
@@ -168,11 +173,17 @@ PostsCoverButton.UploadCover = function UploadCover() {
         uploadType: "posts",
         mediaType: "images",
       });
-      const { url = undefined } = resp_upload.data ?? {};
-      if (!url) {
+      const { url = undefined, id = undefined } = resp_upload.data ?? {};
+      if (!url || !id) {
         // TODO: Error 처리
         return;
       }
+
+      changeCover({
+        id,
+        url,
+      });
+      setValue('thumbnailId', id);
 
       ctx.images.infinity.refetch();
     },
@@ -305,17 +316,21 @@ PostsCoverButton.LibraryImage = function LibraryImage({
 }: LibraryImageProps) {
   const { changeCover, cover } = useEditorContext();
 
+  const { setValue } = useFormContext<CreateData>()
+
   const onSelect = useCallback(() => {
     if (cover.id === id) {
       changeCover({
         id: null,
         url: null,
       });
+      setValue('thumbnailId', null);
     } else {
       changeCover({
         id,
         url,
       });
+      setValue('thumbnailId', id);
     }
   }, [changeCover, cover.id, id, url]);
 

@@ -85,11 +85,11 @@ const SubNav = () => {
           </Button>
         </Dropdown>
       </div>
-      <div className="subnav--categories invisible space-x-1 md:visible">
+      <div className="subnav--categories snap-x space-x-1">
         <ul className="btn-categories-group">
           {categories.map((category) => (
             <li
-              className={clsx("btn-category", {
+              className={clsx("btn-category snap-center", {
                 active: false,
               })}
               key={`subnav-category-${category.id}`}

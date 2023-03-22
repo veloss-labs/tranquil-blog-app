@@ -28,7 +28,7 @@ export const filesRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const session = ctx.session;
 
-      await ctx.prisma.postImage.create({
+      const data = await ctx.prisma.postImage.create({
         data: {
           userId: session.id,
           url: input.key,
@@ -39,6 +39,7 @@ export const filesRouter = createTRPCRouter({
 
       return responseWith({
         data: {
+          id: data.id,
           // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
           url: `${env.CLOUDFLARE_R2_ENDPOINT}/${input.key}`,
         },

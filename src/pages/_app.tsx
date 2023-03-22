@@ -14,6 +14,7 @@ import { DashboardLayoutProvider } from "~/context/layout-context";
 import { DashboardRouteProvider } from "~/context/route-context";
 import { getRoutes } from "~/libs/router/api/routes";
 import { clientEnv } from "~/env/schema.mjs";
+import { useEffect } from "react";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -28,13 +29,14 @@ const App: AppType<AppPageProps> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
+  const ctx = api.useContext();
   // @ts-ignore
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-return
   const getLayout = Component.getLayout || ((page) => page);
 
-  api.common.generateId.useQuery(undefined, {
-    staleTime: Infinity,
-  });
+  useEffect(() => {
+    ctx.common.generateId.fetch();
+  }, [])
 
   return (
     <div className={fontSans.variable}>

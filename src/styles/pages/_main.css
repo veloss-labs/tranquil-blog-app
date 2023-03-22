@@ -20,7 +20,13 @@
 }
 
 .subnav .subnav--categories {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
   @apply relative text-center text-sm font-normal;
+}
+
+.subnav .subnav--categories::-webkit-scrollbar {
+    @apply hidden;
 }
 
 .subnav .subnav--categories:not(.allow-overflow) {
@@ -29,11 +35,7 @@
 
 .subnav .subnav--categories .btn-categories-group {
   padding: 0 4px;
-  scroll-behavior: smooth;
-  -ms-overflow-style: -ms-autohiding-scrollbar;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  @apply whitespace-nowrap;
+  @apply whitespace-nowrap scroll-smooth;
 }
 
 .subnav .subnav--categories .btn-categories-group .btn-category {
@@ -109,6 +111,42 @@
   .container-contents--subnav {
     @apply pt-8;
   }
+}
+
+@media only screen and (max-width: 959px) {
+    .subnav {
+        @apply flex-wrap;
+    }
+
+    .subnav .subnav--views {
+        -ms-flex-order: 1;
+        order: 1;
+        margin-right: 15px;
+    }
+
+    .subnav .subnav--categories {
+        -ms-flex-order: 3;
+        order: 3;
+        width: calc(100% + 30px);
+        margin: 15px -15px 0;
+        padding: 15px 0 0;
+        border-top: 1px solid #f3f3f4;
+    }
+
+    .subnav .subnav--categories .btn-categories-group .btn-category a {
+      font-size: 16px;
+    }
+
+    .subnav .subnav--filters {
+        -ms-flex: 0 0 auto;
+        flex: 0 0 auto;
+        -ms-flex-order: 2;
+        order: 2;
+    }
+
+    .container-contents--list {
+        padding: 16px;
+    }
 }
 
 @media screen and (min-width: 1300px) {

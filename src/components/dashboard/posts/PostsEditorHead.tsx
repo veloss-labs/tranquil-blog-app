@@ -3,18 +3,29 @@ import { Button, Input } from "antd";
 import { Icons } from "~/components/shared/Icons";
 import { useEditorContext } from "~/context/editor-context";
 import PostsCoverButton from "~/components/dashboard/posts/PostsCoverButton";
+import { useController, useFormContext } from "react-hook-form";
+import type { CreateData } from "~/libs/validation/posts";
 
 const PostsEditorHead = () => {
   const {
     popoverOpen,
     popoverClose,
-    title,
     cover,
     subtitle,
-    changeSubtitleText,
-    changeTitleText,
     changeCover,
   } = useEditorContext();
+
+  const { control, setValue } = useFormContext<CreateData>();
+
+  const control_title = useController({
+    control,
+    name: "title"
+  });
+
+  const control_subtitle = useController({
+    control,
+    name: "subTitle"
+  })
 
   const onAddSubtitle = useCallback(() => {
     popoverOpen({ id: "subtitle" });
@@ -22,24 +33,8 @@ const PostsEditorHead = () => {
 
   const onCloseSubtitle = useCallback(() => {
     popoverClose({ id: "subtitle" });
-    changeSubtitleText({ text: "" });
-  }, [popoverClose, changeSubtitleText]);
-
-  const onChangeSubtitle: React.ChangeEventHandler<HTMLTextAreaElement> =
-    useCallback(
-      (e) => {
-        changeSubtitleText({ text: e.target.value });
-      },
-      [changeSubtitleText]
-    );
-
-  const onChangeTitle: React.ChangeEventHandler<HTMLTextAreaElement> =
-    useCallback(
-      (e) => {
-        changeTitleText({ text: e.target.value });
-      },
-      [changeTitleText]
-    );
+    setValue('subTitle', undefined)
+  }, [popoverClose]);
 
   const onRemoveCover = useCallback(() => {
     changeCover({ id: null, url: null });
@@ -84,10 +79,9 @@ const PostsEditorHead = () => {
       ) : null}
       <div className="editor-title">
         <Input.TextArea
-          value={title}
           autoSize
           placeholder="제목"
-          onChange={onChangeTitle}
+          {...control_title.field}
         />
       </div>
       {subtitle.open ? (
@@ -95,9 +89,8 @@ const PostsEditorHead = () => {
           <Input.TextArea
             maxLength={150}
             autoSize
-            value={subtitle.text}
-            onChange={onChangeSubtitle}
             placeholder="Article Subtitle…"
+            {...control_subtitle.field}
           />
           <Button
             type="text"

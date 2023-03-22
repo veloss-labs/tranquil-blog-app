@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
-import PostsLayout from "~/components/dashboard/posts/PostsLayout";
-import PostsHeader from "~/components/dashboard/posts/PostsHeader";
-import { EditorContent } from "@tiptap/react";
+import React, { useMemo } from "react";
+
+// nextjs
+import dynamic from "next/dynamic";
 
 import {
   AuthMode,
@@ -12,18 +12,23 @@ import {
 // components
 import PostsContent from "~/components/dashboard/posts/PostsContent";
 import Toolbar from "~/components/editor/Toolbar";
+import PostsLayout from "~/components/dashboard/posts/PostsLayout";
+import PostsHeader from "~/components/dashboard/posts/PostsHeader";
+import { EditorContent } from "@tiptap/react";
 
 // hooks
 import { FormProvider, useForm } from 'react-hook-form'
 import { useTiptapEditor } from "~/components/editor/useEditor";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { schema } from '~/libs/validation/posts'
+import { schema, type CreateData } from '~/libs/validation/posts'
 
 // context
 import { EditorProvider } from "~/context/editor-context";
 
 // types
 import type { GetServerSidePropsContext } from "next";
+
+const PostsPublishDrawer = dynamic(() => import('~/components/dashboard/posts/PostsPublishDrawer'), { ssr: false })
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   const session = await getServerAuthSession(ctx);
@@ -39,13 +44,30 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 }
 
 export default function Posts() {
+  const defaultValues: CreateData = useMemo(() => {
+    return {
+      title: "",
+      subTitle: "",
+      content: "",
+      thumbnailId: null,
+      issueDate: null,
+      published: false,
+      tags: [],
+      categoryId: null,
+    }
+  }, [])
+
+  const methods = useForm<CreateData>({
+    resolver: zodResolver(schema.create),
+    defaultValues,
+  })
+
   const editor = useTiptapEditor({
     placeholder: "Write something …",
+    onUpdate({ editor }) {
+      methods.setValue('content', editor.getHTML())
+    },
   });
-
-  const methods = useForm({
-    resolver: zodResolver(schema.create)
-  })
 
   return (
     <FormProvider {...methods}>
@@ -55,6 +77,7 @@ export default function Posts() {
           {editor && <Toolbar editor={editor} />}
           <EditorContent editor={editor} />
         </PostsContent>
+        <PostsPublishDrawer />
       </div>
     </FormProvider>
   );
@@ -62,8 +85,10 @@ export default function Posts() {
 
 Posts.getLayout = function GetLayout(page: React.ReactNode) {
   return (
-    <PostsLayout>
-      <EditorProvider>{page}</EditorProvider>
-    </PostsLayout>
+    <EditorProvider>
+      <PostsLayout>
+        {page}
+      </PostsLayout>
+    </EditorProvider>
   );
 };
