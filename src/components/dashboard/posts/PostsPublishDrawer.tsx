@@ -109,8 +109,8 @@ const InternalPostsPublishDrawer: React.FC<InternalPostsPublishDrawerProps> = ({
 
   const onSubmit: SubmitHandler<CreateData> = (input) => {
     const id = router.query.id?.toString();
-    console.log(input);
     if (!id) {
+      mutation_create.mutate(input);
       return;
     }
   };

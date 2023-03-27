@@ -80,11 +80,17 @@ export const postsRouter = createTRPCRouter({
         },
         where: {
           userId: session.id,
+          title: {
+            contains: input.keyword ?? undefined,
+          },
         },
       }),
       ctx.prisma.post.count({
         where: {
           userId: session.id,
+          title: {
+            contains: input.keyword ?? undefined,
+          },
         },
       }),
     ]);
@@ -124,6 +130,8 @@ export const postsRouter = createTRPCRouter({
     .input(schema.create)
     .mutation(async ({ ctx, input }) => {
       const session = ctx.session;
+
+      console.log("input", input);
 
       return ctx.prisma.$transaction(async (tx) => {
         // 발행일시가 없는 경우 오늘로 설정

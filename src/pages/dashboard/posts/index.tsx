@@ -9,6 +9,7 @@ import {
   Row,
   Breadcrumb,
   Col,
+  Tag,
   type TablePaginationConfig,
 } from "antd";
 import React, { useCallback, useEffect, useMemo } from "react";
@@ -82,6 +83,7 @@ export default function Posts() {
     {
       page,
       pageSize,
+      keyword: state.keyword,
     },
     {
       staleTime: Infinity,
@@ -231,6 +233,29 @@ export default function Posts() {
             dataIndex: "description",
             title: "설명",
             align: "left",
+            width: 300,
+          },
+          {
+            dataIndex: "published",
+            title: "게시여부",
+            align: "center",
+            width: 100,
+            render: (value: boolean) => {
+              return (
+                <Tag color={value ? "green" : "red"}>
+                  {value ? "게시" : "미게시"}
+                </Tag>
+              );
+            },
+          },
+          {
+            dataIndex: "issueDate",
+            title: "게시일",
+            align: "center",
+            width: 200,
+            render: (value: string) => {
+              return dayjs(value).format("YYYY-MM-DD HH:mm:ss");
+            },
           },
           {
             dataIndex: "createdAt",

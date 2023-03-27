@@ -289,6 +289,7 @@ export default function Categories() {
             dataIndex: "description",
             title: "설명",
             align: "left",
+            width: 200,
           },
           {
             dataIndex: "createdAt",

@@ -7,25 +7,20 @@ import { useController, useFormContext } from "react-hook-form";
 import type { CreateData } from "~/libs/validation/posts";
 
 const PostsEditorHead = () => {
-  const {
-    popoverOpen,
-    popoverClose,
-    cover,
-    subtitle,
-    changeCover,
-  } = useEditorContext();
+  const { popoverOpen, popoverClose, cover, subtitle, changeCover } =
+    useEditorContext();
 
   const { control, setValue } = useFormContext<CreateData>();
 
   const control_title = useController({
     control,
-    name: "title"
+    name: "title",
   });
 
   const control_subtitle = useController({
     control,
-    name: "subTitle"
-  })
+    name: "subTitle",
+  });
 
   const onAddSubtitle = useCallback(() => {
     popoverOpen({ id: "subtitle" });
@@ -33,7 +28,7 @@ const PostsEditorHead = () => {
 
   const onCloseSubtitle = useCallback(() => {
     popoverClose({ id: "subtitle" });
-    setValue('subTitle', undefined)
+    setValue("subTitle", undefined);
   }, [popoverClose]);
 
   const onRemoveCover = useCallback(() => {
@@ -78,11 +73,7 @@ const PostsEditorHead = () => {
         </div>
       ) : null}
       <div className="editor-title">
-        <Input.TextArea
-          autoSize
-          placeholder="제목"
-          {...control_title.field}
-        />
+        <Input.TextArea autoSize placeholder="제목" {...control_title.field} />
       </div>
       {subtitle.open ? (
         <div className="editor-subtitle" aria-label="sub title">
