@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { Icons } from "~/components/shared/Icons";
+import { useTranslation } from "react-i18next";
 
 interface AuthFormProps {
   title: string;
@@ -15,6 +16,11 @@ export default function AuthForm({
   isSignup,
   children,
 }: AuthFormProps) {
+  const { t } = useTranslation("common");
+
+  console.log("ssr (component)", t("signin.not_account"));
+  console.log("ssr (component)", t("signin.title"));
+
   return (
     <div className="auth-form">
       <div>
@@ -25,9 +31,7 @@ export default function AuthForm({
       {children}
       <p className="footer">
         <Link href={isSignup ? "/auth/signup" : "/auth/signin"}>
-          {isSignup
-            ? "계정이 없으신가요? 회원가입"
-            : "이미 계정이 있으신가요? 로그인"}
+          {isSignup ? t("signin.not_account") : t("signin.already_account")}
         </Link>
       </p>
     </div>

@@ -10,8 +10,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { schema, type SignInData } from "~/libs/validation/auth";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
+import { useTranslation } from "react-i18next";
 
 export default function LoginForm() {
+  const { t } = useTranslation("common");
+
   const {
     control,
     handleSubmit,
@@ -64,14 +67,14 @@ export default function LoginForm() {
         layout="vertical"
         onFinish={handleSubmit(onSubmit)}
         initialValues={{
-          email:"test@email.com",
+          email: "test@email.com",
           password: "1q2w3e4r!Q",
         }}
       >
         <div className="grid gap-2">
           <div className="grid gap-1">
             <Form.Item
-              label="이메일"
+              label={t("signin.email")}
               name="email"
               validateStatus={errors.email?.message ? "error" : undefined}
               help={errors.email?.message ? errors.email?.message : undefined}
@@ -80,12 +83,12 @@ export default function LoginForm() {
                 type="email"
                 autoComplete="email"
                 autoCorrect="off"
-                placeholder="name@example.com"
+                placeholder={t("signin.email_placeholder")}
                 {...control_email.field}
               />
             </Form.Item>
             <Form.Item
-              label="비밀번호"
+              label={t("signin.password")}
               name="password"
               validateStatus={errors.password?.message ? "error" : undefined}
               help={
@@ -95,7 +98,7 @@ export default function LoginForm() {
               <Input.Password
                 autoComplete="password"
                 autoCorrect="off"
-                placeholder="비밀번호"
+                placeholder={t("signin.password_placeholder")}
                 {...control_password.field}
               />
             </Form.Item>
@@ -106,7 +109,7 @@ export default function LoginForm() {
             className="!shadow-none"
             loading={isLoading}
           >
-            로그인
+            {t("signin.signin")}
           </Button>
         </div>
       </Form>

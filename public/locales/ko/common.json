@@ -1,0 +1,13 @@
+{
+  "signin": {
+    "title": "Welcome back",
+    "description": "계정에 로그인하려면 이메일, 비밀번호를 입력하세요.",
+    "already_account": "이미 계정이 있으신가요? 로그인",
+    "not_account": "계정이 없으신가요? 회원가입",
+    "email": "이메일",
+    "email_placeholder": "이메일을 입력하세요",
+    "password": "비밀번호",
+    "password_placeholder": "비밀번호를 입력하세요",
+    "signin": "로그인"
+  }
+}

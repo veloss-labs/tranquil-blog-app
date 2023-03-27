@@ -40,9 +40,10 @@ export default class MyDocument extends Document {
   }
 
   render() {
+    const currentLocale = this.props.__NEXT_DATA__.locale ?? "ko";
     return (
       <Html
-        lang="ko"
+        lang={currentLocale}
         dir="ltr"
         className={cn("bg-white font-sans text-slate-900 antialiased")}
       >

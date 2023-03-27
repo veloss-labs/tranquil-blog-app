@@ -48,6 +48,7 @@
     "cookies": "^0.8.0",
     "dayjs": "^1.11.7",
     "framer-motion": "^10.3.1",
+    "i18next": "^22.4.13",
     "katex": "^0.16.4",
     "lodash-es": "^4.17.21",
     "modern-errors": "^5.5.2",
@@ -57,10 +58,12 @@
     "modern-errors-switch": "^1.0.1",
     "next": "^13.2.4",
     "next-auth": "^4.20.1",
+    "next-i18next": "^13.2.2",
     "qs": "^6.11.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.43.5",
+    "react-i18next": "^12.2.0",
     "stable-hash": "^0.0.3",
     "superjson": "^1.12.2",
     "tailwind-merge": "^1.10.0",
@@ -91,5 +94,8 @@
   },
   "ct3aMetadata": {
     "initVersion": "7.4.0"
+  },
+  "resolutions": {
+    "dayjs": "^1.11.7"
   }
 }

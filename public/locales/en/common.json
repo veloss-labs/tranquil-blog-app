@@ -1,0 +1,13 @@
+{
+  "signin": {
+    "title": "Welcome back",
+    "description": "Please enter your email and password to log in.",
+    "already_account": "Already have an account?",
+    "not_account": "Don't have an account?",
+    "email": "Email",
+    "email_placeholder": "Enter your email",
+    "password": "Password",
+    "password_placeholder": "Enter your password",
+    "signin": "Sign in"
+  }
+}

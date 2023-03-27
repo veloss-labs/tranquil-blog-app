@@ -7,3 +7,11 @@ postcss.config.cjs
 
 # prettier
 .prettier.config.cjs
+
+# config
+next-i18next.config.js
+next.config.mjs
+
+# node
+node_modules
+.next

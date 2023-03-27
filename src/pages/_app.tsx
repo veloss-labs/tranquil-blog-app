@@ -1,20 +1,17 @@
-import { SessionProvider } from "next-auth/react";
-import { ConfigProvider } from "antd";
 import { Inter as FontSans } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { api } from "~/utils/api";
-import koKR from "antd/locale/ko_KR";
+import { appWithTranslation } from "next-i18next";
 
 import "~/styles/globals.css";
 
 import { type AppType } from "next/app";
 import { type Session } from "next-auth";
-import { _COLOR } from "~/libs/styles/color";
-import { DashboardLayoutProvider } from "~/context/layout-context";
-import { DashboardRouteProvider } from "~/context/route-context";
-import { getRoutes } from "~/libs/router/api/routes";
 import { clientEnv } from "~/env/schema.mjs";
 import { useEffect } from "react";
+
+import RootContext from "~/context/root-context";
+import nextI18NextConfig from "../../next-i18next.config";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -36,31 +33,13 @@ const App: AppType<AppPageProps> = ({
 
   useEffect(() => {
     ctx.common.generateId.fetch();
-  }, [])
+  }, []);
 
   return (
     <div className={fontSans.variable}>
-      <ConfigProvider
-        theme={{
-          token: {
-            colorPrimary: _COLOR.brand.DEFAULT,
-            colorPrimaryHover: _COLOR.brand.HOVER,
-            colorPrimaryActive: _COLOR.brand.ACTIVE,
-            colorLink: _COLOR.brand.LINK,
-            colorLinkHover: _COLOR.brand.LINK_HOVER,
-            colorText: _COLOR.brand.DEFAULT,
-          },
-        }}
-        locale={koKR}
-      >
-        <SessionProvider session={session}>
-          <DashboardRouteProvider originRoutes={getRoutes().data}>
-            <DashboardLayoutProvider>
-              {getLayout(<Component {...pageProps} />)}
-            </DashboardLayoutProvider>
-          </DashboardRouteProvider>
-        </SessionProvider>
-      </ConfigProvider>
+      <RootContext session={session}>
+        {getLayout(<Component {...pageProps} />)}
+      </RootContext>
       <Analytics
         debug={
           clientEnv.NEXT_PUBLIC_DEPLOY_GROUP
@@ -72,4 +51,4 @@ const App: AppType<AppPageProps> = ({
   );
 };
 
-export default api.withTRPC(App);
+export default api.withTRPC(appWithTranslation(App, nextI18NextConfig));

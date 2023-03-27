@@ -19,7 +19,7 @@
     "paths": {
       "~/*": ["./src/*"]
     },
-    "typeRoots": ["global.d.ts"]
+    "typeRoots": ["global.d.ts", "i18next.d.ts"]
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.cjs", "**/*.mjs"],
   "exclude": ["node_modules"]
