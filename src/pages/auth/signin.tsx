@@ -24,6 +24,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
         destination: "/",
         permanent: false,
       },
+      props: {},
     };
   }
 
@@ -38,8 +39,6 @@ export default function SignIn(
   _props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) {
   const { t } = useTranslation();
-  console.log("ssr (page)", t("signin.not_account"));
-  console.log("ssr (page)", t("signin.title"));
 
   return (
     <AuthLayout>

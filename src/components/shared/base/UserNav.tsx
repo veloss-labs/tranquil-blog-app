@@ -46,14 +46,6 @@ const UserNav: React.FC<UserNavProps> = ({ session }) => {
         ),
         key: "2",
       });
-      _menuItems.push({
-        label: (
-          <Link href="/dashboard/posts" aria-label="posts">
-            <Typography.Text strong>Posts</Typography.Text>
-          </Link>
-        ),
-        key: "3",
-      });
     }
     _menuItems.push({
       type: "divider",
@@ -69,7 +61,7 @@ const UserNav: React.FC<UserNavProps> = ({ session }) => {
           Sign out
         </Typography.Text>
       ),
-      key: "4",
+      key: "3",
     });
 
     return _menuItems;

@@ -118,14 +118,6 @@ const SiteNavMenu: React.FC<SiteNavMenuProps> = ({
                     Dashboard
                   </Link>
                 </li>
-                <li>
-                  <Link
-                    data-site-nav-element="Dashboard"
-                    href="/dashboard/posts"
-                  >
-                    Posts
-                  </Link>
-                </li>
               </>
             )}
           </div>

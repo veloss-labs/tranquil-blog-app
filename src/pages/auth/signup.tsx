@@ -4,11 +4,18 @@ import AuthLayout from "~/components/auth/AuthLayout";
 import SignupForm from "~/components/auth/SignupForm";
 
 import { getServerAuthSession } from "~/server/auth";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useTranslation } from "next-i18next";
 
-import type { GetServerSidePropsContext } from "next";
+// types
+import type {
+  GetServerSidePropsContext,
+  InferGetServerSidePropsType,
+} from "next";
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   const session = await getServerAuthSession(ctx);
+  const message = await serverSideTranslations(ctx.locale ?? "ko", ["common"]);
 
   if (session) {
     return {
@@ -20,16 +27,21 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   }
 
   return {
-    props: {},
+    props: {
+      ...message,
+    },
   };
 }
 
-export default function SignUp() {
+export default function SignUp(
+  _props: InferGetServerSidePropsType<typeof getServerSideProps>
+) {
+  const { t } = useTranslation();
   return (
     <AuthLayout>
       <AuthForm
-        title="Create an account"
-        description="계정을 만들려면 아래에 정보들을 입력하세요."
+        title={t("signup.title")}
+        description={t("signup.description")}
         isSignup={false}
       >
         <SignupForm />

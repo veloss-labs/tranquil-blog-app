@@ -1,4 +1,7 @@
 {
+  "shared": {
+    "back": "Back"
+  },
   "signin": {
     "title": "Welcome back",
     "description": "Please enter your email and password to log in.",
@@ -9,5 +12,14 @@
     "password": "Password",
     "password_placeholder": "Enter your password",
     "signin": "Sign in"
+  },
+  "signup": {
+    "title": "Create an account",
+    "description": "Please enter the following information to create an account.",
+    "nickname": "Nickname",
+    "email": "Email",
+    "password": "Password",
+    "password_confirmation": "Confirm password",
+    "signup": "Sign up"
   }
 }

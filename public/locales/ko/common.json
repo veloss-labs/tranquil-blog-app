@@ -1,4 +1,7 @@
 {
+  "shared": {
+    "back": "Back"
+  },
   "signin": {
     "title": "Welcome back",
     "description": "계정에 로그인하려면 이메일, 비밀번호를 입력하세요.",
@@ -9,5 +12,14 @@
     "password": "비밀번호",
     "password_placeholder": "비밀번호를 입력하세요",
     "signin": "로그인"
+  },
+  "signup": {
+    "title": "Create an account",
+    "description": "계정을 만들려면 아래에 정보들을 입력하세요.",
+    "nickname": "닉네임",
+    "email": "이메일",
+    "password": "비밀번호",
+    "password_confirm": "비밀번호 확인",
+    "signup": "회원가입"
   }
 }

@@ -12,9 +12,14 @@ import { useController, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { schema, type SignUpData } from "~/libs/validation/auth";
 import { useRouter } from "next/router";
+import { useTranslation } from "next-i18next";
 
-export default function SignupForm() {
+interface SignupFormProps {}
+
+export default function SignupForm({}: SignupFormProps) {
   const router = useRouter();
+  const { t } = useTranslation();
+
   const mutation = api.users.create.useMutation({
     onSuccess: () => {
       router.replace("/auth/signin");
@@ -66,7 +71,7 @@ export default function SignupForm() {
         <div className="grid gap-2">
           <div className="grid gap-1">
             <Form.Item
-              label="닉네임"
+              label={t("signup.nickname")}
               name="nickname"
               validateStatus={errors.nickname?.message ? "error" : undefined}
               help={
@@ -77,12 +82,12 @@ export default function SignupForm() {
                 type="text"
                 autoComplete="nickname"
                 autoCorrect="off"
-                placeholder="닉네임"
+                placeholder={t("signup.nickname")}
                 {...control_nickname.field}
               />
             </Form.Item>
             <Form.Item
-              label="이메일"
+              label={t("signup.email")}
               name="email"
               validateStatus={errors.email?.message ? "error" : undefined}
               help={errors.email?.message ? errors.email?.message : undefined}
@@ -96,7 +101,7 @@ export default function SignupForm() {
               />
             </Form.Item>
             <Form.Item
-              label="비밀번호"
+              label={t("signup.password")}
               name="password"
               validateStatus={errors.password?.message ? "error" : undefined}
               help={
@@ -106,12 +111,12 @@ export default function SignupForm() {
               <Input.Password
                 autoComplete="password"
                 autoCorrect="off"
-                placeholder="비밀번호"
+                placeholder={t("signup.password")}
                 {...control_password.field}
               />
             </Form.Item>
             <Form.Item
-              label="비밀번호 확인"
+              label={t("signup.password_confirm")}
               name="passwordConfirm"
               validateStatus={
                 errors.passwordConfirm?.message ? "error" : undefined
@@ -125,13 +130,13 @@ export default function SignupForm() {
               <Input.Password
                 autoComplete="password"
                 autoCorrect="off"
-                placeholder="비밀번호 확인"
+                placeholder={t("signup.password_confirm")}
                 {...control_passwordConfirm.field}
               />
             </Form.Item>
           </div>
           <Button htmlType="submit" type="primary" className="!shadow-none">
-            회원가입
+            {t("signup.signup")}
           </Button>
         </div>
       </Form>

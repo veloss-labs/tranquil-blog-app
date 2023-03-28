@@ -10,10 +10,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { schema, type SignInData } from "~/libs/validation/auth";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "next-i18next";
 
 export default function LoginForm() {
-  const { t } = useTranslation("common");
+  const { t } = useTranslation();
 
   const {
     control,

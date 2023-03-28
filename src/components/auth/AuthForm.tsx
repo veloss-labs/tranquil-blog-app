@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { Icons } from "~/components/shared/Icons";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "next-i18next";
 
 interface AuthFormProps {
   title: string;
@@ -16,10 +16,7 @@ export default function AuthForm({
   isSignup,
   children,
 }: AuthFormProps) {
-  const { t } = useTranslation("common");
-
-  console.log("ssr (component)", t("signin.not_account"));
-  console.log("ssr (component)", t("signin.title"));
+  const { t } = useTranslation();
 
   return (
     <div className="auth-form">
