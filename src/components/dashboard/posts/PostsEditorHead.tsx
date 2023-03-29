@@ -1,16 +1,34 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
+
+// components
 import { Button, Input } from "antd";
 import { Icons } from "~/components/shared/Icons";
-import { useEditorContext } from "~/context/editor-context";
 import PostsCoverButton from "~/components/dashboard/posts/PostsCoverButton";
+
+// hooks
+import { Transition, useEditorContext } from "~/context/editor-context";
 import { useController, useFormContext } from "react-hook-form";
+import { useTranslation } from "next-i18next";
+import { useDebounceFn } from "ahooks";
+
+// types
 import type { CreateData } from "~/libs/validation/posts";
 
 const PostsEditorHead = () => {
-  const { popoverOpen, popoverClose, cover, subtitle, changeCover } =
-    useEditorContext();
+  const {
+    popoverOpen,
+    popoverClose,
+    cover,
+    subtitle,
+    changeCover,
+    changeTransition,
+  } = useEditorContext();
 
-  const { control, setValue } = useFormContext<CreateData>();
+  const { t } = useTranslation();
+
+  const { control, setValue, formState, watch } = useFormContext<CreateData>();
+
+  const watchTitle = watch("title");
 
   const control_title = useController({
     control,
@@ -21,6 +39,17 @@ const PostsEditorHead = () => {
     control,
     name: "subTitle",
   });
+
+  const debounced = useDebounceFn(
+    (title: string) => {
+      console.log(title);
+      changeTransition(Transition.PROCESSING);
+    },
+    {
+      wait: 200,
+      trailing: true,
+    }
+  );
 
   const onAddSubtitle = useCallback(() => {
     popoverOpen({ id: "subtitle" });
@@ -35,6 +64,11 @@ const PostsEditorHead = () => {
     changeCover({ id: null, url: null });
   }, [changeCover]);
 
+  useEffect(() => {
+    if (!formState.dirtyFields.title) return;
+    debounced.run(watchTitle);
+  }, [watchTitle, formState.dirtyFields.title]);
+
   return (
     <>
       <div className="editor-header">
@@ -48,7 +82,7 @@ const PostsEditorHead = () => {
               icon={<Icons.subTitle className="icon--sm" />}
               onClick={onAddSubtitle}
             >
-              Add Subtitle
+              {t("dashboard.posts.write.add_subtitle")}
             </Button>
           ) : null}
         </div>
@@ -73,14 +107,18 @@ const PostsEditorHead = () => {
         </div>
       ) : null}
       <div className="editor-title">
-        <Input.TextArea autoSize placeholder="제목" {...control_title.field} />
+        <Input.TextArea
+          autoSize
+          placeholder={t("dashboard.posts.write.title_placeholder")}
+          {...control_title.field}
+        />
       </div>
       {subtitle.open ? (
         <div className="editor-subtitle" aria-label="sub title">
           <Input.TextArea
             maxLength={150}
             autoSize
-            placeholder="Article Subtitle…"
+            placeholder={t("dashboard.posts.write.subtitle_placeholder")}
             {...control_subtitle.field}
           />
           <Button

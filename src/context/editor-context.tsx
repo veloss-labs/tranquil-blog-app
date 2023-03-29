@@ -14,8 +14,7 @@ interface HeadingContextState extends PopoverContextState {
   level: number;
 }
 
-interface SubtitleContextState extends PopoverContextState {
-}
+interface SubtitleContextState extends PopoverContextState {}
 
 interface CoverContextState extends PopoverContextState {
   id: number | null;
@@ -23,7 +22,7 @@ interface CoverContextState extends PopoverContextState {
   transition: Transition;
 }
 
-interface PublishContextState extends PopoverContextState { }
+interface PublishContextState extends PopoverContextState {}
 
 export enum Transition {
   IDLE = "IDLE",
@@ -37,9 +36,11 @@ interface EditorContextState {
   subtitle: SubtitleContextState;
   cover: CoverContextState;
   publish: PublishContextState;
+  transition: Transition;
 }
 
 enum Action {
+  CHANGE_TRANSITION = "CHANGE_TRANSITION",
   POPOVER_ALL_CLOSE = "POPOVER_ALL_CLOSE",
   POPOVER_OPEN = "POPOVER_OPEN",
   POPOVER_CLOSE = "POPOVER_CLOSE",
@@ -51,21 +52,26 @@ enum Action {
   TRANSITION_COVER = "TRANSITION_COVER",
 }
 
+type ChangeTransitionAction = {
+  type: Action.CHANGE_TRANSITION;
+  payload: Transition;
+};
+
 type PopoverAllCloseAction = {
   type: Action.POPOVER_ALL_CLOSE;
-}
+};
 
 type PopoverOpenAction = {
   type: Action.POPOVER_OPEN;
   payload: {
-    id: keyof EditorContextState;
+    id: keyof Omit<EditorContextState, "transition">;
   };
 };
 
 type PopoverCloseAction = {
   type: Action.POPOVER_CLOSE;
   payload: {
-    id: keyof EditorContextState;
+    id: keyof Omit<EditorContextState, "transition">;
   };
 };
 
@@ -105,7 +111,8 @@ type ActionType =
   | ChangeHeadingLevelAction
   | ChangeCoverAction
   | ChangeCoverTransitionAction
-  | PopoverAllCloseAction;
+  | PopoverAllCloseAction
+  | ChangeTransitionAction;
 
 interface EditorContext extends EditorContextState {
   popoverAllClose: () => void;
@@ -117,6 +124,7 @@ interface EditorContext extends EditorContextState {
   changeHeadingLevel: (payload: ChangeHeadingLevelAction["payload"]) => void;
   transitionCover: (payload: ChangeCoverTransitionAction["payload"]) => void;
   changeCover: (payload: ChangeCoverAction["payload"]) => void;
+  changeTransition: (transition: ChangeTransitionAction["payload"]) => void;
   dispatch: React.Dispatch<ActionType>;
 }
 
@@ -141,6 +149,7 @@ const initialState: EditorContextState = {
   publish: {
     open: false,
   },
+  transition: Transition.IDLE,
 };
 
 const [Provider, useEditorContext] = createContext<EditorContext>({
@@ -221,6 +230,11 @@ function reducer(state = initialState, action: ActionType): EditorContextState {
           transition: action.payload.transition,
         },
       };
+    case Action.CHANGE_TRANSITION:
+      return {
+        ...state,
+        transition: action.payload,
+      };
     default:
       return state;
   }
@@ -239,8 +253,8 @@ function EditorProvider({ children, ...otherProps }: Props) {
   const popoverAllClose = () => {
     dispatch({
       type: Action.POPOVER_ALL_CLOSE,
-    })
-  }
+    });
+  };
 
   const popoverOpen = (payload: PopoverOpenAction["payload"]) => {
     dispatch({
@@ -286,6 +300,13 @@ function EditorProvider({ children, ...otherProps }: Props) {
     });
   };
 
+  const changeTransition = (transition: Transition) => {
+    dispatch({
+      type: Action.CHANGE_TRANSITION,
+      payload: transition,
+    });
+  };
+
   const actions = useMemo(
     () => ({
       ...state,
@@ -296,6 +317,7 @@ function EditorProvider({ children, ...otherProps }: Props) {
       changeHeadingLevel,
       changeCover,
       transitionCover,
+      changeTransition,
       dispatch,
     }),
     [state]

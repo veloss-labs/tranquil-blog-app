@@ -95,16 +95,17 @@ model UserRole {
 }
 
 model Post {
-    id        Int      @id @default(autoincrement())
-    title     String // 제목
-    subTitle  String? // 부제목
-    content   String // @db.Text 에디터 내용
-    issueDate DateTime // 발행시간 발행시간 값이 없으면 작성시간으로 대체
-    likeCount Int      @default(0) // 좋아요 수
-    viewCount Int      @default(0) // 조회수
-    published Boolean  @default(false) // 공개여부
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    id          Int      @id @default(autoincrement())
+    title       String // 제목
+    subTitle    String? // 부제목
+    content     String // @db.Text 에디터 내용
+    description String? // @db.Text 메타 태그 설명
+    issueDate   DateTime // 발행시간 발행시간 값이 없으면 작성시간으로 대체
+    likeCount   Int      @default(0) // 좋아요 수
+    viewCount   Int      @default(0) // 조회수
+    published   Boolean  @default(false) // 공개여부
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
 
     userId String
     user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)

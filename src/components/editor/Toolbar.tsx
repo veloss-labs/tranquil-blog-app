@@ -2,7 +2,6 @@ import clsx from "clsx";
 import React, { useCallback, useRef } from "react";
 import { Radio, Space } from "antd";
 
-
 import { Icons } from "~/components/shared/Icons";
 import * as Popover from "@radix-ui/react-popover";
 import type { TiptapEditorInstance } from "./useEditor";
@@ -14,7 +13,7 @@ interface ToolbarProps {
 }
 
 function Toolbar({ editor }: ToolbarProps) {
-  const { } = useEditorContext();
+  const {} = useEditorContext();
 
   return (
     <div className="editor__toolbar">
@@ -51,7 +50,7 @@ function Toolbar({ editor }: ToolbarProps) {
       >
         <Icons.Strikethrough />
       </button>
-      <Toolbar.Highlight editor={editor} />
+      {/* <Toolbar.Highlight editor={editor} /> */}
       <div className="divider"></div>
       <Toolbar.Heading editor={editor} />
       <button
@@ -215,7 +214,7 @@ Toolbar.Heading = function Heading({ editor }: ToolbarProps) {
   );
 };
 
-interface HighlightProps extends ToolbarProps { }
+interface HighlightProps extends ToolbarProps {}
 
 Toolbar.Highlight = function Highlight({ editor }: HighlightProps) {
   const { highlight, popoverClose, popoverOpen, changeHighlightColor } =

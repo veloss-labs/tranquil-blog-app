@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 
 // nextjs
 import dynamic from "next/dynamic";
@@ -23,10 +23,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { schema, type CreateData } from "~/libs/validation/posts";
 
 // context
-import { EditorProvider } from "~/context/editor-context";
+import {
+  EditorProvider,
+  Transition,
+  useEditorContext,
+} from "~/context/editor-context";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useTranslation } from "next-i18next";
 
 // types
 import type { GetServerSidePropsContext } from "next";
+import { useDebounceFn } from "ahooks";
 
 const PostsPublishDrawer = dynamic(
   () => import("~/components/dashboard/posts/PostsPublishDrawer"),
@@ -41,16 +48,23 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     return result;
   }
 
+  const message = await serverSideTranslations(ctx.locale ?? "ko", ["common"]);
+
   return {
-    props: {},
+    props: {
+      ...message,
+    },
   };
 }
 
 export default function Posts() {
+  const { t } = useTranslation();
+  const { changeTransition, transition } = useEditorContext();
   const defaultValues: CreateData = useMemo(() => {
     return {
       title: "",
       subTitle: "",
+      description: "",
       content: "",
       thumbnailId: null,
       issueDate: null,
@@ -65,12 +79,46 @@ export default function Posts() {
     defaultValues,
   });
 
-  const editor = useTiptapEditor({
-    placeholder: "Write something …",
-    onUpdate({ editor }) {
+  const watchAll = methods.watch();
+
+  const debounced_sync = useDebounceFn(
+    async (input: Pick<CreateData, "title" | "content">) => {
+      console.log("Syncing...", input);
+      changeTransition(Transition.DONE);
+    },
+    {
+      wait: 500,
+      trailing: true,
+    }
+  );
+
+  const debounced_content = useDebounceFn(
+    // @ts-ignore
+    (editor) => {
+      changeTransition(Transition.PROCESSING);
       methods.setValue("content", editor.getHTML());
     },
+    {
+      wait: 200,
+      trailing: true,
+    }
+  );
+
+  const editor = useTiptapEditor({
+    placeholder: t("dashboard.posts.write.placeholder"),
+    onUpdate({ editor }) {
+      debounced_content.run(editor);
+    },
   });
+
+  useEffect(() => {
+    if (transition === Transition.PROCESSING) {
+      debounced_sync.run({
+        title: watchAll.title,
+        content: watchAll.content,
+      });
+    }
+  }, [transition, watchAll.title, watchAll.content]);
 
   return (
     <FormProvider {...methods}>

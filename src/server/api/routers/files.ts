@@ -14,7 +14,7 @@ export const filesRouter = createTRPCRouter({
       const presignedUrl = await r2Manager.getSignedUrlForPutObject({
         key,
         fileType: input.fileType,
-        fileSize: input.fileSize
+        fileSize: input.fileSize,
       });
       return responseWith({
         data: {
@@ -34,15 +34,15 @@ export const filesRouter = createTRPCRouter({
           url: input.key,
           uploadType: input.uploadType as string,
           mediaType: input.mediaType,
-        }
-      })
+        },
+      });
 
       return responseWith({
         data: {
           id: data.id,
           // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          url: `${env.CLOUDFLARE_R2_ENDPOINT}/${input.key}`,
+          url: `${env.CLOUDFLARE_R2_PUBLIC_URL}/assets/${input.key}`,
         },
       });
-    })
+    }),
 });

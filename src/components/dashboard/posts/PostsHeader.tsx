@@ -7,18 +7,20 @@ import { Icons } from "~/components/shared/Icons";
 // hooks
 import { useEditorContext } from "~/context/editor-context";
 import { useRouter } from "next/router";
+import { useTranslation } from "next-i18next";
 
 const PostsHeader = () => {
   const router = useRouter();
   const { popoverOpen } = useEditorContext();
+  const { t } = useTranslation();
 
   const onClick = useCallback(() => {
-    popoverOpen({ id: 'publish' })
-  }, [popoverOpen])
+    popoverOpen({ id: "publish" });
+  }, [popoverOpen]);
 
   const onBack = useCallback(() => {
     router.back();
-  }, [router])
+  }, [router]);
 
   return (
     <div className="dashboard-posts--header">
@@ -35,13 +37,17 @@ const PostsHeader = () => {
         </div>
         <div className="dashboard-posts--header-right">
           <Space size="middle">
+            <div className="flex flex-row items-center text-green-500">
+              <Icons.SavePosts className="icon--md mr-2 flex-shrink-0 fill-current" />
+              <p>{t("dashboard.posts.write.saved")}</p>
+            </div>
             <Button
               type="text"
               size="large"
               icon={<Icons.time className="icon--md" />}
             />
             <Button type="primary" className="!shadow-none" onClick={onClick}>
-              출간하기
+              {t("dashboard.posts.write.publish")}
             </Button>
           </Space>
         </div>

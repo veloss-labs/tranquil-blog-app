@@ -23,12 +23,14 @@ import {
   Select,
   DatePicker,
   Switch,
+  InputRef,
 } from "antd";
 
 // hooks
 import { useEditorContext } from "~/context/editor-context";
 import { useFormContext, useController } from "react-hook-form";
 import { useRouter } from "next/router";
+import { useTranslation } from "next-i18next";
 
 // api
 import { api } from "~/utils/api";
@@ -53,16 +55,15 @@ const InternalPostsPublishDrawer: React.FC<InternalPostsPublishDrawerProps> = ({
   const [isPending, startTransition] = useTransition();
 
   const router = useRouter();
-
+  const { t } = useTranslation();
   const $form = useRef<FormInstance>(null);
-
   const { handleSubmit, control, watch } = useFormContext<CreateData>();
 
   console.log(watch());
 
   const [items, setItems] = useState(["jack", "lucy"]);
   const [name, setName] = useState("");
-  const inputRef = useRef<any>(null);
+  const inputRef = useRef<InputRef | null>(null);
 
   const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
@@ -102,6 +103,16 @@ const InternalPostsPublishDrawer: React.FC<InternalPostsPublishDrawerProps> = ({
     name: "published",
   });
 
+  const control_description = useController({
+    control,
+    name: "dsecription",
+  });
+
+  const control_categoryId = useController({
+    control,
+    name: "categoryId",
+  });
+
   const control_issueDate = useController({
     control,
     name: "issueDate",
@@ -132,22 +143,24 @@ const InternalPostsPublishDrawer: React.FC<InternalPostsPublishDrawerProps> = ({
       <Row gutter={16}>
         <Col span={24}>
           <Form.Item
-            name="published"
-            label="published"
-            extra="Select a publishing date/time (Based on your local time zone)"
+            name="description"
+            label={t("dashboard.posts.write.description_label")}
+            extra={t("dashboard.posts.write.description_desc")}
           >
-            <Switch {...control_published.field} />
+            <Input.TextArea
+              placeholder={t("dashboard.posts.write.description_placeholder")}
+              autoSize={{ minRows: 3, maxRows: 5 }}
+              {...control_description.field}
+            />
           </Form.Item>
         </Col>
       </Row>
       <Row gutter={16}>
         <Col span={24}>
-          <Form.Item label="SELECT TAGS">
+          <Form.Item label={t("dashboard.posts.write.category_label")}>
             <Select
-              placeholder="SELECT TAGS"
-              onChange={(values) => {
-                console.log(values);
-              }}
+              placeholder={t("dashboard.posts.write.category_placeholder")}
+              {...control_categoryId.field}
             >
               {categories.map((category) => (
                 <Select.Option key={category.id} value={category.id}>
@@ -160,16 +173,16 @@ const InternalPostsPublishDrawer: React.FC<InternalPostsPublishDrawerProps> = ({
       </Row>
       <Row gutter={16}>
         <Col span={24}>
-          <Form.Item label="SELECT TAGS">
+          <Form.Item label={t("dashboard.posts.write.tags_label")}>
             <Select
-              placeholder="custom dropdown render"
+              placeholder={t("dashboard.posts.write.tags_placeholder")}
               dropdownRender={(menu) => (
                 <>
                   {menu}
                   <Divider style={{ margin: "8px 0" }} />
                   <Space style={{ padding: "0 8px 4px" }}>
                     <Input
-                      placeholder="Please enter item"
+                      placeholder={t("dashboard.posts.write.tags_placeholder")}
                       ref={inputRef}
                       value={name}
                       onChange={onNameChange}
@@ -179,7 +192,7 @@ const InternalPostsPublishDrawer: React.FC<InternalPostsPublishDrawerProps> = ({
                       icon={<PlusOutlined />}
                       onClick={addItem}
                     >
-                      Add item
+                      {t("dashboard.posts.write.tags_add")}
                     </Button>
                   </Space>
                 </>
@@ -192,8 +205,22 @@ const InternalPostsPublishDrawer: React.FC<InternalPostsPublishDrawerProps> = ({
       <Row gutter={16}>
         <Col span={24}>
           <Form.Item
-            label="SCHEDULE YOUR ARTICLE"
-            extra="Select a publishing date/time (Based on your local time zone)"
+            name="published"
+            label={t("dashboard.posts.write.published_label")}
+            extra={t("dashboard.posts.write.published_desc")}
+          >
+            <Switch
+              {...control_published.field}
+              checked={control_published.field.value}
+            />
+          </Form.Item>
+        </Col>
+      </Row>
+      <Row gutter={16}>
+        <Col span={24}>
+          <Form.Item
+            label={t("dashboard.posts.write.issueDate_label")}
+            extra={t("dashboard.posts.write.issueDate_desc")}
           >
             <DatePicker
               showTime
@@ -220,6 +247,7 @@ const PostsPublishDrawer = () => {
   const [$form, setFormElement] = useState<FormInstance | null>(null);
   const { publish, popoverClose } = useEditorContext();
   const isMobile = useMedia("(max-width: 460px)");
+  const { t } = useTranslation();
 
   const onClose = useCallback(() => {
     popoverClose({ id: "publish" });
@@ -246,7 +274,6 @@ const PostsPublishDrawer = () => {
 
   return (
     <Drawer
-      title="Publish"
       width={isMobile ? "100%" : 368}
       onClose={onClose}
       destroyOnClose
@@ -259,7 +286,7 @@ const PostsPublishDrawer = () => {
           type="primary"
           className="!shadow-none"
         >
-          Publish
+          {t("dashboard.posts.write.publish")}
         </Button>
       }
     >

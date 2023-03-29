@@ -23,6 +23,7 @@ import { useForceUpdate } from "~/libs/hooks/useForceUpdate";
 import { useEditorContext } from "~/context/editor-context";
 import { useEventListener } from "ahooks";
 import { useFormContext } from "react-hook-form";
+import { useTranslation } from "next-i18next";
 
 // utils
 import { optimizeAnimation } from "~/utils/utils";
@@ -40,6 +41,7 @@ import type { CreateData } from "~/libs/validation/posts";
 
 const PostsCoverButton = () => {
   const forceUpdate = useForceUpdate();
+  const { t } = useTranslation();
   const [tabKey, setTabKey] = useState("upload");
   const { cover, popoverOpen, popoverClose } = useEditorContext();
   const $button = useRef<HTMLElement | null>(null);
@@ -87,7 +89,7 @@ const PostsCoverButton = () => {
         <Button
           type="text"
           size="small"
-          className="!inline-flex !items-center"
+          className="!inline-flex !items-center space-x-2"
           icon={<Icons.media className="icon--sm" />}
           ref={(ref) => {
             if (!$button.current) {
@@ -96,7 +98,7 @@ const PostsCoverButton = () => {
             }
           }}
         >
-          Add Cover
+          {t("dashboard.posts.write.add_cover")}
         </Button>
       </Popover.Trigger>
       <Popover.Portal container={$button.current}>
@@ -132,13 +134,14 @@ PostsCoverButton.UploadCover = function UploadCover() {
   const mutation_upload = api.files.upload.useMutation();
 
   const { changeCover } = useEditorContext();
-  const { setValue } = useFormContext<CreateData>()
+  const { setValue } = useFormContext<CreateData>();
 
   const isUploading = useMemo(() => {
     return mutation_url.isLoading || mutation_upload.isLoading;
   }, [mutation_upload.isLoading, mutation_url.isLoading]);
 
   const ctx = api.useContext();
+  const { t } = useTranslation();
 
   const customRequest = useCallback(
     async ({ file }: UploadRequestOption) => {
@@ -183,7 +186,7 @@ PostsCoverButton.UploadCover = function UploadCover() {
         id,
         url,
       });
-      setValue('thumbnailId', id);
+      setValue("thumbnailId", id);
 
       ctx.images.infinity.refetch();
     },
@@ -192,7 +195,7 @@ PostsCoverButton.UploadCover = function UploadCover() {
 
   return (
     <>
-      <div className="p-4 pt-0">
+      <div className="p-0">
         <Upload.Dragger
           accept="image/*"
           maxCount={1}
@@ -233,7 +236,7 @@ PostsCoverButton.UploadCover = function UploadCover() {
             <InboxOutlined />
           </p>
           <p className="ant-upload-hint break-words">
-            Recommended dimension is 1600 x 840
+            {t("dashboard.posts.write.upload_alert")}
           </p>
           {isUploading ? (
             <Deferred>
@@ -316,7 +319,7 @@ PostsCoverButton.LibraryImage = function LibraryImage({
 }: LibraryImageProps) {
   const { changeCover, cover } = useEditorContext();
 
-  const { setValue } = useFormContext<CreateData>()
+  const { setValue } = useFormContext<CreateData>();
 
   const onSelect = useCallback(() => {
     if (cover.id === id) {
@@ -324,13 +327,13 @@ PostsCoverButton.LibraryImage = function LibraryImage({
         id: null,
         url: null,
       });
-      setValue('thumbnailId', null);
+      setValue("thumbnailId", null);
     } else {
       changeCover({
         id,
         url,
       });
-      setValue('thumbnailId', id);
+      setValue("thumbnailId", id);
     }
   }, [changeCover, cover.id, id, url]);
 

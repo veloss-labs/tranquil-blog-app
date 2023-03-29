@@ -21,5 +21,31 @@
     "password": "비밀번호",
     "password_confirm": "비밀번호 확인",
     "signup": "회원가입"
+  },
+  "dashboard": {
+    "posts": {
+      "write": {
+        "placeholder": "여기에 글을 작성하세요...",
+        "publish": "출간하기",
+        "add_subtitle": "부제목 추가",
+        "add_cover": "이미지 추가",
+        "title_placeholder": "제목을 입력하세요...",
+        "subtitle_placeholder": "부제목을 입력하세요...",
+        "upload_alert": "권장 크기는 1600 x 840입니다.",
+        "description_label": "설명",
+        "description_desc": "검색 엔진 결과 페이지에서 부제목 대신 SEO 설명이 사용됩니다. 좋은 SEO 설명은 키워드를 활용하며 글을 요약하며, 140-156자 사이여야 합니다.",
+        "description_placeholder": "설명을 입력하세요...",
+        "published_label": "공개 설정",
+        "published_desc": "공개 설정을 변경하면 다른 사람들이 볼 수 있습니다.",
+        "category_label": "카테고리",
+        "category_placeholder": "(옵션) 카테고리를 선택하세요.",
+        "tags_label": "태그",
+        "tags_placeholder": "(옵션) 태그를 입력하세요.",
+        "tags_add": "태그 추가",
+        "issueDate_label": "발행 시간",
+        "issueDate_desc": "발행 일시를 선택하세요 (귀하의 지역 시간대 기준)",
+        "saved": "저장"
+      }
+    }
   }
 }
