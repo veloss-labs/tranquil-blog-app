@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useCallback } from "react";
 import { Icons } from "~/components/shared/Icons";
+import { useTranslation } from "next-i18next";
 import UserNav from "./UserNav";
 
 interface DesktopHeaderProps {}
@@ -11,6 +12,7 @@ interface DesktopHeaderProps {}
 const DesktopHeader: React.FC<DesktopHeaderProps> = () => {
   const router = useRouter();
   const session = useSession();
+  const { t } = useTranslation();
 
   const onMoveToSignin = useCallback(() => {
     router.push("/auth/signin");
@@ -32,11 +34,11 @@ const DesktopHeader: React.FC<DesktopHeaderProps> = () => {
                 type="text"
                 role="link"
                 data-href="/auth/signin"
-                aria-label="로그인"
+                aria-label={t("shared.signin")}
                 onClick={onMoveToSignin}
                 onKeyDown={onMoveToSignin}
               >
-                로그인
+                {t("shared.signin")}
               </Button>
             </div>
           )}

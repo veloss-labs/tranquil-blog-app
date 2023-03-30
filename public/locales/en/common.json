@@ -1,7 +1,12 @@
 {
   "shared": {
     "back": "Back",
-    "load_more": "Load more"
+    "load_more": "Load more",
+    "signin": "Sign in",
+    "profile": "Profile",
+    "account_settings": "Account Settings",
+    "dashboard": "Dashboard",
+    "sign_out": "Sign Out"
   },
   "signin": {
     "title": "Welcome back",

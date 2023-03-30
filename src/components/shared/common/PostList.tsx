@@ -29,7 +29,6 @@ const PostList: React.FC<PostListProps> = () => {
           <PostCard key={`main-post-${post.id}`} post={post} />
         ))}
       </ol>
-      ;
     </>
   );
 };

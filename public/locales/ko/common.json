@@ -1,7 +1,12 @@
 {
   "shared": {
     "back": "Back",
-    "load_more": "더보기"
+    "load_more": "더보기",
+    "signin": "로그인",
+    "profile": "프로필",
+    "account_settings": "계정 설정",
+    "dashboard": "대시보드",
+    "sign_out": "로그아웃"
   },
   "signin": {
     "title": "Welcome back",

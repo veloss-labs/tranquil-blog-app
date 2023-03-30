@@ -7,6 +7,7 @@ import SiteNavMenu from "~/components/shared/layouts/SiteNavMenu";
 import { configResponsive, useResponsive } from "ahooks";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import { useTranslation } from "next-i18next";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -21,6 +22,8 @@ const Layout: React.FC<LayoutProps> = ({ children, hasHeader = true }) => {
   const responsive = useResponsive();
 
   const session = useSession();
+
+  const { t } = useTranslation();
 
   const router = useRouter();
 
@@ -75,11 +78,11 @@ const Layout: React.FC<LayoutProps> = ({ children, hasHeader = true }) => {
                     type="text"
                     role="link"
                     data-href="/auth/signin"
-                    aria-label="로그인"
+                    aria-label={t("shared.signin")}
                     onClick={onMoveToSignin}
                     onKeyDown={onMoveToSignin}
                   >
-                    로그인
+                    {t("shared.signin")}
                   </Button>
                 ) : null
               }

@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import Link from "next/link";
-import { Dropdown, Space, Avatar, Button, Typography } from "antd";
+import { Dropdown, Space, Avatar, Typography } from "antd";
+import { useTranslation } from "next-i18next";
 
 import { signOut } from "next-auth/react";
 
@@ -18,12 +19,14 @@ const UserNav: React.FC<UserNavProps> = ({ session }) => {
     });
   }, []);
 
+  const { t } = useTranslation();
+
   const menuItems: MenuProps["items"] = useMemo(() => {
     const _menuItems: MenuProps["items"] = [
       {
         label: (
           <Link href="/" aria-label="profile">
-            <Typography.Text strong> Profile</Typography.Text>
+            <Typography.Text strong>{t("shared.profile")}</Typography.Text>
           </Link>
         ),
         key: "0",
@@ -31,7 +34,9 @@ const UserNav: React.FC<UserNavProps> = ({ session }) => {
       {
         label: (
           <Link href="/" aria-label="account setting">
-            <Typography.Text strong>Account Setting</Typography.Text>
+            <Typography.Text strong>
+              {t("shared.account_settings")}
+            </Typography.Text>
           </Link>
         ),
         key: "1",
@@ -41,7 +46,7 @@ const UserNav: React.FC<UserNavProps> = ({ session }) => {
       _menuItems.push({
         label: (
           <Link href="/dashboard" aria-label="dashboard">
-            <Typography.Text strong>Dashboard</Typography.Text>
+            <Typography.Text strong>{t("shared.dashboard")}</Typography.Text>
           </Link>
         ),
         key: "2",
@@ -58,7 +63,7 @@ const UserNav: React.FC<UserNavProps> = ({ session }) => {
           strong
           onClick={onSignOut}
         >
-          Sign out
+          {t("shared.sign_out")}
         </Typography.Text>
       ),
       key: "3",
