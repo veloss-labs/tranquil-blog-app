@@ -50,7 +50,9 @@ const InternalPostsPublishDrawer: React.FC<InternalPostsPublishDrawerProps> = ({
   const router = useRouter();
   const { t } = useTranslation();
   const $form = useRef<FormInstance>(null);
-  const { handleSubmit, control } = useFormContext<CreateData>();
+  const { handleSubmit, control, watch } = useFormContext<CreateData>();
+
+  console.log("watch", watch());
 
   const [items, setItems] = useState(["jack", "lucy"]);
   const [name, setName] = useState("");
@@ -71,6 +73,8 @@ const InternalPostsPublishDrawer: React.FC<InternalPostsPublishDrawerProps> = ({
     }, 0);
   };
 
+  const utils = api.useContext();
+
   const query_categories = api.categories.pages.useQuery(
     {
       page: 1,
@@ -85,9 +89,27 @@ const InternalPostsPublishDrawer: React.FC<InternalPostsPublishDrawerProps> = ({
     return query_categories.data?.data?.list ?? [];
   }, [query_categories.data?.data?.list]);
 
-  const mutation_create = api.posts.create.useMutation();
+  const { draftId, popoverClose } = useEditorContext();
 
-  const mutation_update = api.posts.update.useMutation();
+  const mutation_create = api.posts.create.useMutation({
+    onSuccess: async () => {
+      popoverClose({
+        id: "publish",
+      });
+      await utils.posts.pages.invalidate();
+      router.replace("/dashboard/posts/");
+    },
+  });
+
+  const mutation_update = api.posts.update.useMutation({
+    onSuccess: async () => {
+      popoverClose({
+        id: "publish",
+      });
+      await utils.posts.pages.invalidate();
+      router.replace("/dashboard/posts/");
+    },
+  });
 
   const control_description = useController({
     control,
@@ -105,10 +127,20 @@ const InternalPostsPublishDrawer: React.FC<InternalPostsPublishDrawerProps> = ({
   });
 
   const onSubmit: SubmitHandler<CreateData> = (input) => {
-    const id = router.query.id?.toString();
-    if (!id) {
+    if (!draftId) {
       mutation_create.mutate(input);
-      return;
+    } else {
+      mutation_update.mutate({
+        id: draftId,
+        title: input.title ?? undefined,
+        subTitle: input.subTitle,
+        content: input.content,
+        dsecription: input.dsecription,
+        thumbnailId: input.thumbnailId,
+        issueDate: input.issueDate ?? undefined,
+        tags: input.tags ?? [],
+        categoryId: input.categoryId,
+      });
     }
   };
 
@@ -124,20 +156,24 @@ const InternalPostsPublishDrawer: React.FC<InternalPostsPublishDrawerProps> = ({
     }
   }, [mutation_create.isLoading, mutation_update.isLoading]);
 
+  console.log("control_description", control_description);
+
   return (
     <Form layout="vertical" ref={$form} onFinish={handleSubmit(onSubmit)}>
       <Row gutter={16}>
         <Col span={24}>
           <Form.Item
-            name="description"
             label={t("dashboard.posts.write.description_label")}
             extra={t("dashboard.posts.write.description_desc")}
           >
             <Input.TextArea
               placeholder={t("dashboard.posts.write.description_placeholder")}
               autoSize={{ minRows: 3, maxRows: 5 }}
-              {...control_description.field}
-              value={control_description.field.value ?? undefined}
+              ref={control_description.field.ref}
+              name={control_description.field.name}
+              value={control_description.field.value ?? ""}
+              onChange={control_description.field.onChange}
+              onBlur={control_description.field.onBlur}
             />
           </Form.Item>
         </Col>

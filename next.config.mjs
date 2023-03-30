@@ -65,6 +65,9 @@ const config = {
     locales: ["ko", "en"],
     defaultLocale: "ko",
   },
+  images: {
+    domains: ["pub-08d8c7274d0d472399e2802ce2925e19.r2.dev"],
+  },
   async headers() {
     return [
       {

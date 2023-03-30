@@ -9,7 +9,7 @@ export const schema = {
     dsecription: z.string().optional().nullable(),
     thumbnailId: z.number().int().positive().optional().nullish(),
     issueDate: z.date().optional().nullish(),
-    tags: z.array(z.string()),
+    tags: z.array(z.string()).optional(),
     categoryId: z.number().int().positive().optional().nullish(),
   }),
   update: z.object({

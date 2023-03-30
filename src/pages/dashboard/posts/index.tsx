@@ -237,6 +237,7 @@ export default function Posts() {
             title: "설명",
             align: "left",
             width: 300,
+            ellipsis: true,
           },
           {
             dataIndex: "isDraft",
@@ -334,7 +335,7 @@ Posts.getLayout = function GetLayout(page: React.ReactNode) {
   return (
     <DashboardLayout
       pageHeader={
-        <div className="py-7 px-5 sm:px-10">
+        <div className="px-5 py-7 sm:px-10">
           <Breadcrumb
             items={[
               { title: "대시보드", href: "/dashboard" },

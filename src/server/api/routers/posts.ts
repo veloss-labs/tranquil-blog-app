@@ -15,7 +15,7 @@ import { getTrpcRouterCookie } from "~/server/auth";
 import { Prisma, type Tag } from "@prisma/client";
 import { responseWith } from "~/server/utils/response";
 import { RESULT_CODE } from "~/server/errors/code";
-import { env } from "~/env/server.mjs";
+import { r2Manager } from "~/server/service/r2Manager";
 
 const _default_post_select = Prisma.validator<Prisma.PostSelect>()({
   id: true,
@@ -131,6 +131,7 @@ export const postsRouter = createTRPCRouter({
         orderBy: {
           createdAt: "desc",
         },
+        select: _default_post_select,
         where: {
           title: {
             contains: input.keyword ?? undefined,
@@ -141,13 +142,13 @@ export const postsRouter = createTRPCRouter({
                 isDraft: input.isDraft ?? false,
                 ...(!input.isDraft && {
                   issueDate: {
-                    gte: new Date(),
+                    lte: new Date(),
                   },
                 }),
               }
             : {
                 issueDate: {
-                  gte: new Date(),
+                  lte: new Date(),
                 },
                 isDraft: false,
               }),
@@ -164,7 +165,15 @@ export const postsRouter = createTRPCRouter({
 
       return responseWith({
         data: {
-          items: items,
+          items: items.map((post) => ({
+            ...post,
+            thumbnail: post.thumbnail
+              ? {
+                  id: post.thumbnail.id,
+                  url: r2Manager.concatUrl(post.thumbnail.url),
+                }
+              : null,
+          })),
           nextCursor,
         },
       });
@@ -208,7 +217,7 @@ export const postsRouter = createTRPCRouter({
         thumbnail: post.thumbnail
           ? {
               id: post.thumbnail.id,
-              url: `${env.CLOUDFLARE_R2_PUBLIC_URL}/assets/${post.thumbnail.url}`,
+              url: r2Manager.concatUrl(post.thumbnail.url),
             }
           : null,
       },
@@ -218,8 +227,6 @@ export const postsRouter = createTRPCRouter({
     .input(schema.create)
     .mutation(async ({ ctx, input }) => {
       const session = ctx.session;
-
-      console.log("input", input);
 
       return ctx.prisma.$transaction(async (tx) => {
         // 발행일시가 없는 경우 오늘로 설정
@@ -283,7 +290,7 @@ export const postsRouter = createTRPCRouter({
 
         let createdTags: Tag[] = [];
         // 카테고리가 존재하는 경우
-        if (!isEmpty(input.tags)) {
+        if (input.tags && !isEmpty(input.tags)) {
           const tags = await Promise.all(
             input.tags.map(async (tag) => {
               // 카테고리 정보가 이미 존재하는지 체크

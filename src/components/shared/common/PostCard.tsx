@@ -14,7 +14,7 @@ function PostCard({ post }: PostCardProps) {
       <div className="image-container">
         <Image
           alt="main image"
-          src="/images/webpack.png"
+          src={post.thumbnail?.url ?? "/images/placeholder.png"}
           fill
           className={clsx(
             "duration-700 ease-in-out group-hover:opacity-75",
