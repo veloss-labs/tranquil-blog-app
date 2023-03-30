@@ -117,9 +117,12 @@ export default function Posts() {
     form.resetFields();
   }, [form, reset]);
 
-  const onRowClick = useCallback((postId: number) => {
-    console.log(postId);
-  }, []);
+  const onRowClick = useCallback(
+    (postId: number) => {
+      router.push(`/dashboard/posts/write/${postId}`);
+    },
+    [router]
+  );
 
   const onTableChange = useCallback(
     (data: TablePaginationConfig) => {
@@ -236,14 +239,14 @@ export default function Posts() {
             width: 300,
           },
           {
-            dataIndex: "published",
-            title: "게시여부",
+            dataIndex: "isDraft",
+            title: "초안여부",
             align: "center",
             width: 100,
             render: (value: boolean) => {
               return (
                 <Tag color={value ? "green" : "red"}>
-                  {value ? "게시" : "미게시"}
+                  {value ? "초안" : "완료"}
                 </Tag>
               );
             },
@@ -254,6 +257,7 @@ export default function Posts() {
             align: "center",
             width: 200,
             render: (value: string) => {
+              if (!value) return "";
               return dayjs(value).format("YYYY-MM-DD HH:mm:ss");
             },
           },
@@ -280,7 +284,7 @@ export default function Posts() {
             title: "관리",
             align: "center",
             width: 100,
-            render: (value: number) => {
+            render: () => {
               return (
                 <Button
                   type="text"

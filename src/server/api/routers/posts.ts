@@ -15,13 +15,14 @@ import { getTrpcRouterCookie } from "~/server/auth";
 import { Prisma, type Tag } from "@prisma/client";
 import { responseWith } from "~/server/utils/response";
 import { RESULT_CODE } from "~/server/errors/code";
+import { env } from "~/env/server.mjs";
 
 const _default_post_select = Prisma.validator<Prisma.PostSelect>()({
   id: true,
   title: true,
   subTitle: true,
   content: true,
-  viewCount: true,
+  description: true,
   issueDate: true,
   createdAt: true,
   updatedAt: true,
@@ -64,6 +65,12 @@ const _default_post_select = Prisma.validator<Prisma.PostSelect>()({
   },
 });
 
+export type PostDetailSchema = Prisma.PostGetPayload<
+  Omit<Prisma.PostArgs, "include"> & {
+    select: typeof _default_post_select;
+  }
+>;
+
 export const postsRouter = createTRPCRouter({
   pages: creatorProcedure.input(schema.pages).query(async ({ input, ctx }) => {
     const session = ctx.session;
@@ -102,7 +109,80 @@ export const postsRouter = createTRPCRouter({
       },
     });
   }),
+  infinity: publicProcedure
+    .input(schema.infinity)
+    .query(async ({ input, ctx }) => {
+      /**
+       * For pagination docs you can have a look here
+       * @see https://trpc.io/docs/useInfiniteQuery
+       * @see https://www.prisma.io/docs/concepts/components/prisma-client/pagination
+       */
+      const limit = input.limit ?? 20;
+      const cursor = input.cursor ?? input.initialCursor;
+      const session = ctx.session;
+
+      const items = await ctx.prisma.post.findMany({
+        take: limit + 1,
+        cursor: cursor
+          ? {
+              id: cursor,
+            }
+          : undefined,
+        orderBy: {
+          createdAt: "desc",
+        },
+        where: {
+          title: {
+            contains: input.keyword ?? undefined,
+          },
+          ...(session
+            ? {
+                userId: session.id,
+                isDraft: input.isDraft ?? false,
+                ...(!input.isDraft && {
+                  issueDate: {
+                    gte: new Date(),
+                  },
+                }),
+              }
+            : {
+                issueDate: {
+                  gte: new Date(),
+                },
+                isDraft: false,
+              }),
+        },
+      });
+      let nextCursor: number | undefined = undefined;
+      if (items.length > limit) {
+        // Remove the last item and use it as next cursor
+
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const lastItem = items.pop()!;
+        nextCursor = lastItem.id;
+      }
+
+      return responseWith({
+        data: {
+          items: items,
+          nextCursor,
+        },
+      });
+    }),
   byId: publicProcedure.input(schema.byId).query(async ({ ctx, input }) => {
+    if (!input.id) {
+      throw new BadRequestError("PostNotFound", {
+        http: {
+          instance: "[trpc]: postsRouter.byId",
+          extra: responseWith({
+            ok: false,
+            resultCode: RESULT_CODE.NOT_FOUND,
+            resultMessage: "게시글이 존재하지 않습니다.",
+          }),
+        },
+      });
+    }
+
     const post = await ctx.prisma.post.findUnique({
       where: {
         id: input.id,
@@ -123,7 +203,15 @@ export const postsRouter = createTRPCRouter({
       });
     }
     return responseWith({
-      data: post,
+      data: {
+        ...post,
+        thumbnail: post.thumbnail
+          ? {
+              id: post.thumbnail.id,
+              url: `${env.CLOUDFLARE_R2_PUBLIC_URL}/assets/${post.thumbnail.url}`,
+            }
+          : null,
+      },
     });
   }),
   create: creatorProcedure
@@ -142,8 +230,9 @@ export const postsRouter = createTRPCRouter({
             title: input.title,
             subTitle: input.subTitle,
             content: input.content,
+            description: input.dsecription,
             issueDate,
-            published: input.published ?? false,
+            isDraft: false,
             userId: session.id,
           },
         });
@@ -290,10 +379,9 @@ export const postsRouter = createTRPCRouter({
         });
       }
 
-      const newData = {} as Prisma.XOR<
-        Prisma.PostUpdateInput,
-        Prisma.PostUncheckedUpdateInput
-      >;
+      const newData = {
+        isDraft: false,
+      } as Prisma.XOR<Prisma.PostUpdateInput, Prisma.PostUncheckedUpdateInput>;
       if (input.title && !isEqual(input.title, post.title)) {
         newData.title = input.title;
       }
@@ -303,6 +391,9 @@ export const postsRouter = createTRPCRouter({
       if (input.content && !isEqual(input.content, post.content)) {
         newData.content = input.content;
       }
+      if (input.dsecription && !isEqual(input.dsecription, post.description)) {
+        newData.description = input.dsecription;
+      }
       if (
         input.thumbnailId &&
         !isEqual(input.thumbnailId, post.thumbnail?.id)
@@ -311,13 +402,10 @@ export const postsRouter = createTRPCRouter({
       }
       if (input.issueDate) {
         const issueDate = input.issueDate.getTime();
-        const postIssueDate = post.issueDate.getTime();
+        const postIssueDate = post.issueDate ? post.issueDate.getTime() : null;
         if (!isEqual(issueDate, postIssueDate)) {
           newData.issueDate = new Date(issueDate);
         }
-      }
-      if (input.published !== undefined) {
-        newData.published = input.published ?? false;
       }
       if (input.categoryId && !isEqual(input.categoryId, post.category?.id)) {
         newData.categoryId = input.categoryId;
@@ -510,19 +598,20 @@ export const postsRouter = createTRPCRouter({
         } catch (e) {}
       }
 
-      const update_posts = await ctx.prisma.post.update({
-        where: {
-          id: input.id,
-        },
-        data: {
-          likeCount: {
-            decrement: 1,
-          },
-        },
-      });
+      // const update_posts = await ctx.prisma.post.update({
+      //   where: {
+      //     id: input.id,
+      //   },
+      //   data: {
+      //     likeCount: {
+      //       decrement: 1,
+      //     },
+      //   },
+      // });
 
       return responseWith({
-        data: update_posts.likeCount,
+        // data: update_posts.likeCount,
+        data: 0,
       });
     }),
   like: publicProcedure.input(schema.byId).mutation(async ({ ctx, input }) => {
@@ -539,6 +628,19 @@ export const postsRouter = createTRPCRouter({
             ok: false,
             resultCode: RESULT_CODE.NOT_USED_GUEST_ID,
             resultMessage: "게스트 아이디가 존재하지 않습니다.",
+          }),
+        },
+      });
+    }
+
+    if (!input.id) {
+      throw new BadRequestError("PostNotFound", {
+        http: {
+          instance: "[trpc]: postsRouter.byId",
+          extra: responseWith({
+            ok: false,
+            resultCode: RESULT_CODE.NOT_FOUND,
+            resultMessage: "게시글이 존재하지 않습니다.",
           }),
         },
       });
@@ -561,19 +663,20 @@ export const postsRouter = createTRPCRouter({
       } catch (e) {}
     }
 
-    const update_posts = await ctx.prisma.post.update({
-      where: {
-        id: input.id,
-      },
-      data: {
-        likeCount: {
-          increment: 1,
-        },
-      },
-    });
+    // const update_posts = await ctx.prisma.post.update({
+    //   where: {
+    //     id: input.id,
+    //   },
+    //   data: {
+    //     likeCount: {
+    //       increment: 1,
+    //     },
+    //   },
+    // });
 
     return responseWith({
-      data: update_posts.likeCount,
+      // data: update_posts.likeCount,
+      data: 0,
     });
   }),
   view: publicProcedure.input(schema.byId).query(async ({ ctx, input }) => {
@@ -614,19 +717,20 @@ export const postsRouter = createTRPCRouter({
       });
     }
 
-    const update_posts = await ctx.prisma.post.update({
-      where: {
-        id: input.id,
-      },
-      data: {
-        viewCount: {
-          increment: 1,
-        },
-      },
-    });
+    // const update_posts = await ctx.prisma.post.update({
+    //   where: {
+    //     id: input.id,
+    //   },
+    //   data: {
+    //     viewCount: {
+    //       increment: 1,
+    //     },
+    //   },
+    // });
 
     return responseWith({
-      data: update_posts.viewCount,
+      // data: update_posts.viewCount,
+      data: 0,
     });
   }),
 });

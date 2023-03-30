@@ -24,6 +24,8 @@ interface CoverContextState extends PopoverContextState {
 
 interface PublishContextState extends PopoverContextState {}
 
+interface DraftViewContextState extends PopoverContextState {}
+
 export enum Transition {
   IDLE = "IDLE",
   PROCESSING = "PROCESSING",
@@ -37,6 +39,8 @@ interface EditorContextState {
   cover: CoverContextState;
   publish: PublishContextState;
   transition: Transition;
+  draftView: DraftViewContextState;
+  draftId: Nullable<number>;
 }
 
 enum Action {
@@ -50,11 +54,17 @@ enum Action {
   CHANGE_TITLE_TEXT = "CHANGE_TITLE_TEXT",
   CHANGE_COVER = "CHANGE_COVER",
   TRANSITION_COVER = "TRANSITION_COVER",
+  CHANGE_DRAFT_ID = "CHANGE_DRAFT_ID",
 }
 
 type ChangeTransitionAction = {
   type: Action.CHANGE_TRANSITION;
   payload: Transition;
+};
+
+type ChangeDraftIdAction = {
+  type: Action.CHANGE_DRAFT_ID;
+  payload: number | null;
 };
 
 type PopoverAllCloseAction = {
@@ -64,14 +74,14 @@ type PopoverAllCloseAction = {
 type PopoverOpenAction = {
   type: Action.POPOVER_OPEN;
   payload: {
-    id: keyof Omit<EditorContextState, "transition">;
+    id: keyof Omit<EditorContextState, "transition" | "draftId">;
   };
 };
 
 type PopoverCloseAction = {
   type: Action.POPOVER_CLOSE;
   payload: {
-    id: keyof Omit<EditorContextState, "transition">;
+    id: keyof Omit<EditorContextState, "transition" | "draftId">;
   };
 };
 
@@ -112,7 +122,8 @@ type ActionType =
   | ChangeCoverAction
   | ChangeCoverTransitionAction
   | PopoverAllCloseAction
-  | ChangeTransitionAction;
+  | ChangeTransitionAction
+  | ChangeDraftIdAction;
 
 interface EditorContext extends EditorContextState {
   popoverAllClose: () => void;
@@ -125,6 +136,7 @@ interface EditorContext extends EditorContextState {
   transitionCover: (payload: ChangeCoverTransitionAction["payload"]) => void;
   changeCover: (payload: ChangeCoverAction["payload"]) => void;
   changeTransition: (transition: ChangeTransitionAction["payload"]) => void;
+  changeDraftId: (draftId: ChangeDraftIdAction["payload"]) => void;
   dispatch: React.Dispatch<ActionType>;
 }
 
@@ -149,7 +161,11 @@ const initialState: EditorContextState = {
   publish: {
     open: false,
   },
+  draftView: {
+    open: false,
+  },
   transition: Transition.IDLE,
+  draftId: null,
 };
 
 const [Provider, useEditorContext] = createContext<EditorContext>({
@@ -235,6 +251,11 @@ function reducer(state = initialState, action: ActionType): EditorContextState {
         ...state,
         transition: action.payload,
       };
+    case Action.CHANGE_DRAFT_ID:
+      return {
+        ...state,
+        draftId: action.payload,
+      };
     default:
       return state;
   }
@@ -300,10 +321,17 @@ function EditorProvider({ children, ...otherProps }: Props) {
     });
   };
 
-  const changeTransition = (transition: Transition) => {
+  const changeTransition = (transition: ChangeTransitionAction["payload"]) => {
     dispatch({
       type: Action.CHANGE_TRANSITION,
       payload: transition,
+    });
+  };
+
+  const changeDraftId = (draftId: ChangeDraftIdAction["payload"]) => {
+    dispatch({
+      type: Action.CHANGE_DRAFT_ID,
+      payload: draftId,
     });
   };
 
@@ -318,6 +346,7 @@ function EditorProvider({ children, ...otherProps }: Props) {
       changeCover,
       transitionCover,
       changeTransition,
+      changeDraftId,
       dispatch,
     }),
     [state]

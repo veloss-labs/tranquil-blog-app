@@ -207,3 +207,8 @@ export const getTrpcRouterCookie = (ctx: TRPCContext) => {
   const cookies = new Cookies(ctx.req, ctx.res, { keys: keys });
   return cookies;
 };
+
+export const getServerSideCookie = (ctx: GetServerSidePropsContext) => {
+  const cookies = new Cookies(ctx.req, ctx.res);
+  return cookies;
+};

@@ -49,6 +49,7 @@
     "dayjs": "^1.11.7",
     "framer-motion": "^10.9.2",
     "i18next": "^22.4.13",
+    "js-cookie": "^3.0.1",
     "katex": "^0.16.4",
     "lodash-es": "^4.17.21",
     "modern-errors": "^5.5.4",

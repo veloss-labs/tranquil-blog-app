@@ -2,7 +2,11 @@ import React, { useState } from "react";
 import clsx from "clsx";
 import Image from "next/image";
 
-function PostCard() {
+interface PostCardProps {
+  post: any;
+}
+
+function PostCard({ post }: PostCardProps) {
   const [isLoading, setLoading] = useState(true);
 
   return (
@@ -32,9 +36,9 @@ function PostCard() {
           width={24}
           height={24}
         />
-        veloss-labs
+        {post.user?.profile?.username}
       </div>
-      <h3 className="title">Migrate from Webpack to Remix</h3>
+      <h3 className="title">{post?.title}</h3>
       <div className="action">
         <span className="text-xs">좋아요 11개</span>
         <span className="text-xs">댓글 10개</span>

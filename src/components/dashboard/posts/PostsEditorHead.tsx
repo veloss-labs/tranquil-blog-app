@@ -41,8 +41,7 @@ const PostsEditorHead = () => {
   });
 
   const debounced = useDebounceFn(
-    (title: string) => {
-      console.log(title);
+    (_: string) => {
       changeTransition(Transition.PROCESSING);
     },
     {

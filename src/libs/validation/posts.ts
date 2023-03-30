@@ -6,10 +6,9 @@ export const schema = {
     title: z.string(),
     subTitle: z.string().optional(),
     content: z.string(),
-    dsecription: z.string().optional(),
+    dsecription: z.string().optional().nullable(),
     thumbnailId: z.number().int().positive().optional().nullish(),
     issueDate: z.date().optional().nullish(),
-    published: z.boolean().default(false),
     tags: z.array(z.string()),
     categoryId: z.number().int().positive().optional().nullish(),
   }),
@@ -18,21 +17,26 @@ export const schema = {
     title: z.string().optional(),
     subTitle: z.string().optional(),
     content: z.string().optional(),
-    dsecription: z.string().optional(),
+    dsecription: z.string().optional().nullable(),
     thumbnailId: z.number().int().positive().optional().nullish(),
     issueDate: z.date().optional(),
-    published: z.boolean().optional(),
     tags: z.array(z.string()).optional(),
     categoryId: z.number().int().positive().optional().nullish(),
   }),
   byId: z.object({
-    id: z.number().int().positive(),
+    id: z.number().int().positive().optional(),
   }),
   pages: z
     .object({
       keyword: z.string().optional().nullish(),
     })
     .merge(common.pages),
+  infinity: z
+    .object({
+      keyword: z.string().optional().nullish(),
+      isDraft: z.boolean().optional().nullish(),
+    })
+    .merge(common.list),
 };
 
 export type CreateData = z.infer<typeof schema.create>;

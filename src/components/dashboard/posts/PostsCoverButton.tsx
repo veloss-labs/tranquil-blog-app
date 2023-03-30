@@ -50,12 +50,12 @@ const PostsCoverButton = () => {
     return [
       {
         key: "upload",
-        label: "Upload",
+        label: t("dashboard.posts.write.tabs_upload"),
         children: <PostsCoverButton.UploadCover />,
       },
       {
         key: "library",
-        label: "Library",
+        label: t("dashboard.posts.write.tabs_library"),
         children: <PostsCoverButton.LibraryCover />,
       },
     ];

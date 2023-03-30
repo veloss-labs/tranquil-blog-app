@@ -32,7 +32,9 @@ const App: AppType<AppPageProps> = ({
   const getLayout = Component.getLayout || ((page) => page);
 
   useEffect(() => {
-    ctx.common.generateId.fetch();
+    ctx.common.generateId.fetch(undefined, {
+      staleTime: Infinity,
+    });
   }, []);
 
   return (

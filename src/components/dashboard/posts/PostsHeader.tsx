@@ -5,17 +5,21 @@ import { Button, Space } from "antd";
 import { Icons } from "~/components/shared/Icons";
 
 // hooks
-import { useEditorContext } from "~/context/editor-context";
+import { Transition, useEditorContext } from "~/context/editor-context";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 
 const PostsHeader = () => {
   const router = useRouter();
-  const { popoverOpen } = useEditorContext();
+  const { popoverOpen, draftId, transition } = useEditorContext();
   const { t } = useTranslation();
 
-  const onClick = useCallback(() => {
+  const onOpenPublish = useCallback(() => {
     popoverOpen({ id: "publish" });
+  }, [popoverOpen]);
+
+  const onOpenDraftView = useCallback(() => {
+    popoverOpen({ id: "draftView" });
   }, [popoverOpen]);
 
   const onBack = useCallback(() => {
@@ -37,16 +41,23 @@ const PostsHeader = () => {
         </div>
         <div className="dashboard-posts--header-right">
           <Space size="middle">
-            <div className="flex flex-row items-center text-green-500">
-              <Icons.SavePosts className="icon--md mr-2 flex-shrink-0 fill-current" />
-              <p>{t("dashboard.posts.write.saved")}</p>
-            </div>
+            {transition === Transition.DONE && draftId ? (
+              <div className="flex flex-row items-center text-green-500">
+                <Icons.SavePosts className="icon--md mr-2 flex-shrink-0 fill-current" />
+                <p>{t("dashboard.posts.write.saved")}</p>
+              </div>
+            ) : null}
             <Button
               type="text"
               size="large"
               icon={<Icons.time className="icon--md" />}
+              onClick={onOpenDraftView}
             />
-            <Button type="primary" className="!shadow-none" onClick={onClick}>
+            <Button
+              type="primary"
+              className="!shadow-none"
+              onClick={onOpenPublish}
+            >
               {t("dashboard.posts.write.publish")}
             </Button>
           </Space>

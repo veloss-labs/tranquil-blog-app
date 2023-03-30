@@ -1,6 +1,7 @@
 {
   "shared": {
-    "back": "Back"
+    "back": "Back",
+    "load_more": "Load more"
   },
   "signin": {
     "title": "Welcome back",
@@ -44,7 +45,9 @@
         "tags_add": "Add a tag",
         "issueDate_label": "Issue Date",
         "issueDate_desc": "Select a publishing date/time (Based on your local time zone)",
-        "saved": "Saved"
+        "saved": "Saved",
+        "tabs_upload": "Upload",
+        "tabs_library": "Library"
       }
     }
   }

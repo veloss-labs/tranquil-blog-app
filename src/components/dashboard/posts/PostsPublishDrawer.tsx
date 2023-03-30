@@ -4,7 +4,6 @@ import React, {
   useMemo,
   useRef,
   useState,
-  useTransition,
 } from "react";
 import dayjs from "dayjs";
 import { PlusOutlined } from "@ant-design/icons";
@@ -22,8 +21,6 @@ import {
   Input,
   Select,
   DatePicker,
-  Switch,
-  InputRef,
 } from "antd";
 
 // hooks
@@ -31,6 +28,7 @@ import { useEditorContext } from "~/context/editor-context";
 import { useFormContext, useController } from "react-hook-form";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
+import { useMedia } from "~/libs/hooks/useMedia";
 
 // api
 import { api } from "~/utils/api";
@@ -38,8 +36,7 @@ import { api } from "~/utils/api";
 // types
 import type { CreateData } from "~/libs/validation/posts";
 import type { SubmitHandler } from "react-hook-form";
-import type { FormInstance } from "antd";
-import { useMedia } from "~/libs/hooks/useMedia";
+import type { FormInstance, InputRef } from "antd";
 
 interface InternalPostsPublishDrawerProps {
   setForm: (form: FormInstance | null) => void;
@@ -50,16 +47,10 @@ const InternalPostsPublishDrawer: React.FC<InternalPostsPublishDrawerProps> = ({
   setForm,
   setLoading,
 }) => {
-  const [keyword_categories, setKeywordCategories] = useState<string>("");
-
-  const [isPending, startTransition] = useTransition();
-
   const router = useRouter();
   const { t } = useTranslation();
   const $form = useRef<FormInstance>(null);
-  const { handleSubmit, control, watch } = useFormContext<CreateData>();
-
-  console.log(watch());
+  const { handleSubmit, control } = useFormContext<CreateData>();
 
   const [items, setItems] = useState(["jack", "lucy"]);
   const [name, setName] = useState("");
@@ -97,11 +88,6 @@ const InternalPostsPublishDrawer: React.FC<InternalPostsPublishDrawerProps> = ({
   const mutation_create = api.posts.create.useMutation();
 
   const mutation_update = api.posts.update.useMutation();
-
-  const control_published = useController({
-    control,
-    name: "published",
-  });
 
   const control_description = useController({
     control,
@@ -151,6 +137,7 @@ const InternalPostsPublishDrawer: React.FC<InternalPostsPublishDrawerProps> = ({
               placeholder={t("dashboard.posts.write.description_placeholder")}
               autoSize={{ minRows: 3, maxRows: 5 }}
               {...control_description.field}
+              value={control_description.field.value ?? undefined}
             />
           </Form.Item>
         </Col>
@@ -198,20 +185,6 @@ const InternalPostsPublishDrawer: React.FC<InternalPostsPublishDrawerProps> = ({
                 </>
               )}
               options={items.map((item) => ({ label: item, value: item }))}
-            />
-          </Form.Item>
-        </Col>
-      </Row>
-      <Row gutter={16}>
-        <Col span={24}>
-          <Form.Item
-            name="published"
-            label={t("dashboard.posts.write.published_label")}
-            extra={t("dashboard.posts.write.published_desc")}
-          >
-            <Switch
-              {...control_published.field}
-              checked={control_published.field.value}
             />
           </Form.Item>
         </Col>
