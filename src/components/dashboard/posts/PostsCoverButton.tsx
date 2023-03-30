@@ -133,7 +133,7 @@ PostsCoverButton.UploadCover = function UploadCover() {
 
   const mutation_upload = api.files.upload.useMutation();
 
-  const { changeCover } = useEditorContext();
+  const { changeCover, popoverClose } = useEditorContext();
   const { setValue } = useFormContext<CreateData>();
 
   const isUploading = useMemo(() => {
@@ -187,6 +187,7 @@ PostsCoverButton.UploadCover = function UploadCover() {
         url,
       });
       setValue("thumbnailId", id);
+      popoverClose({ id: "cover" });
 
       ctx.images.infinity.refetch();
     },
