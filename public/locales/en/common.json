@@ -6,7 +6,16 @@
     "profile": "Profile",
     "account_settings": "Account Settings",
     "dashboard": "Dashboard",
-    "sign_out": "Sign Out"
+    "sign_out": "Sign Out",
+    "all": "All",
+    "latest": "Latest",
+    "oldest": "Oldest",
+    "popular": "Popular",
+    "filter": "Filters"
+  },
+  "post": {
+    "date_at": "Published on {{date}}",
+    "sell_all_posts": "See all posts"
   },
   "signin": {
     "title": "Welcome back",

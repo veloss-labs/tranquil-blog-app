@@ -93,3 +93,12 @@ export function optimizeAnimation(callback: () => void) {
     }
   };
 }
+
+export const toKebabCase = (str: string) => {
+  // 단어를 앞글자가 대문자인 경우에만 그 앞에 공백을 추가한다. 그리고 앞뒤 공백을 제거한다.
+  return str
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "-");
+};

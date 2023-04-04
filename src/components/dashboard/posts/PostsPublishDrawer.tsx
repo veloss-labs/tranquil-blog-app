@@ -6,7 +6,6 @@ import React, {
   useState,
 } from "react";
 import dayjs from "dayjs";
-import { PlusOutlined } from "@ant-design/icons";
 
 // components
 
@@ -16,8 +15,6 @@ import {
   Row,
   Form,
   Col,
-  Space,
-  Divider,
   Input,
   Select,
   DatePicker,
@@ -36,7 +33,7 @@ import { api } from "~/utils/api";
 // types
 import type { CreateData } from "~/libs/validation/posts";
 import type { SubmitHandler } from "react-hook-form";
-import type { FormInstance, InputRef } from "antd";
+import type { FormInstance } from "antd";
 
 interface InternalPostsPublishDrawerProps {
   setForm: (form: FormInstance | null) => void;
@@ -52,26 +49,7 @@ const InternalPostsPublishDrawer: React.FC<InternalPostsPublishDrawerProps> = ({
   const $form = useRef<FormInstance>(null);
   const { handleSubmit, control, watch } = useFormContext<CreateData>();
 
-  console.log("watch", watch());
-
-  const [items, setItems] = useState(["jack", "lucy"]);
-  const [name, setName] = useState("");
-  const inputRef = useRef<InputRef | null>(null);
-
-  const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setName(event.target.value);
-  };
-
-  const addItem = (
-    e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>
-  ) => {
-    e.preventDefault();
-    setItems([...items, name || `New item`]);
-    setName("");
-    setTimeout(() => {
-      inputRef.current?.focus();
-    }, 0);
-  };
+  const watchTags = watch("tags");
 
   const utils = api.useContext();
 
@@ -126,6 +104,11 @@ const InternalPostsPublishDrawer: React.FC<InternalPostsPublishDrawerProps> = ({
     name: "issueDate",
   });
 
+  const control_tags = useController({
+    control,
+    name: "tags",
+  });
+
   const onSubmit: SubmitHandler<CreateData> = (input) => {
     if (!draftId) {
       mutation_create.mutate(input);
@@ -156,7 +139,7 @@ const InternalPostsPublishDrawer: React.FC<InternalPostsPublishDrawerProps> = ({
     }
   }, [mutation_create.isLoading, mutation_update.isLoading]);
 
-  console.log("control_description", control_description);
+  console.log("render", watchTags);
 
   return (
     <Form layout="vertical" ref={$form} onFinish={handleSubmit(onSubmit)}>
@@ -198,29 +181,12 @@ const InternalPostsPublishDrawer: React.FC<InternalPostsPublishDrawerProps> = ({
         <Col span={24}>
           <Form.Item label={t("dashboard.posts.write.tags_label")}>
             <Select
+              mode="tags"
               placeholder={t("dashboard.posts.write.tags_placeholder")}
-              dropdownRender={(menu) => (
-                <>
-                  {menu}
-                  <Divider style={{ margin: "8px 0" }} />
-                  <Space style={{ padding: "0 8px 4px" }}>
-                    <Input
-                      placeholder={t("dashboard.posts.write.tags_placeholder")}
-                      ref={inputRef}
-                      value={name}
-                      onChange={onNameChange}
-                    />
-                    <Button
-                      type="text"
-                      icon={<PlusOutlined />}
-                      onClick={addItem}
-                    >
-                      {t("dashboard.posts.write.tags_add")}
-                    </Button>
-                  </Space>
-                </>
-              )}
-              options={items.map((item) => ({ label: item, value: item }))}
+              options={
+                watchTags?.map((item) => ({ label: item, value: item })) ?? []
+              }
+              {...control_tags.field}
             />
           </Form.Item>
         </Col>

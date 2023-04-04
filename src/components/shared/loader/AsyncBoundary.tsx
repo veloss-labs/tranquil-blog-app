@@ -1,6 +1,6 @@
 import React from 'react';
-import ErrorBoundary from '~/components/ui/loader/ErrorBoundary';
-import Suspense from '~/components/ui/loader/Suspense';
+import ErrorBoundary from "~/components/shared/loader/ErrorBoundary";
+import Suspense from "~/components/shared/loader/Suspense";
 
 // types
 import type { ComponentProps } from 'react';

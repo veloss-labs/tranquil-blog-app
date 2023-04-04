@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { Typography } from "antd";
+import { Typography, Avatar } from "antd";
 import { signOut } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 
@@ -31,16 +30,17 @@ const SiteNavMenu: React.FC<SiteNavMenuProps> = ({
         <ul className="site-nav-mobile-user-menu m-0">
           <li>
             <Link
-              href="/"
+              href={`/blog/${session.user?.profile?.username}`}
               className="site-nav-bold-text site-nav-mobile-avatar"
             >
-              <Image
-                src="/images/profile.jpeg"
-                width={40}
-                height={40}
-                alt="profile"
-              />
-              <span className="site-nav-bold-text">
+              <Avatar
+                size="large"
+                gap={4}
+                src={session?.user?.profile?.profileUrl ?? undefined}
+              >
+                {session?.user?.profile?.username}
+              </Avatar>
+              <span className="site-nav-bold-text ml-4">
                 {session?.user?.profile.username}
               </span>
             </Link>
@@ -52,7 +52,10 @@ const SiteNavMenu: React.FC<SiteNavMenuProps> = ({
               </Link>
             </li>
             <li>
-              <Link data-site-nav-element="Account Setting" href="/">
+              <Link
+                data-site-nav-element="Account Setting"
+                href="/account/profile"
+              >
                 {t("shared.account_settings")}
               </Link>
             </li>

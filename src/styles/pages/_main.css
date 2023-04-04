@@ -104,7 +104,14 @@
 }
 
 .posts-card-item .action {
-  @apply ml-1 flex flex-none gap-3;
+  flex: 1;
+  font-size: 12px;
+  font-weight: 400;
+  @apply ml-1 flex gap-3 justify-end;
+}
+
+.posts-card-item .action .action-item {
+  @apply inline-flex items-center ml-2;
 }
 
 @media screen and (min-width: 959px) {

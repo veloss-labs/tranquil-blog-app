@@ -6,7 +6,16 @@
     "profile": "프로필",
     "account_settings": "계정 설정",
     "dashboard": "대시보드",
-    "sign_out": "로그아웃"
+    "sign_out": "로그아웃",
+    "all": "전체",
+    "latest": "최신순",
+    "oldest": "과거순",
+    "popular": "인기순",
+    "filter": "필터"
+  },
+  "post": {
+    "date_at": "{{date}}",
+    "sell_all_posts": "모든 글 보기"
   },
   "signin": {
     "title": "Welcome back",

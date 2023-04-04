@@ -28,6 +28,8 @@ import {
   ActivityLogIcon,
   ArrowLeftIcon as BackIcon,
   ArrowRightIcon as ForwardIcon,
+  HeartIcon,
+  EyeOpenIcon,
 } from "@radix-ui/react-icons";
 
 import type { CustomIconComponentProps } from "@ant-design/icons/lib/components/Icon";
@@ -85,6 +87,8 @@ export const Icons = {
   Forward: ForwardIcon,
   OrderedList: OrderedListIcon,
   SavePosts: SavePostsIcon,
+  Heart: HeartIcon,
+  EyeOpen: EyeOpenIcon,
 };
 
 export const AntdIcons = {

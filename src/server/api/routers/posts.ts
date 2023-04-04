@@ -16,6 +16,8 @@ import { Prisma, type Tag } from "@prisma/client";
 import { responseWith } from "~/server/utils/response";
 import { RESULT_CODE } from "~/server/errors/code";
 import { r2Manager } from "~/server/service/r2Manager";
+import { toKebabCase } from "~/utils/utils";
+import { memoryManager } from "~/server/service/memoryManager";
 
 const _default_post_select = Prisma.validator<Prisma.PostSelect>()({
   id: true,
@@ -51,6 +53,13 @@ const _default_post_select = Prisma.validator<Prisma.PostSelect>()({
           location: true,
         },
       },
+    },
+  },
+  stats: {
+    select: {
+      views: true,
+      likes: true,
+      commentsCount: true,
     },
   },
   postsTags: {
@@ -120,6 +129,21 @@ export const postsRouter = createTRPCRouter({
       const limit = input.limit ?? 20;
       const cursor = input.cursor ?? input.initialCursor;
       const session = ctx.session;
+      let sorting: "desc" | "asc" | undefined = undefined;
+
+      switch (input.sorting) {
+        case "latest":
+          sorting = "desc";
+          break;
+        case "oldest":
+          sorting = "asc";
+          break;
+        case "trending":
+          sorting = undefined;
+        default:
+          sorting = "desc";
+          break;
+      }
 
       const items = await ctx.prisma.post.findMany({
         take: limit + 1,
@@ -129,13 +153,14 @@ export const postsRouter = createTRPCRouter({
             }
           : undefined,
         orderBy: {
-          createdAt: "desc",
+          createdAt: sorting,
         },
         select: _default_post_select,
         where: {
           title: {
             contains: input.keyword ?? undefined,
           },
+          categoryId: input.categoryId ?? undefined,
           ...(session
             ? {
                 userId: session.id,
@@ -223,133 +248,144 @@ export const postsRouter = createTRPCRouter({
       },
     });
   }),
-  create: creatorProcedure
-    .input(schema.create)
-    .mutation(async ({ ctx, input }) => {
-      const session = ctx.session;
+  create: creatorProcedure.input(schema.create).mutation(({ ctx, input }) => {
+    const session = ctx.session;
 
-      return ctx.prisma.$transaction(async (tx) => {
-        // 발행일시가 없는 경우 오늘로 설정
-        const issueDate = input.issueDate ?? new Date();
+    return ctx.prisma.$transaction(async (tx) => {
+      // 발행일시가 없는 경우 오늘로 설정
+      const issueDate = input.issueDate ?? new Date();
 
-        const post = await tx.post.create({
-          data: {
-            title: input.title,
-            subTitle: input.subTitle,
-            content: input.content,
-            description: input.dsecription,
-            issueDate,
-            isDraft: false,
-            userId: session.id,
+      const post = await tx.post.create({
+        data: {
+          title: input.title,
+          subTitle: input.subTitle,
+          content: input.content,
+          description: input.dsecription,
+          issueDate,
+          isDraft: false,
+          userId: session.id,
+        },
+      });
+
+      // 카테고리가 존재하는 경우 카테고리와 게시물을 연결
+      if (input.categoryId) {
+        const exists_category = await ctx.prisma.postCategory.findUnique({
+          where: {
+            id: input.categoryId,
           },
         });
 
-        // 카테고리가 존재하는 경우 카테고리와 게시물을 연결
-        if (input.categoryId) {
-          const exists_category = await ctx.prisma.postCategory.findUnique({
-            where: {
-              id: input.categoryId,
+        if (!exists_category) {
+          throw new BadRequestError("CategoryNotFound", {
+            http: {
+              instance: "[trpc]: postsRouter.create",
+              extra: responseWith({
+                ok: false,
+                resultCode: RESULT_CODE.NOT_FOUND,
+                resultMessage: "카테고리가 존재하지 않습니다.",
+              }),
             },
           });
-
-          if (!exists_category) {
-            throw new BadRequestError("CategoryNotFound", {
-              http: {
-                instance: "[trpc]: postsRouter.create",
-                extra: responseWith({
-                  ok: false,
-                  resultCode: RESULT_CODE.NOT_FOUND,
-                  resultMessage: "카테고리가 존재하지 않습니다.",
-                }),
-              },
-            });
-          }
         }
+      }
 
-        // 썸네일이 존재하는 경우 썸네일과 게시물을 연결
-        if (input.thumbnailId) {
-          const exists_image = await ctx.prisma.postImage.findUnique({
-            where: {
-              id: input.thumbnailId,
+      // 썸네일이 존재하는 경우 썸네일과 게시물을 연결
+      if (input.thumbnailId) {
+        const exists_image = await ctx.prisma.postImage.findUnique({
+          where: {
+            id: input.thumbnailId,
+          },
+        });
+
+        if (!exists_image) {
+          throw new BadRequestError("PostImageNotFound", {
+            http: {
+              instance: "[trpc]: postsRouter.create",
+              extra: responseWith({
+                ok: false,
+                resultCode: RESULT_CODE.NOT_FOUND,
+                resultMessage: "게시물 이미지가 존재하지 않습니다.",
+              }),
             },
           });
+        }
+      }
 
-          if (!exists_image) {
-            throw new BadRequestError("PostImageNotFound", {
-              http: {
-                instance: "[trpc]: postsRouter.create",
-                extra: responseWith({
-                  ok: false,
-                  resultCode: RESULT_CODE.NOT_FOUND,
-                  resultMessage: "게시물 이미지가 존재하지 않습니다.",
-                }),
+      let createdTags: Tag[] = [];
+      // 카테고리가 존재하는 경우
+      if (input.tags && !isEmpty(input.tags)) {
+        const tags = await Promise.all(
+          input.tags.map(async (tag) => {
+            const newTag = toKebabCase(tag);
+            // 카테고리 정보가 이미 존재하는지 체크
+            const tagData = await tx.tag.findFirst({
+              where: {
+                name: newTag,
               },
             });
-          }
-        }
-
-        let createdTags: Tag[] = [];
-        // 카테고리가 존재하는 경우
-        if (input.tags && !isEmpty(input.tags)) {
-          const tags = await Promise.all(
-            input.tags.map(async (tag) => {
-              // 카테고리 정보가 이미 존재하는지 체크
-              const tagData = await tx.tag.findFirst({
-                where: {
-                  name: tag,
+            // 없으면 새롭게 생성하고 있으면 기존 데이터를 사용
+            if (!tagData) {
+              return tx.tag.create({
+                data: {
+                  name: newTag,
                 },
               });
-              // 없으면 새롭게 생성하고 있으면 기존 데이터를 사용
-              if (!tagData) {
-                return tx.tag.create({
-                  data: {
-                    name: tag,
-                  },
-                });
-              }
-              return tagData;
-            })
-          );
-          createdTags = tags;
-        }
+            }
+            return tagData;
+          })
+        );
+        createdTags = tags;
+      }
 
-        // 태그가 존재하는 경우에만 게시물과 태그를 연결
-        if (!isEmpty(createdTags)) {
-          await Promise.all(
-            createdTags.map((tag) =>
-              tx.postsTags.create({
-                data: {
-                  post: {
-                    connect: {
-                      id: post.id,
-                    },
-                  },
-                  tag: {
-                    connect: {
-                      id: tag.id,
-                    },
+      // 태그가 존재하는 경우에만 게시물과 태그를 연결
+      if (!isEmpty(createdTags)) {
+        await Promise.all(
+          createdTags.map((tag) =>
+            tx.postsTags.create({
+              data: {
+                post: {
+                  connect: {
+                    id: post.id,
                   },
                 },
-              })
-            )
-          );
-        }
+                tag: {
+                  connect: {
+                    id: tag.id,
+                  },
+                },
+              },
+            })
+          )
+        );
+      }
 
-        await tx.post.update({
-          where: {
-            id: post.id,
-          },
-          data: {
-            categoryId: input.categoryId ? input.categoryId : null,
-            thumbnailId: input.thumbnailId ? input.thumbnailId : null,
-          },
-        });
-
-        return responseWith({
-          data: post.id,
-        });
+      await tx.post.update({
+        where: {
+          id: post.id,
+        },
+        data: {
+          categoryId: input.categoryId ? input.categoryId : null,
+          thumbnailId: input.thumbnailId ? input.thumbnailId : null,
+        },
       });
-    }),
+
+      if (post) {
+        try {
+          await tx.postStats.create({
+            data: {
+              postId: post.id,
+            },
+          });
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      return responseWith({
+        data: post.id,
+      });
+    });
+  }),
   update: creatorProcedure.input(schema.update).mutation(({ ctx, input }) => {
     const session = ctx.session;
     return ctx.prisma.$transaction(async (tx) => {
@@ -455,17 +491,18 @@ export const postsRouter = createTRPCRouter({
         if (added_tags.length > 0) {
           const tags = await Promise.all(
             added_tags.map(async (tag) => {
+              const newTag = toKebabCase(tag);
               // 태그 정보가 이미 존재하는지 체크
               const tagData = await tx.tag.findFirst({
                 where: {
-                  name: tag,
+                  name: newTag,
                 },
               });
               // 없으면 새롭게 생성하고 있으면 기존 데이터를 사용
               if (!tagData) {
                 return tx.tag.create({
                   data: {
-                    name: tag,
+                    name: newTag,
                   },
                 });
               }
@@ -506,6 +543,26 @@ export const postsRouter = createTRPCRouter({
         },
         data: newData,
       });
+
+      if (post) {
+        try {
+          const stats = await tx.postStats.findFirst({
+            where: {
+              postId: post.id,
+            },
+          });
+
+          if (!stats) {
+            await tx.postStats.create({
+              data: {
+                postId: post.id,
+              },
+            });
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      }
 
       return responseWith({
         data: post.id,
@@ -686,7 +743,7 @@ export const postsRouter = createTRPCRouter({
       data: 0,
     });
   }),
-  view: publicProcedure.input(schema.byId).query(async ({ ctx, input }) => {
+  view: publicProcedure.input(schema.byId).mutation(async ({ ctx, input }) => {
     const cookies = getTrpcRouterCookie(ctx);
     const guestId = cookies.get(process.env.GUEST_ID_NAME, {
       signed: true,
@@ -709,6 +766,14 @@ export const postsRouter = createTRPCRouter({
       where: {
         id: input.id,
       },
+      select: {
+        id: true,
+        stats: {
+          select: {
+            views: true,
+          },
+        },
+      },
     });
 
     if (!post) {
@@ -724,20 +789,29 @@ export const postsRouter = createTRPCRouter({
       });
     }
 
-    // const update_posts = await ctx.prisma.post.update({
-    //   where: {
-    //     id: input.id,
-    //   },
-    //   data: {
-    //     viewCount: {
-    //       increment: 1,
-    //     },
-    //   },
-    // });
+    if (memoryManager.has(memoryManager.makeViewKey(guestId))) {
+      return responseWith({
+        data: post.stats?.views ?? 0,
+      });
+    }
+
+    console.log("view", input.id);
+
+    const alreadyViewed = await ctx.prisma.postStats.update({
+      where: {
+        postId: input.id,
+      },
+      data: {
+        views: {
+          increment: 1,
+        },
+      },
+    });
+
+    memoryManager.setItem(memoryManager.makeViewKey(guestId), true);
 
     return responseWith({
-      // data: update_posts.viewCount,
-      data: 0,
+      data: alreadyViewed.views,
     });
   }),
 });

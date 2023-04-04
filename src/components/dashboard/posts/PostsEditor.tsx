@@ -160,6 +160,10 @@ const PostsEditor: React.FC<PostsEditorProps> = ({ id, data }) => {
           thumbnailId: data.thumbnail?.id ?? null,
           issueDate: data.issueDate ? new Date(data.issueDate) : null,
           categoryId: data.category ? data.category.id : null,
+          // @ts-ignore
+          tags:
+            data.postsTags.map((tag: any) => tag?.tag?.name).filter(Boolean) ??
+            [],
         });
         isHydrated.current = true;
         return;

@@ -34,6 +34,8 @@ export const schema = {
   infinity: z
     .object({
       keyword: z.string().optional().nullish(),
+      categoryId: z.number().int().positive().optional().nullish(),
+      sorting: z.string().optional().nullish(),
       isDraft: z.boolean().optional().nullish(),
     })
     .merge(common.list),

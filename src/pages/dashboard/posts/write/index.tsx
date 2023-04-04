@@ -55,6 +55,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
   return {
     props: {
+      session,
       ...message,
     },
   };

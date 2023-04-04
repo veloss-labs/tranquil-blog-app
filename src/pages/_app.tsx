@@ -12,6 +12,10 @@ import { useEffect } from "react";
 
 import RootContext from "~/context/root-context";
 import nextI18NextConfig from "../../next-i18next.config";
+import dayjs from "dayjs";
+import "dayjs/locale/ko";
+
+dayjs.locale("ko");
 
 const fontSans = FontSans({
   subsets: ["latin"],

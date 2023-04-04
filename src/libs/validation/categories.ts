@@ -34,6 +34,9 @@ export const schema = {
       keyword: z.string().optional().nullish(),
     })
     .merge(common.pages),
+  topCategories: z.object({
+    pageSize: z.number().min(1).max(100).nullish(),
+  }),
 };
 
 export type CreateData = z.infer<typeof schema.create>;

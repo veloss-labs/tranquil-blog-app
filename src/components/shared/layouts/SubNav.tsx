@@ -1,117 +1,162 @@
 import React, { useMemo } from "react";
-import { Button, Dropdown, Typography } from "antd";
-import { Icons } from "~/components/shared/Icons";
-import { api } from "~/utils/api";
+import dynamic from "next/dynamic";
 
-import type { MenuProps } from "antd";
 import Link from "next/link";
 import clsx from "clsx";
+import { Button, Dropdown, Typography } from "antd";
+import { Icons } from "~/components/shared/Icons";
+import _SubNavCategories from "~/components/shared/layouts/SubNavCategories";
 
-const items: MenuProps["items"] = [
-  {
-    key: "1",
-    label: (
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://www.antgroup.com"
-      >
-        1st menu item
-      </a>
-    ),
-  },
-  {
-    key: "2",
-    label: (
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://www.aliyun.com"
-      >
-        2nd menu item (disabled)
-      </a>
-    ),
-    disabled: true,
-  },
-  {
-    key: "3",
-    label: (
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://www.luohanacademy.com"
-      >
-        3rd menu item (disabled)
-      </a>
-    ),
-    disabled: true,
-  },
-  {
-    key: "4",
-    danger: true,
-    label: "a danger item",
-  },
-];
+// hooks
+import { useRouter } from "next/router";
+import { useUrlState } from "~/libs/hooks/useUrlState";
+import { useTranslation } from "next-i18next";
 
-const SubNav = () => {
-  const query = api.categories.infinity.useInfiniteQuery(
-    {
-      limit: 100,
-    },
-    {
-      getNextPageParam(lastPage) {
-        return lastPage.data?.nextCursor;
-      },
-      refetchOnMount: false,
-      staleTime: Infinity,
-    }
-  );
+// types
+import type { MenuProps } from "antd";
 
-  const categories = useMemo(
-    () => query.data?.pages.map((page) => page.data?.items ?? []).flat() ?? [],
-    [query.data]
-  );
+const SubNavCategories = dynamic(
+  () => import("~/components/shared/layouts/SubNavCategories"),
+  {
+    ssr: false,
+    loading: () => <_SubNavCategories.Skeleton />,
+  }
+);
 
+function SubNav() {
   return (
     <div className="subnav">
-      <div className="subnav--views">
-        <Dropdown menu={{ items }} trigger={["click"]}>
-          <Button
-            className="!inline-flex !items-center"
-            aria-label="리스트 필터 옵션"
+      <SubNav.Sorting />
+      <SubNav.Categories />
+      <SubNav.Filters />
+    </div>
+  );
+}
+
+export default SubNav;
+
+SubNav.Sorting = function Sorting() {
+  const { t } = useTranslation();
+  const router = useRouter();
+  const [_, setState] = useUrlState(undefined, {
+    transitionOptions: {
+      shallow: true,
+    },
+  });
+
+  const items: MenuProps["items"] = useMemo(() => {
+    return [
+      {
+        key: "latest",
+        label: (
+          <Link
+            href={{
+              pathname: "/",
+              query: { ...router.query, sorting: "latest" },
+            }}
+            shallow
           >
-            <Typography.Text>최신순</Typography.Text>
-            <Icons.down className="icon--sm ml-2 opacity-50" />
-          </Button>
-        </Dropdown>
-      </div>
-      <div className="subnav--categories snap-x space-x-1">
-        <ul className="btn-categories-group">
-          {categories.map((category) => (
-            <li
-              className={clsx("btn-category snap-center", {
-                active: false,
-              })}
-              key={`subnav-category-${category.id}`}
-            >
-              <Link aria-label={category.name} href="/" title={category.name}>
-                {category.name}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div className="subnav--filters">
-        <Button
-          className="!inline-flex !items-center"
-          aria-label="리스트 검색 옵션"
-          icon={<Icons.subTitle className="icon--sm mr-2 opacity-80" />}
-        >
-          <Typography.Text>필터</Typography.Text>
+            {t("shared.latest")}
+          </Link>
+        ),
+      },
+      {
+        key: "oldest",
+        label: (
+          <Link
+            href={{
+              pathname: "/",
+              query: { ...router.query, sorting: "oldest" },
+            }}
+            shallow
+          >
+            {t("shared.oldest")}
+          </Link>
+        ),
+      },
+    ];
+  }, [router.query]);
+
+  const text = useMemo(() => {
+    const sorting = router.query.sorting?.toString();
+    if (!sorting) return t("shared.latest");
+    switch (sorting) {
+      case "latest":
+        return t("shared.latest");
+      case "oldest":
+        return t("shared.oldest");
+      case "popular":
+        return t("shared.popular");
+      default:
+        return t("shared.latest");
+    }
+  }, [router.query.sorting]);
+
+  return (
+    <div className="subnav--views">
+      <Dropdown
+        menu={{
+          items,
+          selectedKeys: [router.query.sorting?.toString() ?? "latest"],
+          onClick: ({ key }) => {
+            setState({ sorting: key });
+          },
+        }}
+        trigger={["click"]}
+      >
+        <Button className="!inline-flex !items-center" aria-label="sorting">
+          <Typography.Text>{text}</Typography.Text>
+          <Icons.down className="icon--sm ml-2 opacity-50" />
         </Button>
-      </div>
+      </Dropdown>
     </div>
   );
 };
 
-export default SubNav;
+SubNav.Categories = function Categories() {
+  const router = useRouter();
+  const { t } = useTranslation();
+
+  return (
+    <div className="subnav--categories snap-x space-x-1">
+      <ul className="btn-categories-group">
+        <li
+          className={clsx("btn-category snap-center", {
+            active: !router.query.category?.toString(),
+          })}
+        >
+          <Link
+            aria-label="all"
+            href={{
+              pathname: "/",
+              query: {
+                ...router.query,
+                category: undefined,
+              },
+            }}
+            title="all"
+            shallow
+          >
+            {t("shared.all")}
+          </Link>
+        </li>
+        <SubNavCategories />
+      </ul>
+    </div>
+  );
+};
+
+SubNav.Filters = function Filters() {
+  const { t } = useTranslation();
+  return (
+    <div className="subnav--filters">
+      <Button
+        className="!inline-flex !items-center"
+        aria-label="filters"
+        icon={<Icons.subTitle className="icon--sm mr-2 opacity-80" />}
+      >
+        <Typography.Text>{t("shared.filter")}</Typography.Text>
+      </Button>
+    </div>
+  );
+};

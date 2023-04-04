@@ -25,7 +25,10 @@ const UserNav: React.FC<UserNavProps> = ({ session }) => {
     const _menuItems: MenuProps["items"] = [
       {
         label: (
-          <Link href="/" aria-label="profile">
+          <Link
+            href={`/blog/${session.user?.profile?.username}`}
+            aria-label="profile"
+          >
             <Typography.Text strong>{t("shared.profile")}</Typography.Text>
           </Link>
         ),
@@ -33,7 +36,7 @@ const UserNav: React.FC<UserNavProps> = ({ session }) => {
       },
       {
         label: (
-          <Link href="/" aria-label="account setting">
+          <Link href="/account/profile" aria-label="account setting">
             <Typography.Text strong>
               {t("shared.account_settings")}
             </Typography.Text>
@@ -78,13 +81,20 @@ const UserNav: React.FC<UserNavProps> = ({ session }) => {
         <Dropdown
           menu={{
             items: menuItems,
+            style: {
+              width: "150px",
+            },
           }}
           placement="bottomLeft"
           trigger={["click"]}
           className="flex w-14 items-center"
         >
           <a onClick={(e) => e.preventDefault()}>
-            <Avatar size="large" gap={4} src="/images/profile.jpeg">
+            <Avatar
+              size="large"
+              gap={4}
+              src={session?.user?.profile?.profileUrl ?? undefined}
+            >
               {session?.user?.profile?.username}
             </Avatar>
           </a>
