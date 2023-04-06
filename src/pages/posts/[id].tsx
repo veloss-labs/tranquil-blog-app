@@ -124,13 +124,14 @@ export default function Posts(
         ) : null}
       </div>
       {data?.thumbnail ? (
-        <div className="relative my-6 h-[405px] w-full">
+        <div className="relative">
           <Image
             src={data.thumbnail.url}
             alt={data.title ?? "thumbnail"}
-            className="m-0 my-8 rounded-md border border-slate-200 bg-slate-200 transition-colors group-hover:border-slate-900"
+            className="m-0 my-4 h-auto max-w-full rounded-md border border-slate-200 bg-slate-200 transition-colors group-hover:border-slate-900"
             priority
-            fill
+            width={768}
+            height={405}
           />
         </div>
       ) : null}

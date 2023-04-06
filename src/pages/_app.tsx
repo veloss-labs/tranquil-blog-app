@@ -14,6 +14,7 @@ import RootContext from "~/context/root-context";
 import nextI18NextConfig from "../../next-i18next.config";
 import dayjs from "dayjs";
 import "dayjs/locale/ko";
+import BaseSeo from "~/components/shared/seo/BaseSeo";
 
 dayjs.locale("ko");
 
@@ -42,18 +43,21 @@ const App: AppType<AppPageProps> = ({
   }, []);
 
   return (
-    <div className={fontSans.variable}>
-      <RootContext session={session}>
-        {getLayout(<Component {...pageProps} />)}
-      </RootContext>
-      <Analytics
-        debug={
-          clientEnv.NEXT_PUBLIC_DEPLOY_GROUP
-            ? ["local"].includes(clientEnv.NEXT_PUBLIC_DEPLOY_GROUP)
-            : false
-        }
-      />
-    </div>
+    <>
+      <BaseSeo />
+      <div className={fontSans.variable}>
+        <RootContext session={session}>
+          {getLayout(<Component {...pageProps} />)}
+        </RootContext>
+        <Analytics
+          debug={
+            clientEnv.NEXT_PUBLIC_DEPLOY_GROUP
+              ? ["local"].includes(clientEnv.NEXT_PUBLIC_DEPLOY_GROUP)
+              : false
+          }
+        />
+      </div>
+    </>
   );
 };
 
