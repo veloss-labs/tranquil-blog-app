@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 export interface CreateContextOptions {
   /**
@@ -17,7 +17,7 @@ export interface CreateContextOptions {
   /**
    * 컨텍스트의 기본값
    */
-  defaultValue?: unknown;
+  defaultValue?: any;
 }
 
 type CreateContextReturn<T> = [React.Provider<T>, () => T, React.Context<T>];
@@ -25,12 +25,12 @@ type CreateContextReturn<T> = [React.Provider<T>, () => T, React.Context<T>];
 export function createContext<ContextType>(options: CreateContextOptions = {}) {
   const {
     strict = true,
-    errorMessage = "useContext: `context` is undefined. Seems you forgot to wrap component within the Provider",
+    errorMessage = 'useContext: `context` is undefined. Seems you forgot to wrap component within the Provider',
     name,
     defaultValue = undefined,
   } = options;
 
-  const Context = React.createContext<ContextType | unknown>(defaultValue);
+  const Context = React.createContext<ContextType | undefined>(defaultValue);
 
   Context.displayName = name;
 
@@ -39,7 +39,7 @@ export function createContext<ContextType>(options: CreateContextOptions = {}) {
 
     if (!context && strict) {
       const error = new Error(errorMessage);
-      error.name = "ContextError";
+      error.name = 'ContextError';
       // @ts-ignore
       Error.captureStackTrace?.(error, useContext);
       throw error;

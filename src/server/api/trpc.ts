@@ -16,14 +16,11 @@
  * processing a request
  *
  */
-import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
-import type { NextApiRequest, NextApiResponse } from "next";
-
-import { getServerAuthSession, type UserSchema } from "~/server/auth";
-import { prisma } from "~/server/db";
+import { type CreateNextContextOptions } from '@trpc/server/adapters/next';
+import { notion } from '~/server/db/notion';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
 type CreateContextOptions = {
-  session: UserSchema | null;
   req: NextApiRequest;
   res: NextApiResponse;
 };
@@ -39,10 +36,9 @@ type CreateContextOptions = {
  */
 const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
-    session: opts.session,
-    prisma,
     req: opts.req,
     res: opts.res,
+    notion,
   };
 };
 
@@ -53,12 +49,7 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
  */
 export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   const { req, res } = opts;
-
-  // Get the session from the server using the unstable_getServerSession wrapper function
-  const session = await getServerAuthSession({ req, res });
-
   return createInnerTRPCContext({
-    session,
     req,
     res,
   });
@@ -66,15 +57,14 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 
 export type TRPCContext = ReturnType<typeof createInnerTRPCContext>;
 
-
 /**
  * 2. INITIALIZATION
  *
  * This is where the trpc api is initialized, connecting the context and
  * transformer
  */
-import { initTRPC, TRPCError } from "@trpc/server";
-import superjson from "superjson";
+import { initTRPC } from '@trpc/server';
+import superjson from 'superjson';
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
@@ -109,38 +99,17 @@ export const publicProcedure = t.procedure;
  * Reusable middleware that enforces users are logged in before running the
  * procedure
  */
-const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
-  if (!ctx.session || !ctx.session) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
-  }
-  return next({
-    ctx: {
-      // infers the `session` as non-nullable
-      session: ctx.session,
-    },
-  });
-});
-
-/**
- * Reusable middleware that enforces users are logged in before running the
- * procedure and that they are a creator
- */
-const enforceUserIsCreator = t.middleware(({ ctx, next }) => {
-  if (!ctx.session || !ctx.session) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
-  }
-
-  if (ctx.session.role?.authority !== "CREATOR") {
-    throw new TRPCError({ code: "FORBIDDEN" });
-  }
-
-  return next({
-    ctx: {
-      // infers the `session` as non-nullable
-      session: ctx.session,
-    },
-  });
-});
+// const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
+//   if (!ctx.session || !ctx.session) {
+//     throw new TRPCError({ code: 'UNAUTHORIZED' });
+//   }
+//   return next({
+//     ctx: {
+//       // infers the `session` as non-nullable
+//       session: ctx.session,
+//     },
+//   });
+// });
 
 /**
  * Protected (authed) procedure
@@ -151,13 +120,4 @@ const enforceUserIsCreator = t.middleware(({ ctx, next }) => {
  *
  * @see https://trpc.io/docs/procedures
  */
-export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
-
-/**
- * Creator procedure
- * If you want a query or mutation to ONLY be accessible to logged in users who
- * are creators, use this. It verifies the session is valid and guarantees
- * ctx.session.user is not null
- * @see https://trpc.io/docs/procedures
- */
-export const creatorProcedure = t.procedure.use(enforceUserIsCreator);
+// export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);

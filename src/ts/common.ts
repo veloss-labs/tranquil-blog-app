@@ -1,27 +1,75 @@
+import type { Icons } from '~/components/blog/Icons';
+
 export type ApiRoutes = URL | Request | string;
-
-export type UrlRoutes = URL | string;
-
-export type ExtractState<S> = S extends {
-  getState: () => infer T;
-}
-  ? T
-  : never;
 
 export type Nullable<T> = T | null;
 
-export type NoInfer<T> = [T][T extends any ? 0 : never];
+export type Undefinedable<T> = T | undefined;
 
-export type IsAny<T, Y, N> = 1 extends 0 & T ? Y : N;
-
-export type IsAnyBoolean<T> = 1 extends 0 & T ? true : false;
+export type NullableUndefinedable<T> = T | null | undefined;
 
 export type IsKnown<T, Y, N> = unknown extends T ? N : Y;
 
-export type NonNullable<T> = T extends null | undefined ? never : T;
+export type IsRequired<T> = IsKnown<T, T, T | undefined>;
 
-export type Values<O> = O[ValueKeys<O>];
+export type NestedObject<T extends Record<string, any>> = {
+  [K in keyof T]: T[K] extends Record<string, any> ? NestedObject<T[K]> : T[K];
+};
 
-export type ValueKeys<O> = Extract<keyof O, PropertyKey>;
+export type NestedKeyOf<ObjectType extends object> = {
+  [Key in keyof ObjectType & (string | number)]: ObjectType[Key] extends object
+    ? // @ts-ignore
+      `${Key}` | `${Key}.${NestedKeyOf<ObjectType[Key]>}`
+    : `${Key}`;
+}[keyof ObjectType & (string | number)];
 
-export type Timeout = ReturnType<typeof setTimeout>;
+export type NestedObjectValueOf<
+  T extends Record<string, any>,
+  K extends NestedKeyOf<T>,
+> = {
+  [P in K]: P extends `${infer Key}.${infer Rest}`
+    ? Key extends keyof T
+      ? T[Key] extends Record<string, any>
+        ? // @ts-ignore
+          NestedObjectValueOf<T[Key], Rest>
+        : never
+      : never
+    : P extends keyof T
+    ? T[P]
+    : never;
+}[K];
+
+export type NavItem = {
+  title: string;
+  href: string;
+  disabled?: boolean;
+};
+
+export type MainNavItem = NavItem;
+
+export type SidebarNavItem = {
+  title: string;
+  disabled?: boolean;
+  external?: boolean;
+  icon?: keyof typeof Icons;
+} & (
+  | {
+      href: string;
+      items?: never;
+    }
+  | {
+      href?: string;
+      items: any[];
+    }
+);
+
+export type SiteConfig = {
+  name: string;
+  description: string;
+  url: string;
+  ogImage: string;
+  links: {
+    twitter: string;
+    github: string;
+  };
+};

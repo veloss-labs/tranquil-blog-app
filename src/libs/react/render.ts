@@ -1,6 +1,6 @@
-import type * as React from "react";
-import * as ReactDOM from "react-dom";
-import type { Root } from "react-dom/client";
+import type * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import type { Root } from 'react-dom/client';
 
 // Let compiler not to search module usage
 const fullClone = {
@@ -18,7 +18,7 @@ const { version, render: reactRender, unmountComponentAtNode } = fullClone;
 
 let createRoot: CreateRoot;
 try {
-  const mainVersion = Number((version || "").split(".")[0]);
+  const mainVersion = Number((version || '').split('.')[0]);
   if (mainVersion >= 18) {
     // @ts-ignore
     ({ createRoot } = fullClone);
@@ -32,14 +32,14 @@ function toggleWarning(skip: boolean) {
 
   if (
     __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED &&
-    typeof __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED === "object"
+    typeof __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED === 'object'
   ) {
     __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.usingClientEntryPoint =
       skip;
   }
 }
 
-const MARK = "__rc_react_root__";
+const MARK = '__rc_react_root__';
 
 // ========================== Render ==========================
 type ContainerType = (Element | DocumentFragment) & {
@@ -62,7 +62,7 @@ function legacyRender(node: React.ReactElement, container: ContainerType) {
 
 /** @private Test usage. Not work in prod */
 export function _r(node: React.ReactElement, container: ContainerType) {
-  if (process.env.NODE_ENV !== "production") {
+  if (process.env.NODE_ENV !== 'production') {
     return legacyRender(node, container);
   }
 }
@@ -93,7 +93,7 @@ function legacyUnmount(container: ContainerType) {
 
 /** @private Test usage. Not work in prod */
 export function _u(container: ContainerType) {
-  if (process.env.NODE_ENV !== "production") {
+  if (process.env.NODE_ENV !== 'production') {
     return legacyUnmount(container);
   }
 }

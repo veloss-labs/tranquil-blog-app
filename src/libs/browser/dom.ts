@@ -1,8 +1,8 @@
-import { isElement } from "~/utils/assertion";
+import { isElement } from '~/utils/assertion';
 
 export function canUseDOM(): boolean {
   return !!(
-    typeof window !== "undefined" &&
+    typeof window !== 'undefined' &&
     window.document &&
     window.document.createElement
   );
@@ -31,7 +31,7 @@ export type BasicTarget<T extends TargetType = Element> =
 
 export function getTargetElement<T extends TargetType>(
   target: BasicTarget<T>,
-  defaultElement?: T
+  defaultElement?: T,
 ) {
   if (!isBrowser) {
     return undefined;
@@ -43,9 +43,9 @@ export function getTargetElement<T extends TargetType>(
 
   let targetElement: TargetValue<T>;
 
-  if (typeof target === "function") {
+  if (typeof target === 'function') {
     targetElement = target();
-  } else if ("current" in target) {
+  } else if ('current' in target) {
     targetElement = target.current;
   } else {
     targetElement = target;
@@ -57,7 +57,7 @@ export function getTargetElement<T extends TargetType>(
 export function sortByDomNode<T>(
   nodes: T[],
   resolveKey: (item: T) => HTMLElement | null = (i) =>
-    i as unknown as HTMLElement | null
+    i as unknown as HTMLElement | null,
 ): T[] {
   return nodes.slice().sort((aItem, zItem) => {
     const a = resolveKey(aItem);
@@ -73,12 +73,16 @@ export function sortByDomNode<T>(
   });
 }
 
+export const IS_APPLE: boolean = isBrowser
+  ? /Mac|iPod|iPhone|iPad/.test(navigator.platform)
+  : false;
+
 export const getScrollTop = (el: Document | Element) => {
   if (el === document || el === document.body) {
     return Math.max(
       window.pageYOffset,
       document.documentElement.scrollTop,
-      document.body.scrollTop
+      document.body.scrollTop,
     );
   }
   return (el as Element).scrollTop;
@@ -97,42 +101,3 @@ export const getClientHeight = (el: Document | Element) => {
     Math.max(document.documentElement.clientHeight, document.body.clientHeight)
   );
 };
-
-declare global {
-  interface Document {
-    documentMode?: unknown;
-  }
-
-  interface Window {
-    MSStream?: unknown;
-  }
-}
-
-const documentMode =
-  isBrowser && 'documentMode' in document ? document.documentMode : null;
-
-export const IS_APPLE: boolean =
-  isBrowser && /Mac|iPod|iPhone|iPad/.test(navigator.platform);
-
-export const IS_FIREFOX: boolean =
-  isBrowser && /^(?!.*Seamonkey)(?=.*Firefox).*/i.test(navigator.userAgent);
-
-export const CAN_USE_BEFORE_INPUT: boolean =
-  isBrowser && "InputEvent" in window && !documentMode
-    ? "getTargetRanges" in new window.InputEvent("input")
-    : false;
-
-export const IS_SAFARI: boolean =
-  isBrowser && /Version\/[\d.]+.*Safari/.test(navigator.userAgent);
-
-export const IS_IOS: boolean =
-  isBrowser && /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-
-// Keep these in case we need to use them in the future.
-// export const IS_WINDOWS: boolean = CAN_USE_DOM && /Win/.test(navigator.platform);
-export const IS_CHROME: boolean =
-  isBrowser && /^(?=.*Chrome).*/i.test(navigator.userAgent);
-// export const canUseTextInputEvent: boolean = CAN_USE_DOM && 'TextEvent' in window && !documentMode;
-
-export const IS_APPLE_WEBKIT =
-  isBrowser && /AppleWebKit\/[\d.]+/.test(navigator.userAgent) && !IS_CHROME;

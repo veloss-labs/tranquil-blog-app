@@ -1,3 +1,5 @@
+
+
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
@@ -8,14 +10,15 @@
 # testing
 /coverage
 
-# database
-/prisma/db.sqlite
-/prisma/db.sqlite-journal
+# playwright
+/playwright-report
+
+# partytown
+/public/~partytown/
 
 # next.js
 /.next/
 /out/
-next-env.d.ts
 
 # production
 /build
@@ -31,8 +34,6 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # local env files
-# do not commit any .env files to git, except for the .env.example file. https://create.t3.gg/en/usage/env-variables#using-environment-variables
-.env
 .env*.local
 
 # vercel
@@ -40,3 +41,34 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+next-env.d.ts
+
+# env
+.env
+scripts/env/.env.development
+scripts/env/.env.production
+
+# cli
+dist/
+
+# .serverless
+.serverless
+.serverless_nextjs
+
+# sst
+.open-next
+.sst
+
+# Sentry
+.sentryclirc
+sentry.properties
+
+# serivce worker
+/public/sw.js
+/public/sw.js.map
+/public/workbox-*.js
+/public/workbox-*.js.map
+/public/fallback-*.js
+
+# db
+drizzle/**/*
