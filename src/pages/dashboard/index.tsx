@@ -1,6 +1,8 @@
 import React from "react";
 import { Breadcrumb } from "antd";
 import DashboardLayout from "~/components/dashboard/DashboardLayout";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import {
   AuthMode,
   getServerAuthSession,
@@ -17,27 +19,32 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     return result;
   }
 
+  const message = await serverSideTranslations(ctx.locale ?? "ko", ["common"]);
+
   return {
     props: {
       session,
+      ...message,
     },
   };
 }
 
 export default function Dashboard() {
-  return <div className="mt-4">Home</div>;
-}
+  const { t } = useTranslation();
 
-Dashboard.getLayout = function GetLayout(page: React.ReactNode) {
   return (
     <DashboardLayout
       pageHeader={
         <div className="px-5 pt-7 sm:px-10">
-          <Breadcrumb items={[{ title: "대시보드", href: "/dashboard" }]} />
+          <Breadcrumb
+            items={[
+              { title: t("dashboard.common.dashboard"), href: "/dashboard" },
+            ]}
+          />
         </div>
       }
     >
-      {page}
+      <div className="mt-4">Home</div>
     </DashboardLayout>
   );
-};
+}

@@ -73,7 +73,12 @@ const UserNav: React.FC<UserNavProps> = ({ session }) => {
     });
 
     return _menuItems;
-  }, [session?.user?.role?.authority, onSignOut]);
+  }, [
+    session.user?.profile?.username,
+    session.user?.role?.authority,
+    t,
+    onSignOut,
+  ]);
 
   return (
     <div className="user-nav">

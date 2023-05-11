@@ -11,6 +11,7 @@ import RoutesMenu from "~/components/dashboard/RoutesMenu";
 // hooks
 import { useLayoutDashboardContext } from "~/context/layout-context";
 import { useSession } from "next-auth/react";
+import { useTranslation } from "next-i18next";
 
 // types
 import type { UrlRoutes } from "~/ts/common";
@@ -22,7 +23,7 @@ interface SidebarProps {
 function Sidebar({ pageTransition }: SidebarProps) {
   const session = useSession();
   const { isShowSidebar, toggleSidebar } = useLayoutDashboardContext();
-
+  const { t } = useTranslation();
   const { token } = theme.useToken();
 
   return (
@@ -48,7 +49,7 @@ function Sidebar({ pageTransition }: SidebarProps) {
           </div>
         </div>
         <Divider orientation="left">
-          <span className="text-sm">메뉴</span>
+          <span className="text-sm">{t("dashboard.common.menu")}</span>
         </Divider>
         <div className="grow overflow-auto">
           <RoutesMenu pageTransition={pageTransition} />

@@ -63,6 +63,15 @@
         "tabs_upload": "업로드",
         "tabs_library": "라이브러리"
       }
+    },
+    "common": {
+      "dashboard": "대시보드",
+      "menu": "메뉴"
+    },
+    "routes": {
+      "home": "홈",
+      "profile": "내 프로필",
+      "my_dashboard": "나의 대시보드"
     }
   }
 }

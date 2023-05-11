@@ -32,6 +32,7 @@ import { computedTableIndex } from "~/utils/utils";
 import dayjs from "dayjs";
 import { logger } from "~/utils/logger";
 import { PostsSearch } from "~/libs/search/posts";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 interface FormFields {
   keyword: string;
@@ -45,9 +46,12 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     return result;
   }
 
+  const message = await serverSideTranslations(ctx.locale ?? "ko", ["common"]);
+
   return {
     props: {
       session,
+      ...message,
     },
   };
 }

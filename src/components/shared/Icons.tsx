@@ -34,7 +34,7 @@ import {
 
 import type { CustomIconComponentProps } from "@ant-design/icons/lib/components/Icon";
 
-interface IconProps extends React.SVGProps<SVGSVGElement> { }
+interface IconProps extends React.SVGProps<SVGSVGElement> {}
 
 const OrderedListIcon = (props: IconProps) => (
   <svg
@@ -59,7 +59,20 @@ const SavePostsIcon = (props: IconProps) => (
 const LogoIcon = (props: IconProps) => (
   <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
     <rect width="100" height="100" rx="10" fill="#000" />
-    <text x="45%" y="55%" font-size="80" font-weight="bold" dominant-baseline="middle" text-anchor="middle" fill="#fff" style="font-style: italic;">T</text>
+    <text
+      x="45%"
+      y="55%"
+      fontSize="80"
+      fontWeight="bold"
+      dominantBaseline="middle"
+      textAnchor="middle"
+      fill="#fff"
+      style={{
+        fontStyle: "italic",
+      }}
+    >
+      T
+    </text>
   </svg>
 );
 
@@ -101,6 +114,7 @@ export const Icons = {
 
 export const AntdIcons = {
   time: (props: Partial<CustomIconComponentProps>) => (
+    // @ts-ignore
     <Icon component={Icons.time} {...props} />
   ),
 };

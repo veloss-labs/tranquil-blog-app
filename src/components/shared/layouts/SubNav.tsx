@@ -75,7 +75,7 @@ SubNav.Sorting = function Sorting() {
         ),
       },
     ];
-  }, [router.query]);
+  }, [router.query, t]);
 
   const text = useMemo(() => {
     const sorting = router.query.sorting?.toString();
@@ -90,7 +90,7 @@ SubNav.Sorting = function Sorting() {
       default:
         return t("shared.latest");
     }
-  }, [router.query.sorting]);
+  }, [router.query.sorting, t]);
 
   return (
     <div className="subnav--views">

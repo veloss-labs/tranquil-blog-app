@@ -1,34 +1,34 @@
-import { NextRequest } from "next/server"
-import { ImageResponse } from "@vercel/og"
-import { ogImageSchema } from "~/libs/validation/og"
+import { ImageResponse } from "@vercel/og";
+import { ogImageSchema } from "~/libs/validation/og";
+import type { NextRequest } from "next/server";
 
 export const config = {
   runtime: "edge",
-}
+};
 
 const interRegular = fetch(
   new URL("../../assets/fonts/Inter-Regular.ttf", import.meta.url)
-).then((res) => res.arrayBuffer())
+).then((res) => res.arrayBuffer());
 
 const interBold = fetch(
   new URL("../../assets/fonts/Inter-Bold.ttf", import.meta.url)
-).then((res) => res.arrayBuffer())
+).then((res) => res.arrayBuffer());
 
 export default async function handler(req: NextRequest) {
   try {
-    const fontRegular = await interRegular
-    const fontBold = await interBold
-    const url = new URL(req.url)
-    const values = ogImageSchema.parse(Object.fromEntries(url.searchParams))
+    const fontRegular = await interRegular;
+    const fontBold = await interBold;
+    const url = new URL(req.url);
+    const values = ogImageSchema.parse(Object.fromEntries(url.searchParams));
     const heading =
       values.heading.length > 140
         ? `${values.heading.substring(0, 140)}...`
-        : values.heading
+        : values.heading;
 
-    const { mode } = values
-    const paint = mode === "dark" ? "#fff" : "#000"
+    const { mode } = values;
+    const paint = mode === "dark" ? "#fff" : "#000";
 
-    const fontSize = heading.length > 100 ? "70px" : "100px"
+    const fontSize = heading.length > 100 ? "70px" : "100px";
 
     return new ImageResponse(
       (
@@ -88,7 +88,9 @@ export default async function handler(req: NextRequest) {
                   stroke-linejoin="round"
                 />
               </svg>
-              <div tw="flex ml-2">https://github.com/veloss-labs/tranquil-blog-app</div>
+              <div tw="flex ml-2">
+                https://github.com/veloss-labs/tranquil-blog-app
+              </div>
             </div>
           </div>
         </div>
@@ -111,10 +113,10 @@ export default async function handler(req: NextRequest) {
           },
         ],
       }
-    )
+    );
   } catch (error) {
     return new Response(`Failed to generate image`, {
       status: 500,
-    })
+    });
   }
 }

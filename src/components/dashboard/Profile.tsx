@@ -10,6 +10,7 @@ import ChevronDownIcon from "@heroicons/react/24/outline/ChevronDownIcon";
 // hooks
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import { useTranslation } from "next-i18next";
 
 // types
 import type { MenuProps } from "antd";
@@ -17,6 +18,7 @@ import type { MenuProps } from "antd";
 function Profile() {
   const session = useSession();
   const router = useRouter();
+  const { t } = useTranslation();
 
   const onLogout = useCallback(() => {
     signOut({
@@ -38,7 +40,7 @@ function Profile() {
           className="btn-menu--profile sm:min-w-[8rem]"
           onClick={onHome}
         >
-          홈
+          {t("dashboard.routes.home")}
         </Button>
       ),
       key: "0",
@@ -51,7 +53,7 @@ function Profile() {
           size="small"
           className="btn-menu--profile sm:min-w-[8rem]"
         >
-          내 프로필
+          {t("dashboard.routes.profile")}
         </Button>
       ),
       key: "1",
@@ -68,7 +70,7 @@ function Profile() {
           className="btn-menu--profile"
           onClick={onLogout}
         >
-          로그아웃
+          {t("shared.sign_out")}
         </Button>
       ),
       key: "2",
@@ -78,7 +80,7 @@ function Profile() {
   return (
     <>
       <div className="ml-1">
-        <Typography.Text>나의 대시보드</Typography.Text>
+        <Typography.Text>{t("dashboard.routes.my_dashboard")}</Typography.Text>
       </div>
       <Dropdown menu={{ items }} trigger={["click"]}>
         <Button
