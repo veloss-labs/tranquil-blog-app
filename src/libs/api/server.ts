@@ -5,6 +5,8 @@ import { createContextInner as ctx } from '~/server/api/context';
 
 import { appRouter, type AppRouter } from '~/server/api/root';
 
+import 'server-only';
+
 /**
  * A set of typesafe react-query hooks for your tRPC API
  */

@@ -1,12 +1,14 @@
-import { Client } from '@notionhq/client';
-import { notion as officialNotion } from './notion';
-
-// @ts-ignore
-import { NotionCompatAPI } from 'notion-compat';
-import { ExtendedRecordMap, SearchParams, SearchResults } from 'notion-types';
+import { NotionAPI } from 'notion-client';
+import { env } from '~/env/server.mjs';
 
 // import { previewImagesEnabled, useOfficialNotionAPI } from './config';
 // import { getPreviewImageMap } from './preview-images';
-const globalForNotionCompat = globalThis as unknown as { notionCompat: any };
+const globalForNotionClient = globalThis as unknown as {
+  notionClient: NotionAPI;
+};
 
-export const notionCompat = new NotionCompatAPI(officialNotion);
+export const notionClient =
+  globalForNotionClient.notionClient || new NotionAPI();
+
+if (env.NODE_ENV !== 'production')
+  globalForNotionClient.notionClient = notionClient;

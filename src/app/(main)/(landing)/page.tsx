@@ -1,6 +1,7 @@
 import React from 'react';
 import PostCard from '~/components/blog/PostCard';
-import { api } from '~/libs/api/server';
+import { getPosts } from '~/server/data/getPosts';
+import { getTags } from '~/server/data/getTags';
 
 // types
 import type { CoverType, PostSchema } from '~/ts/schema';
@@ -10,20 +11,14 @@ interface PageProps {
 }
 
 export default async function Page({ searchParams }: PageProps) {
-  const { tags } = await api.tags.list.fetch();
+  const tags = await getTags();
 
   const currentTag = searchParams?.tag ?? null;
   const tagId = currentTag
     ? tags.find((tag) => tag.slug === currentTag)?.id
     : null;
 
-  const data = await api.posts.infinite.fetchInfinite({
-    limit: 100,
-    tagId,
-  });
-
-  // @ts-expect-error
-  const posts = data?.pages?.flatMap((page) => page?.items) ?? [];
+  const posts = await getPosts({ limit: 100, tagId });
 
   return (
     <div className="mt-8">

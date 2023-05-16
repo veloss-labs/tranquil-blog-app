@@ -1,13 +1,13 @@
 import React from 'react';
 import Category from '~/components/blog/Category';
-import { api } from '~/libs/api/server';
+import { getTags } from '~/server/data/getTags';
 
 interface LayoutProps {
   children: React.JSX.Element;
 }
 
 export default async function Layout({ children }: LayoutProps) {
-  const { tags } = await api.tags.list.fetch();
+  const tags = await getTags();
 
   const categories = tags.map((tag) => {
     return {
