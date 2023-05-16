@@ -1,17 +1,15 @@
-import { type NextRequest } from 'next/server';
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
-import { createContextInner } from '~/server/api/context';
+import { createContextInner as ctx } from '~/server/api/context';
 import { appRouter } from '~/server/api/root';
 import { env } from '~/env/server.mjs';
 
-export default function handler(req: NextRequest) {
+const handler = (req: Request) => {
   return fetchRequestHandler({
-    req,
     endpoint: '/api/trpc',
+    req,
     router: appRouter,
-    // @ts-expect-error
     createContext() {
-      return createContextInner({
+      return ctx({
         req,
       });
     },
@@ -24,4 +22,7 @@ export default function handler(req: NextRequest) {
           }
         : undefined,
   });
-}
+};
+
+export const GET = handler;
+export const POST = handler;

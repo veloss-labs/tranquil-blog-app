@@ -1,3 +1,10 @@
+import type {
+  PageObjectResponse,
+  PartialPageObjectResponse,
+  QueryDatabaseResponse,
+} from '@notionhq/client/build/src/api-endpoints';
+import { PROPERTIES, TAG_PROPERTIES } from './serialize';
+
 export type Dict<T = any> = Record<string, T>;
 
 // Number assertions
@@ -115,4 +122,20 @@ export const isInvalidDate = (date?: Date | null) => {
 
 export function isThenable(thing?: PromiseLike<any>): boolean {
   return !!(thing && !!thing.then);
+}
+
+export function isNotionDatabasePage(resp: QueryDatabaseResponse) {
+  return resp.object === 'list';
+}
+
+export function isNotionPageValidation(item: any) {
+  const properties: Record<string, any> = item.properties ?? {};
+  const validations = Object.values(PROPERTIES);
+  return validations.every((v) => properties[v]);
+}
+
+export function isNotionTagPageValidation(item: any) {
+  const properties: Record<string, any> = item.properties ?? {};
+  const validations = Object.values(TAG_PROPERTIES);
+  return validations.every((v) => properties[v]);
 }

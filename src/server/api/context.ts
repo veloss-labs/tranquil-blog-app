@@ -5,7 +5,7 @@ import type { CreateNextContextOptions } from '@trpc/server/adapters/next';
 import { notion } from '~/server/db/notion';
 
 type CreateContextOptions = {
-  req: NextRequest | GetServerSidePropsContext['req'] | null;
+  req: NextRequest | GetServerSidePropsContext['req'] | Request | null;
 };
 
 export const createContextInner = (opts: CreateContextOptions) => {

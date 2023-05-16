@@ -1,7 +1,7 @@
 import { type inferRouterInputs, type inferRouterOutputs } from '@trpc/server';
 import superjson from 'superjson';
 import { createTRPCNextLayout } from '~/@trpc/next-layout/server';
-import { createContextInner } from '~/server/api/context';
+import { createContextInner as ctx } from '~/server/api/context';
 
 import { appRouter, type AppRouter } from '~/server/api/root';
 
@@ -11,9 +11,8 @@ import { appRouter, type AppRouter } from '~/server/api/root';
 export const api = createTRPCNextLayout({
   router: appRouter,
   transformer: superjson,
-  // @ts-expect-error
   createContext() {
-    return createContextInner({
+    return ctx({
       req: null,
     });
   },

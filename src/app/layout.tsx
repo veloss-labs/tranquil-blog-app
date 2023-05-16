@@ -1,5 +1,6 @@
 import '~/assets/css/globals.css';
 import { PreloadResources } from './preload-resources';
+import { ClientProviders } from './client-provider';
 
 export const metadata = {
   metadataBase: new URL('http://localhost:3000'),
@@ -30,9 +31,11 @@ export default function RootLayout({
         rel="search"
         href="/opensearch.xml"
         type="application/opensearchdescription+xml"
-        title="Hashnode"
+        title="Blog"
       />
-      <body>{children}</body>
+      <ClientProviders>
+        <body>{children}</body>
+      </ClientProviders>
     </html>
   );
 }

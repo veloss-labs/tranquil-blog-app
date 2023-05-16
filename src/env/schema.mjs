@@ -13,6 +13,7 @@ export const serverSchema = z.object({
       ? z.string().url().min(1)
       : z.string().optional(),
   NOTION_API_KEY: z.string().min(1),
+  NOTION_DATABASE_ID: z.string().min(1),
 });
 
 /**
@@ -25,6 +26,7 @@ export const serverEnv = {
   DEPLOY_GROUP: process.env.DEPLOY_GROUP,
   SENTRY_DSN: process.env.SENTRY_DSN,
   NOTION_API_KEY: process.env.NOTION_API_KEY,
+  NOTION_DATABASE_ID: process.env.NOTION_DATABASE_ID,
 };
 
 /**
