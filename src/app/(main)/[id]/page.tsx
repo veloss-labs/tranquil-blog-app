@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import React from 'react';
+import React, { Suspense } from 'react';
 import Markdown from '~/components/blog/Markdown';
 import { getPost } from '~/server/data/getPost';
 import { getDateFormat } from '~/utils/date';
@@ -67,9 +67,11 @@ export default async function Page({ params }: PageProps) {
           </div>
         </div>
         <hr className="my-8"></hr>
-        <div className="markdown-body">
+
+        <Suspense fallback={<>Loading...</>}>
+          {/* @ts-expect-error Async Server Component */}
           <Markdown pageId={params.id} />
-        </div>
+        </Suspense>
       </article>
     </>
   );

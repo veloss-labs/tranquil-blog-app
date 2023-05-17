@@ -17,7 +17,10 @@ export async function GET(request: Request, context: Context) {
   const mdString = n2m.toMarkdownString(mdblocks);
   return new Response(
     JSON.stringify({
-      mdx: mdString?.parent ?? '',
+      resultCode: 0,
+      message: null,
+      error: null,
+      result: mdString?.parent ?? '',
     }),
     {
       headers: {

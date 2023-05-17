@@ -1,4 +1,4 @@
-import 'react-notion-x/src/styles.css';
+import '~/assets/css/components/markdown.css';
 
 import React from 'react';
 

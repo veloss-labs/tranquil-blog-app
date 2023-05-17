@@ -8,14 +8,16 @@ export const ASSET_URL = {
   SEO_IMAGE: '/images/seo_image.png',
 };
 
-export const NEXT_ROUTES_API_ENDPOINTS = {} as const;
+export const NEXT_ROUTES_API_ENDPOINTS = {
+  NOTION: {
+    PAGE_ID: {
+      MARKDOWN: (pageId: string) => `notion/${pageId}/markdown`,
+    },
+  },
+} as const;
 
 export const PAGE_ENDPOINTS = {
   ROOT: '/',
-  AUTH: {
-    SIGNIN: '/signin',
-    SIGNUP: '/signup',
-  },
 } as const;
 
 export const STATUS_CODE = {
