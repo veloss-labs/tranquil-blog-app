@@ -43,9 +43,13 @@ export type BaseResponse<Data = any> = {
 
 export class ApiService {
   static baseUrl = !isBrowser
-    ? 'http://localhost:3000/api'
+    ? process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}/api`
+      : 'http://localhost:3000/api'
     : // @ts-ignore
-      window.ENV?.API_BASE_URL ?? 'http://localhost:3000/api';
+    window.ENV?.API_BASE_URL ?? process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}/api`
+    : 'http://localhost:3000/api';
 
   static setBaseUrl(url?: string) {
     this.baseUrl = url || 'http://localhost:3000/api';
