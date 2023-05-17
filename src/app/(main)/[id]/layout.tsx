@@ -1,3 +1,5 @@
+import 'react-notion-x/src/styles.css';
+
 import React from 'react';
 
 interface LayoutProps {

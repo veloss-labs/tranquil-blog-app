@@ -1,14 +1,10 @@
-import { env } from '~/env/server.mjs';
-import { createTRPCRouter, publicProcedure } from '~/server/api/trpc';
+import { z } from 'zod';
+import { createTRPCRouter } from '~/server/api/trpc';
 
-export const commonRouter = createTRPCRouter({
-  database: publicProcedure.query(async ({ ctx }) => {
-    const blogDB = await ctx.notion.databases.query({
-      database_id: env.NOTION_DATABASE_ID,
-    });
-
-    return {
-      data: blogDB,
-    };
-  }),
+const byIdSchema = z.object({
+  id: z.string(),
 });
+
+export type ByIdInput = z.infer<typeof byIdSchema>;
+
+export const commonRouter = createTRPCRouter({});

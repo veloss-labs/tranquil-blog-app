@@ -2,7 +2,7 @@ import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { env } from '~/env/server.mjs';
 import { createTRPCRouter, publicProcedure } from '~/server/api/trpc';
-import { getPage } from '~/server/data/getPost';
+import { n2m } from '~/server/db/notion';
 import { TagSchema } from '~/ts/schema';
 import {
   isNotionDatabasePage,
@@ -117,11 +117,12 @@ export const postsRouter = createTRPCRouter({
     for (const tag of pageInfo.tags) {
       const foundTag = tags.find((t) => t.id === tag.id);
       if (foundTag) {
-        tags.push(foundTag);
+        unionTags.push(foundTag);
       }
     }
 
     return {
+      pageId: blogDB_pages.id,
       pageInfo: {
         ...pageInfo,
         tags: unionTags,

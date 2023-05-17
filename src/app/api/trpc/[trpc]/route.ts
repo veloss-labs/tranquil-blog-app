@@ -26,3 +26,5 @@ const handler = (req: Request) => {
 
 export const GET = handler;
 export const POST = handler;
+
+// export const runtime = 'edge';

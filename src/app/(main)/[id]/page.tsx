@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import React from 'react';
+import Markdown from '~/components/blog/Markdown';
 import { getPost } from '~/server/data/getPost';
 import { getDateFormat } from '~/utils/date';
 
@@ -8,11 +9,12 @@ interface PageProps {
     id: string;
   };
 }
-// https://www.notion.so/image/https%3A%2F%2Fdeno.com%2Fblog%2Froll-your-own-javascript-runtime-pt3%2Fcover.png?table=block&id=2c88c1a5-5539-4c3c-bd0b-1e09fc0e9170&spaceId=15edf32f-6b81-450f-acaf-9ce27666032a&width=2000&userId=cac42e24-7c10-4b08-9e06-37e8e30406b3&cache=v2
+
+// export const runtime = 'edge';
 
 export default async function Page({ params }: PageProps) {
-  const pageInfo = await getPost(params);
-  console.log('pageInfo', pageInfo);
+  const data = await getPost(params);
+
   return (
     <>
       <div>
@@ -20,18 +22,18 @@ export default async function Page({ params }: PageProps) {
           src={
             'https://www.notion.so/image/https%3A%2F%2Fdeno.com%2Fblog%2Froll-your-own-javascript-runtime-pt3%2Fcover.png?table=block&id=2c88c1a5-5539-4c3c-bd0b-1e09fc0e9170&spaceId=15edf32f-6b81-450f-acaf-9ce27666032a&width=1450&userId=cac42e24-7c10-4b08-9e06-37e8e30406b3&cache=v2'
           }
-          alt={pageInfo?.description}
+          alt={data?.description}
           className="mx-auto max-w-screen-sm max-w-lg w-full mt-4 sm:mt-0"
         ></img>
       </div>
       <article className="max-w-screen-md px-4 pt-8 pb-16 md:pt-16 mx-auto">
         <h1 className="mt-6 text-4xl font-bold text-gray-800 sm:text-5xl font-display">
-          {pageInfo?.title}
+          {data?.title}
         </h1>
         <div className="mt-8 text-gray-500">
           <p className="flex gap-2 items-center">
             <time dateTime="2023-03-01T16:00:00.000Z">
-              {getDateFormat(pageInfo?.createdAt)}
+              {getDateFormat(data?.createdAt)}
             </time>
             <a href="/feed" className="hover:text-gray-700" title="Atom Feed">
               <svg
@@ -52,7 +54,7 @@ export default async function Page({ params }: PageProps) {
           </p>
           <div className="flow-root mt-8 text-sm text-gray-400">
             <p className="-m-2 flex flex-row">
-              {pageInfo?.tags?.map((tag) => (
+              {data?.tags?.map((tag) => (
                 <Link
                   key={tag.id}
                   href={`/?tag=${tag.slug}`}
@@ -65,7 +67,9 @@ export default async function Page({ params }: PageProps) {
           </div>
         </div>
         <hr className="my-8"></hr>
-        <div className="markdown-body"></div>
+        <div className="markdown-body">
+          <Markdown pageId={params.id} />
+        </div>
       </article>
     </>
   );

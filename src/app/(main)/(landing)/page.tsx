@@ -6,6 +6,8 @@ import { getTags } from '~/server/data/getTags';
 // types
 import type { CoverType, PostSchema } from '~/ts/schema';
 
+// export const runtime = 'edge';
+
 interface PageProps {
   searchParams: Record<string, string>;
 }

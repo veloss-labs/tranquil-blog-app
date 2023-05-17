@@ -12,10 +12,10 @@ const isProduction = process.env.NODE_ENV === 'production';
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  poweredByHeader: false,
   experimental: {
     appDir: true,
   },
-  poweredByHeader: false,
   compress: true,
   compiler: {
     removeConsole: isProduction

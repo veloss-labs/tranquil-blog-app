@@ -6,6 +6,8 @@ interface LayoutProps {
   children: React.JSX.Element;
 }
 
+// export const runtime = 'edge';
+
 export default async function Layout({ children }: LayoutProps) {
   const tags = await getTags();
 
