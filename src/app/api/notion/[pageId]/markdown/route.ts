@@ -31,4 +31,4 @@ export async function GET(request: Request, context: Context) {
   );
 }
 
-// export const runtime = 'edge';
+export const runtime = 'edge';

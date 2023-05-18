@@ -3,14 +3,14 @@ import React, { useMemo } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import classNames from 'classnames';
+import { PAGE_ENDPOINTS } from '~/constants/constants';
 
-interface CategoryProps {
+interface TagProps {
   name: string;
   slug: string | null;
-  to: string;
 }
 
-export default function Category({ name, slug, to }: CategoryProps) {
+export default function Tag({ name, slug }: TagProps) {
   const searchParams = useSearchParams();
 
   const tag = useMemo(() => {
@@ -25,7 +25,12 @@ export default function Category({ name, slug, to }: CategoryProps) {
           'bg-gray-100 rounded': tag === slug,
         },
       )}
-      href={to}
+      href={{
+        pathname: PAGE_ENDPOINTS.ROOT,
+        ...(slug && {
+          query: { tag: slug },
+        }),
+      }}
     >
       {name}
     </Link>

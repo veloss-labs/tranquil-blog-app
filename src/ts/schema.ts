@@ -6,18 +6,18 @@ export type TagSchema = {
   block: BlockSchema;
 };
 
-type BlockSchema = {
+export type BlockSchema = {
   type: string;
   block_id: string;
 };
 
-type ExternalCoverSchema = {
+export type ExternalCoverSchema = {
   url: string;
 };
 
 export type CoverType = 'external' | 'internal';
 
-type CoverSchema<type extends CoverType> = {
+export type CoverSchema<type extends CoverType> = {
   type: type;
 } & (type extends 'external' ? ExternalCoverSchema : Record<string, any>);
 
@@ -30,4 +30,8 @@ export type PostSchema<C extends CoverType> = {
   updatedAt: string;
   cover: CoverSchema<C>;
   block: BlockSchema;
+};
+
+export type UnionPostSchema = Omit<PostSchema<CoverType>, 'tags'> & {
+  tags: TagSchema[];
 };

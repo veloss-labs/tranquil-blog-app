@@ -2,8 +2,7 @@ import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { env } from '~/env/server.mjs';
 import { createTRPCRouter, publicProcedure } from '~/server/api/trpc';
-import { n2m } from '~/server/db/notion';
-import { TagSchema } from '~/ts/schema';
+import type { TagSchema, UnionPostSchema } from '~/ts/schema';
 import {
   isNotionDatabasePage,
   isNotionPageValidation,
@@ -126,7 +125,7 @@ export const postsRouter = createTRPCRouter({
       pageInfo: {
         ...pageInfo,
         tags: unionTags,
-      },
+      } as UnionPostSchema,
     };
   }),
 });

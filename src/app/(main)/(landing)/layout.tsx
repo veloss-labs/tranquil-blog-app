@@ -1,12 +1,12 @@
 import React, { Suspense } from 'react';
-import Categories from '~/components/blog/Categories';
-import CategoriesSkeleton from '~/components/blog/skeleton/CategoriesSkeleton';
+import AsyncTags from '~/components/blog/AsyncTags';
+import TagsSkeleton from '~/components/blog/skeleton/TagsSkeleton';
 
 interface LayoutProps {
   children: React.JSX.Element;
 }
 
-// export const runtime = 'edge';
+export const runtime = 'edge';
 
 export default async function Layout({ children }: LayoutProps) {
   return (
@@ -14,9 +14,9 @@ export default async function Layout({ children }: LayoutProps) {
       <h1 className="text-5xl font-display font-bold">Blog</h1>
       <div className="flow-root mt-8 text-sm text-gray-400">
         <div className="-m-4 flex flex-row flex-wrap">
-          <Suspense fallback={<CategoriesSkeleton />}>
-            {/* @ts-ignore */}
-            <Categories />
+          <Suspense fallback={<TagsSkeleton />}>
+            {/* @ts-expect-error Async Server Component */}
+            <AsyncTags />
           </Suspense>
         </div>
       </div>
