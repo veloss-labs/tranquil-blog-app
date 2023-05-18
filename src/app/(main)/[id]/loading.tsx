@@ -1,5 +1,6 @@
 import React from 'react';
+import PageSkeleton from '~/components/blog/skeleton/PageSkeleton';
 
-export default function loading() {
-  return <div>loading....</div>;
+export default function Loading() {
+  return <PageSkeleton />;
 }

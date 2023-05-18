@@ -50,7 +50,7 @@
     "cross-env": "^7.0.3",
     "dayjs": "^1.11.7",
     "lodash-es": "^4.17.21",
-    "lucide-react": "^0.216.0",
+    "lucide-react": "^0.219.0",
     "next": "^13.4.2",
     "notion-to-md": "^3.0.0",
     "react": "^18.2.0",
@@ -75,7 +75,7 @@
     "@testing-library/react": "^14.0.0",
     "@types/cookie": "^0.5.1",
     "@types/lodash-es": "^4.17.7",
-    "@types/node": "^20.1.7",
+    "@types/node": "^20.2.0",
     "@types/react": "^18.2.6",
     "@types/react-dom": "^18.2.4",
     "@typescript-eslint/eslint-plugin": "^5.59.6",
@@ -97,12 +97,12 @@
     "patch-package": "^7.0.0",
     "postcss": "^8.4.23",
     "prettier": "^2.8.8",
-    "prettier-plugin-tailwindcss": "^0.2.8",
+    "prettier-plugin-tailwindcss": "^0.3.0",
     "tailwindcss": "^3.3.2",
     "tailwindcss-animate": "^1.0.5",
     "tsup": "^6.7.0",
     "typescript": "^5.0.4",
     "vite": "^4.3.7",
-    "vitest": "^0.31.0"
+    "vitest": "^0.31.1"
   }
 }

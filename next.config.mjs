@@ -16,6 +16,9 @@ const nextConfig = {
   experimental: {
     appDir: true,
   },
+  images: {
+    domains: ['www.notion.so'],
+  },
   compress: true,
   compiler: {
     removeConsole: isProduction
