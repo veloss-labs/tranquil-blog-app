@@ -13,9 +13,6 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   poweredByHeader: false,
-  experimental: {
-    appDir: true,
-  },
   images: {
     domains: ['www.notion.so'],
   },

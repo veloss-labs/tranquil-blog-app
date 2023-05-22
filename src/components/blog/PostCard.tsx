@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { getDateFormat } from '~/utils/date';
 
 import type { PostSchema, CoverType, TagSchema } from '~/ts/schema';
+import { PAGE_ENDPOINTS } from '~/constants/constants';
 
 interface PostCardProps<C extends CoverType> extends PostSchema<C> {
   tagList: TagSchema[];
@@ -41,7 +42,7 @@ export default function PostCard<C extends CoverType>({
               <Link
                 key={tag.id}
                 href={{
-                  pathname: '/',
+                  pathname: PAGE_ENDPOINTS.ROOT,
                   query: { tag: tag.slug },
                 }}
                 className="m-2 hover:text-blue-500 hover:underline"
@@ -52,7 +53,7 @@ export default function PostCard<C extends CoverType>({
           </div>
         </div>
       </div>
-      <Link className="sm:col-span-2" href={`/${id}`}>
+      <Link className="sm:col-span-2" href={PAGE_ENDPOINTS.ID(id)} prefetch>
         <h3 className="text-2xl text-gray-800 font-bold font-display">
           {title}
         </h3>

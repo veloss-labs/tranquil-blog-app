@@ -18,6 +18,7 @@ export const NEXT_ROUTES_API_ENDPOINTS = {
 
 export const PAGE_ENDPOINTS = {
   ROOT: '/',
+  ID: (id: string) => `/${id}`,
 } as const;
 
 export const STATUS_CODE = {

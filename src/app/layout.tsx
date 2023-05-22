@@ -4,11 +4,13 @@ import { ClientProviders } from './client-provider';
 import Script from 'next/script';
 import { ApiService } from '~/api/client';
 import { env } from '~/env/server.mjs';
-import { isBrowser } from '~/libs/browser/dom';
 import { Metadata } from 'next';
 import { Inter as FontSans } from 'next/font/google';
 import classNames from 'classnames';
 import localFont from 'next/font/local';
+import { url } from '~/utils/url';
+
+export const runtime = 'edge';
 
 // Font files can be colocated inside of `pages`
 const fontHeading = localFont({
@@ -20,19 +22,6 @@ const fontSans = FontSans({
   subsets: ['latin'],
   variable: '--font-sans',
 });
-
-const url = (function () {
-  if (isBrowser) {
-    return window.location.origin;
-  }
-  if (env.NEXT_PUBLIC_SITE_URL) {
-    return env.NEXT_PUBLIC_SITE_URL;
-  }
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`;
-  }
-  return 'http://localhost:3000';
-})();
 
 export async function generateMetadata(): Promise<Metadata> {
   const title = 'Tranquil Blog';
@@ -67,6 +56,9 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     alternates: {
       canonical: '/',
+      types: {
+        'application/atom+xml': '/feed.xml',
+      },
     },
     other: {
       'msapplication-TileColor': '#ffffff',
@@ -78,6 +70,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     category: 'blog',
     keywords: ['blog', 'tranquil', 'lalossol'],
+    robots: 'index, follow',
   };
 }
 
@@ -98,9 +91,9 @@ export default function Layout({ children }: LayoutProps) {
       />
       <Script id="inject-env" strategy="afterInteractive">
         {`
-         window.ENV = ${JSON.stringify({
-           API_BASE_URL: env.NEXT_PUBLIC_API_HOST,
-         })}
+          window.ENV = ${JSON.stringify({
+            API_BASE_URL: env.NEXT_PUBLIC_API_HOST,
+          })}
         `}
       </Script>
       <body
