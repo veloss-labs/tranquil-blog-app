@@ -10,6 +10,8 @@ const isProduction = process.env.NODE_ENV === 'production';
  * Next Config Options
  * @type {import('next').NextConfig} */
 const nextConfig = {
+  appDir: true,
+  runtime: 'edge', // for Edge API Routes only
   reactStrictMode: true,
   swcMinify: true,
   poweredByHeader: false,

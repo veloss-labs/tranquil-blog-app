@@ -15,3 +15,5 @@ export default function MainLayout({ children }: MainLayoutProps) {
     </div>
   );
 }
+
+export const runtime = 'edge';

@@ -78,7 +78,7 @@ interface CliResults {
 }
 
 const defaultOptions: CliResults = {
-  appName: 'SST-NEXT-TEMPLATE',
+  appName: 'tranquil-blog',
   flags: {
     root: '.env',
     env: CommonEnv.local,

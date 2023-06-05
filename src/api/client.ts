@@ -80,13 +80,11 @@ export class ApiService {
   static headerJSON = (options?: BaseApiOptions['init']) => {
     const headers = new Headers();
     if (options?.headers && options.headers instanceof Headers) {
-      headers.append('Content-Type', 'application/json');
       for (const [key, value] of options.headers.entries()) {
-        headers.append(key, value);
+        headers.set(key, value);
       }
-    } else {
-      headers.append('Content-Type', 'application/json');
     }
+    headers.set('Content-Type', 'application/json');
     return headers;
   };
 
@@ -115,7 +113,6 @@ export class ApiService {
     options?: BaseApiOptions['init'] | undefined,
   ) {
     const input = this.middlewareForUrl(pathname);
-    console.log('input', input.href);
     const request = new Request(input, {
       ...options,
       method: 'POST',
