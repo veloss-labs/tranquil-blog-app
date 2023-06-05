@@ -22,7 +22,6 @@ export default function Page({ searchParams }: PageProps) {
           </>
         }
       >
-        {/* @ts-expect-error Async Server Component */}
         <PostCards tag={searchParams?.tag} />
       </Suspense>
     </div>

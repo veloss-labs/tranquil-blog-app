@@ -20,7 +20,6 @@ export default async function Page({ params }: PageProps) {
       item={data}
       markdown={
         <Suspense fallback={<MarkdownSkeleton />}>
-          {/* @ts-expect-error Async Server Component */}
           <Markdown pageId={params.id} />
         </Suspense>
       }

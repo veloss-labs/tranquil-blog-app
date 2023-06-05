@@ -10,7 +10,7 @@ import 'server-only';
 export const getPosts = cache(async (input: ListInput) => {
   try {
     const data = await api.posts.infinite.fetchInfinite(input);
-    // @ts-expect-error
+    // @ts-ignore
     const posts = data?.pages?.flatMap((page) => page?.items) ?? [];
     return posts as PostSchema<CoverType>[];
   } catch (error) {

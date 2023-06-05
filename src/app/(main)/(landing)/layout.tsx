@@ -15,7 +15,6 @@ export default async function Layout({ children }: LayoutProps) {
       <div className="flow-root mt-8 text-sm text-gray-400">
         <div className="-m-4 flex flex-row flex-wrap">
           <Suspense fallback={<TagsSkeleton />}>
-            {/* @ts-expect-error Async Server Component */}
             <AsyncTags />
           </Suspense>
         </div>
