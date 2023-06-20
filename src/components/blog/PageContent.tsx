@@ -19,7 +19,7 @@ export default function PageContent({ item, markdown }: PageContentProps) {
           <time dateTime={item?.createdAt}>
             {getDateFormat(item?.createdAt)}
           </time>
-          <a href="/feed" className="hover:text-gray-700" title="Atom Feed">
+          <a href="/feed.xml" className="hover:text-gray-700" title="Atom Feed">
             <svg
               className="w-4 h-4"
               xmlns="http://www.w3.org/2000/svg"

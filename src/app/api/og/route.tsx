@@ -1,5 +1,5 @@
 import * as z from 'zod';
-import { ImageResponse } from '@cloudflare/pages-plugin-vercel-og/api';
+import { ImageResponse } from '@vercel/og';
 
 const ogImageSchema = z.object({
   heading: z.string(),

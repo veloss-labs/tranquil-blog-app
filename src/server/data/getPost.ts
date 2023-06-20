@@ -1,5 +1,5 @@
 import { cache } from 'react';
-import { api } from '~/libs/api/server';
+import { api } from '~/@trpc/next-layout/server/server';
 import logger from '~/utils/logger';
 
 import type { ByIdInput } from '../api/routers/posts';
